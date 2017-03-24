@@ -113,8 +113,8 @@ _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
     _get_namenode_hostname namenode_hostname `hostname -f`
-    hiveserver_hostname="hive2://$namenode_hostname:10000"
-    sparkmaster_hostname="spark://$namenode_hostname:7077"
+    hiveserver_hostname=$namenode_hostname
+    sparkmaster_hostname=$namenode_hostname
 
     #input parameters prompted by start.sh
     expect <<-EOF
@@ -166,6 +166,8 @@ EOF
     echo "" >> /opt/infoworks/conf/conf.properties
     echo  "#iw cdw overrides" >> /opt/infoworks/conf/conf.properties
     echo  "modified_time_as_cksum=true" >> /opt/infoworks/conf/conf.properties
+    echo  "storage_format=orc" >> /opt/infoworks/conf/conf.properties
+    echo  "iw_hdfs_prefix=wasb://" >> /opt/infoworks/conf/conf.properties 
     echo "" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties    
     echo  "#iw cdw properties" >> /opt/infoworks/conf/conf.properties
