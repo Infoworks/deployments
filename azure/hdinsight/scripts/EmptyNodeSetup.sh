@@ -182,7 +182,8 @@ EOF
     if [ "$?" != "0" ]; then
         return 1;
     fi
-/opt/infoworks/bin/migrate/iw_migration.sh
+
+    eval cd /opt/infoworks/bin/migrate/ && ./iw_migration.sh
 }
 
 #install expect tool for interactive mode to input paramenters
