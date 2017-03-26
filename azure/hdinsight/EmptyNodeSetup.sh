@@ -166,6 +166,8 @@ EOF
     echo "" >> /opt/infoworks/conf/conf.properties
     echo  "#iw cdw overrides" >> /opt/infoworks/conf/conf.properties
     echo  "modified_time_as_cksum=true" >> /opt/infoworks/conf/conf.properties
+    echo  "cdc_start_time_place_holder=cdc_start_time" >> /opt/infoworks/conf/conf.properties
+    echo  "cdc_end_time_place_holder=cdc_end_time" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties    
     echo  "#iw cdw properties" >> /opt/infoworks/conf/conf.properties
