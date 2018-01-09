@@ -1,0 +1,62 @@
+resources:
+- name: dataproctest3
+  type: dataproc.v1.cluster
+  properties:
+    clusterName: test
+    projectId: dataproctest2
+    region: global
+    #clusterUuid: 360de560-8e11-4098-963d-251dc96d822b
+    config:
+      #configBucket: dataproc-7dca62b8-01e8-444e-a16b-4ded3f8bbdbd-us
+      gceClusterConfig:
+        networkUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/networks/default
+        serviceAccountScopes:
+        - https://www.googleapis.com/auth/bigquery
+        - https://www.googleapis.com/auth/bigtable.admin.table
+        - https://www.googleapis.com/auth/bigtable.data
+        - https://www.googleapis.com/auth/cloud.useraccounts.readonly
+        - https://www.googleapis.com/auth/devstorage.full_control
+        - https://www.googleapis.com/auth/devstorage.read_write
+        - https://www.googleapis.com/auth/logging.write
+        zoneUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-a
+      initializationActions:
+      - executableFile: gs://iw-store/gcpha.sh
+        executionTimeout: 600s
+      masterConfig:
+        diskConfig:
+          bootDiskSizeGb: 500
+        imageUri: https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-1-20170710-112025
+        machineTypeUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-a/machineTypes/n1-standard-2
+        numInstances: 3
+      softwareConfig:
+        imageVersion: 1.1.35
+        properties:
+          distcp:mapreduce.map.java.opts: -Xmx2457m
+          distcp:mapreduce.map.memory.mb: '3072'
+          distcp:mapreduce.reduce.java.opts: -Xmx4915m
+          distcp:mapreduce.reduce.memory.mb: '6144'
+          mapred:mapreduce.map.cpu.vcores: '1'
+          mapred:mapreduce.map.java.opts: -Xmx2457m
+          mapred:mapreduce.map.memory.mb: '3072'
+          mapred:mapreduce.reduce.cpu.vcores: '2'
+          mapred:mapreduce.reduce.java.opts: -Xmx4915m
+          mapred:mapreduce.reduce.memory.mb: '6144'
+          mapred:yarn.app.mapreduce.am.command-opts: -Xmx4915m
+          mapred:yarn.app.mapreduce.am.resource.cpu-vcores: '2'
+          mapred:yarn.app.mapreduce.am.resource.mb: '6144'
+          spark:spark.driver.maxResultSize: 960m
+          spark:spark.driver.memory: 1920m
+          spark:spark.executor.cores: '1'
+          spark:spark.executor.memory: 2688m
+          spark:spark.yarn.am.memory: 2688m
+          spark:spark.yarn.am.memoryOverhead: '384'
+          spark:spark.yarn.executor.memoryOverhead: '384'
+          yarn:yarn.nodemanager.resource.memory-mb: '6144'
+          yarn:yarn.scheduler.maximum-allocation-mb: '6144'
+          yarn:yarn.scheduler.minimum-allocation-mb: '512'
+      workerConfig:
+        diskConfig:
+          bootDiskSizeGb: 500
+        imageUri: https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-1-20170710-112025
+        machineTypeUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-a/machineTypes/n1-standard-2
+        numInstances: 2

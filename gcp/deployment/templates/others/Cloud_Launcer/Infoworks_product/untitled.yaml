@@ -1,0 +1,23 @@
+resources:
+- type: compute.v1.instance
+  name: test-e-0
+  properties:
+    projectid: 
+    zone: us-central1-f
+    machineType: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/{{ properties["zone"] }}/machineTypes/n1-standard-2
+    disks:
+    - autoDelete: true
+      boot: true
+      deviceName: edgenode-dataproc
+      type: PERSISTENT
+      initializeParams:
+        diskSizeGb: 500.0
+        #diskType: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-f/diskTypes/pd-ssd
+        #selfLink: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/images/edgenode-dataproc
+        sourceImage: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/images/edgenode-dataproc
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/networks/default
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT

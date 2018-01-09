@@ -1,0 +1,36 @@
+resources:
+- type: compute.v1.instance
+  name: test-e-0
+  properties:
+    zone: us-central1-f
+    machineType: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-f/machineTypes/n1-standard-2
+    serviceAccounts:
+      - email: default
+        scopes:
+          - https://www.googleapis.com/auth/compute
+          - https://www.googleapis.com/auth/logging.write
+          - https://www.googleapis.com/auth/monitoring.write
+          - https://www.googleapis.com/auth/devstorage.full_control
+    disks:
+    - autoDelete: true
+      boot: true
+      deviceName: edgenode-dataproc
+      type: PERSISTENT
+      initializeParams:
+        diskSizeGb: 150.0
+        diskType: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-f/diskTypes/pd-ssd
+        imageUri: https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-1-20170710-112025
+    canIpForward: false
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/networks/default
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          #!/bin/bash
+          bash /opt/infoworks/bin/cluster-setup.sh
+          rm -rf cluster-setup.sh

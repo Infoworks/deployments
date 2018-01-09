@@ -1,0 +1,3 @@
+cluster == gcloud dataproc clusters create test --metadata=startup-script-url=https://storage.cloud.google.com/iw-store/gcp_cluster_setup.sh --zone=us-central1-a --num-masters=3 --master-machine-type=n1-standard-2 --num-workers=2 --worker-machine-type=n1-standard-2
+
+edgenode == gcloud compute instances create test-e --image=edgenode-dataproc --machine-type=n1-standard-2 --metadata=startup-script-url=http://repos.sakhaglobal.com/saikrishna/infowork/raw/master/cluster-setup.sh --zone=us-central1-a

@@ -1,0 +1,297 @@
+{
+  "configurations": [
+    {
+      "core-site": {
+        "properties": {
+          "fs.defaultFS": "hdfs://iw-test",
+          "ha.zookeeper.quorum": "%HOSTGROUP::zookeepernode%:2181"
+        }
+      }
+    },
+    {
+      "hdfs-site": {
+        "properties": {
+          "dfs.client.failover.proxy.provider.iw-test": "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider",
+          "dfs.ha.automatic-failover.enabled": "true",
+          "dfs.ha.fencing.methods": "shell(/bin/true)",
+          "dfs.ha.namenodes.iw-test": "nn1,nn2",
+          "dfs.namenode.http-address": "%HOSTGROUP::headnode0%:50070",
+          "dfs.namenode.http-address.iw-test.nn1": "%HOSTGROUP::headnode0%:50070",
+          "dfs.namenode.http-address.iw-test.nn2": "%HOSTGROUP::headnode1%:50070",
+          "dfs.namenode.https-address": "%HOSTGROUP::headnode0%:50470",
+          "dfs.namenode.https-address.iw-test.nn1": "%HOSTGROUP::headnode0%:50470",
+          "dfs.namenode.https-address.iw-test.nn2": "%HOSTGROUP::headnode1%:50470",
+          "dfs.namenode.rpc-address.iw-test.nn1": "%HOSTGROUP::headnode0%:8020",
+          "dfs.namenode.rpc-address.iw-test.nn2": "%HOSTGROUP::headnode1%:8020",
+          "dfs.namenode.shared.edits.dir": "qjournal://%HOSTGROUP::zookeepernode%:8485/iw-test",
+          "dfs.nameservices": "iw-test"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "components": [
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "PHOENIX_QUERY_SERVER"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "SQOOP"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "OOZIE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ],
+      "configurations": [],
+      "name": "workernode",
+      "cardinality": "1"
+    },
+    {
+      "components": [
+        {
+          "name": "HIVE_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SQOOP"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "OOZIE_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "PIG"
+        }
+      ],
+      "configurations": [],
+      "name": "edgenode",
+      "cardinality": "1"
+    },
+    {
+      "components": [
+        {
+          "name": "APP_TIMELINE_SERVER",
+          "provision_action": "INSTALL_ONLY"
+        },
+        {
+          "name": "HISTORYSERVER",
+          "provision_action": "INSTALL_ONLY"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "METRICS_COLLECTOR"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "MYSQL_SERVER"
+        },
+        {
+          "name": "ZKFC"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "SQOOP"
+        },
+        {
+          "name": "OOZIE_CLIENT"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "OOZIE_SERVER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "AMBARI_SERVER"
+        }
+      ],
+      "configurations": [],
+      "name": "headnode0",
+      "cardinality": "1"
+    },
+    {
+      "components": [
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "OOZIE_SERVER"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "OOZIE_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HISTORYSERVER",
+          "provision_action": "INSTALL_ONLY"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER",
+          "provision_action": "INSTALL_ONLY"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "ZKFC"
+        },
+        {
+          "name": "HIVE_SERVER"
+        }
+      ],
+      "configurations": [],
+      "name": "headnode1",
+      "cardinality": "1"
+    },
+    {
+      "components": [
+        {
+          "name": "JOURNALNODE"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        }
+      ],
+      "configurations": [],
+      "name": "zookeepernode",
+      "cardinality": "1"
+    }
+  ],
+  "settings": [
+    {
+      "recovery_settings": [
+        {
+          "recovery_enabled": "true"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "iw-test",
+    "stack_name": "HDP",
+    "stack_version": "2.5",
+    "security": {
+      "type": "NONE"
+    }
+  }
+}

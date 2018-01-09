@@ -1,0 +1,41 @@
+{
+  "blueprint": "blueprint123",
+  "default_password": "admin",
+  "host_groups": [
+    {
+      "name": "host_group_1",
+      "hosts": [
+        {
+          "fqdn": "namenode"
+        }
+      ]
+    },
+    {
+      "name": "host_group_2",
+      "hosts": [
+        {
+          "fqdn": "snamenode"
+        }
+      ]
+    },
+    {
+      "name": "host_group_3",
+      "hosts": [
+        {
+          "fqdn": "worker"
+        }
+      ]
+    },
+    {
+      "name": "host_group_4",
+      "hosts": [
+        {
+          "fqdn": "worker"
+        },
+        {
+          "fqdn": "worker"
+        }
+      ]
+    }
+  ]
+}

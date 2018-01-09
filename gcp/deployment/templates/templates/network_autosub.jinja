@@ -1,0 +1,9 @@
+resources:
+- type: compute.v1.network
+  name: {{ env["deployment"] }}-infoworks-network
+  properties:
+     name: infoworks-network
+     autoCreateSubnetworks: true
+     routingConfig:
+      routingMode: REGIONAL
+     selfLink: 

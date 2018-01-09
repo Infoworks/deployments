@@ -1,0 +1,90 @@
+{#
+Copyright 2016 Google Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set name = "%s-vm-tmpl" % env["name"] %}
+{% set instanceName = "%s-vm" % deployment %}
+{% set zone = properties["zone"] %}
+{% set machineType = properties["machineType"] %}
+{% set network = path_utils.networkPath(properties["network"]) %}
+{% set subnetwork = properties["subnetwork"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
+{% set hasExternalIP = properties["externalIP"] != "None" %}
+{# Software status only works if the VM has an external IP. #}
+{% set enableStatusWaiter = hasExternalIP %}
+
+resources:
+- name: {{ name }}
+  type: dataproc.v1.cluster
+  properties:
+    clusterName: {{ instanceName }}
+    #projectId: dataproctest2
+    region: global
+    #clusterUuid: 360de560-8e11-4098-963d-251dc96d822b
+    config:
+      #configBucket: dataproc-7dca62b8-01e8-444e-a16b-4ded3f8bbdbd-us
+      gceClusterConfig:
+        networkUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/networks/default
+        serviceAccountScopes:
+        - https://www.googleapis.com/auth/bigquery
+        - https://www.googleapis.com/auth/bigtable.admin.table
+        - https://www.googleapis.com/auth/bigtable.data
+        - https://www.googleapis.com/auth/cloud.useraccounts.readonly
+        - https://www.googleapis.com/auth/devstorage.full_control
+        - https://www.googleapis.com/auth/devstorage.read_write
+        - https://www.googleapis.com/auth/logging.write
+        zoneUri: https://www.googleapis.com/compute/v1/projects/{{ env['project'] }}/zones/{{ properties['zone'] }}
+      initializationActions:
+      - executableFile: gs://iw-store/gcpha.sh
+        executionTimeout: 600s
+      masterConfig:
+        diskConfig:
+          bootDiskSizeGb: {{ bootDiskSizeGb }}
+        imageUri: https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-1-20170710-112025
+        machineType: {{ machineType }}
+        numInstances: 3
+      softwareConfig:
+        imageVersion: 1.1.35
+        properties:
+          distcp:mapreduce.map.java.opts: -Xmx2457m
+          distcp:mapreduce.map.memory.mb: '3072'
+          distcp:mapreduce.reduce.java.opts: -Xmx4915m
+          distcp:mapreduce.reduce.memory.mb: '6144'
+          mapred:mapreduce.map.cpu.vcores: '1'
+          mapred:mapreduce.map.java.opts: -Xmx2457m
+          mapred:mapreduce.map.memory.mb: '3072'
+          mapred:mapreduce.reduce.cpu.vcores: '2'
+          mapred:mapreduce.reduce.java.opts: -Xmx4915m
+          mapred:mapreduce.reduce.memory.mb: '6144'
+          mapred:yarn.app.mapreduce.am.command-opts: -Xmx4915m
+          mapred:yarn.app.mapreduce.am.resource.cpu-vcores: '2'
+          mapred:yarn.app.mapreduce.am.resource.mb: '6144'
+          spark:spark.driver.maxResultSize: 960m
+          spark:spark.driver.memory: 1920m
+          spark:spark.executor.cores: '1'
+          spark:spark.executor.memory: 2688m
+          spark:spark.yarn.am.memory: 2688m
+          spark:spark.yarn.am.memoryOverhead: '384'
+          spark:spark.yarn.executor.memoryOverhead: '384'
+          yarn:yarn.nodemanager.resource.memory-mb: '6144'
+          yarn:yarn.scheduler.maximum-allocation-mb: '6144'
+          yarn:yarn.scheduler.minimum-allocation-mb: '512'
+      workerConfig:
+        diskConfig:
+          bootDiskSizeGb: {{ bootDiskSizeGb }}
+        imageUri: https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-1-20170710-112025
+        machineType: {{ machineType }}
+        numInstances: 2

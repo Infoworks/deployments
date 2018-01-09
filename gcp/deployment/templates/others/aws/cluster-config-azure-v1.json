@@ -1,0 +1,765 @@
+{
+  "href" : "http://10.0.0.21:8080/api/v1/blueprints/hadoop_hbase_ha",
+  "configurations" : [
+    {
+      "ams-env" : {
+        "properties" : {
+          "metrics_collector_heapsize" : "512m"
+        }
+      }
+    },
+    {
+      "capacity-scheduler" : {
+        "properties" : {
+          "yarn.scheduler.capacity.root.default.user-limit-factor" : "10",
+          "yarn.scheduler.capacity.root.joblauncher.user-limit-factor" : "10",
+          "yarn.scheduler.capacity.root.queues" : "default,joblauncher",
+          "yarn.scheduler.capacity.root.joblauncher.capacity" : "5",
+          "yarn.scheduler.capacity.node-locality-delay" : "0",
+          "yarn.scheduler.capacity.maximum-am-resource-percent" : "0.33",
+          "yarn.scheduler.capacity.root.joblauncher.maximum-capacity" : "50",
+          "yarn.scheduler.capacity.root.default.capacity" : "95"
+        }
+      }
+    },
+    {
+      "webhcat-log4j" : {
+        "properties" : {
+          "content" : "\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing,\n# software distributed under the License is distributed on an\n# \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n# KIND, either express or implied.  See the License for the\n# specific language governing permissions and limitations\n# under the License.\n\n# Define some default values that can be overridden by system properties\nwebhcat.root.logger = DEBUG, standard\nwebhcat.log.dir = .\nwebhcat.log.file = webhcat.log\n\nlog4j.rootLogger = ${webhcat.root.logger}, ETW, FilterLog, FullPIILogs\n\n# Logging Threshold\nlog4j.threshhold = DEBUG\n\nlog4j.appender.standard  =  org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.standard.File = ${webhcat.log.dir}/${webhcat.log.file}\n\n# Rollver at midnight\nlog4j.appender.DRFA.DatePattern = .yyyy-MM-dd\n\nlog4j.appender.DRFA.layout = org.apache.log4j.PatternLayout\n\nlog4j.appender.standard.layout = org.apache.log4j.PatternLayout\nlog4j.appender.standard.layout.conversionPattern = %d{ISO8601} %-5p [%t]: %c{2} (%F:%M(%L)) - %m%n\n\n# Class logging settings\nlog4j.logger.com.sun.jersey = DEBUG, FullPIILogs\nlog4j.logger.com.sun.jersey.spi.container.servlet.WebComponent = ERROR, FullPIILogs\nlog4j.logger.org.apache.hadoop = INFO, FullPIILogs\nlog4j.logger.org.apache.hadoop.conf = WARN, FullPIILogs\nlog4j.logger.org.apache.zookeeper = WARN\nlog4j.logger.org.eclipse.jetty = INFO, FullPIILogs\n#EtwLog Appender\n\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=templeton\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# Full PII log Appender\n# Sends  PII HDP service logs to our storage account\nlog4j.appender.FullPIILogs=com.microsoft.log4jappender.FullPIILogAppender\nlog4j.appender.FullPIILogs.component=hive\nlog4j.appender.FullPIILogs.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FullPIILogs.Threshold=INFO\nlog4j.appender.FullPIILogs.source=CentralFullServicePIILogs\nlog4j.appender.FullPIILogs.OSType=Linux\nlog4j.appender.FullPIILogs.SuffixHadoopEntryType=true\n"
+        }
+      }
+    },
+    {
+      "zoo.cfg" : {
+        "properties" : {
+          "maxSessionTimeout" : "120000",
+          "maxClientCnxns" : "300"
+        }
+      }
+    },
+    {
+      "ams-hbase-site" : {
+        "properties" : {
+          "dfs.client.read.shortcircuit" : "true",
+          "hbase.rootdir" : "file:///mnt/data/ambari-metrics-collector/hbase",
+          "hbase.cluster.distributed" : "false",
+          "hbase.normalizer.enabled" : "false"
+        }
+      }
+    },
+    {
+      "zookeeper-log4j" : {
+        "properties" : {
+          "content" : "\n#\n#\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing,\n# software distributed under the License is distributed on an\n# \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n# KIND, either express or implied.  See the License for the\n# specific language governing permissions and limitations\n# under the License.\n#\n#\n#\n\n#\n# ZooKeeper Logging Configuration\n#\n\n# DEFAULT: console appender only\nlog4j.rootLogger=INFO, CONSOLE, ETW, FilterLog\n\n# Example with rolling log file\n#log4j.rootLogger=DEBUG, CONSOLE, ROLLINGFILE\n\n# Example with rolling log file and tracing\n#log4j.rootLogger=TRACE, CONSOLE, ROLLINGFILE, TRACEFILE\n\n#\n# Log INFO level and above messages to the console\n#\nlog4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender\nlog4j.appender.CONSOLE.Threshold=INFO\nlog4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout\nlog4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} - %-5p [%t:%C{1}@%L] - %m%n\n\n#\n# Add ROLLINGFILE to rootLogger to get log file output\n#    Log DEBUG level and above messages to a log file\nlog4j.appender.ROLLINGFILE=org.apache.log4j.RollingFileAppender\nlog4j.appender.ROLLINGFILE.Threshold=DEBUG\nlog4j.appender.ROLLINGFILE.File=zookeeper.log\n\n# Max log file size of 10MB\nlog4j.appender.ROLLINGFILE.MaxFileSize=10MB\n# uncomment the next line to limit number of backup files\n#log4j.appender.ROLLINGFILE.MaxBackupIndex=10\n\nlog4j.appender.ROLLINGFILE.layout=org.apache.log4j.PatternLayout\nlog4j.appender.ROLLINGFILE.layout.ConversionPattern=%d{ISO8601} - %-5p [%t:%C{1}@%L] - %m%n\n\n\n#\n# Add TRACEFILE to rootLogger to get log file output\n#  Log DEBUG level and above messages to a log file\nlog4j.appender.TRACEFILE=org.apache.log4j.FileAppender\nlog4j.appender.TRACEFILE.Threshold=TRACE\nlog4j.appender.TRACEFILE.File=zookeeper_trace.log\n\nlog4j.appender.TRACEFILE.layout=org.apache.log4j.PatternLayout\n### Notice we are including log4j's NDC here (%x)\nlog4j.appender.TRACEFILE.layout.ConversionPattern=%d{ISO8601} - %-5p [%t:%C{1}@%L][%x] - %m%n\n\n\n#EtwLog Appender\n\n#sends HDP service logs to customer storage account\n\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=${component}\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# FilterLog Appender\n# Sends filtered HDP service logs to our storage account\nlog4j.appender.FilterLog=com.microsoft.log4jappender.FilterLogAppender\nlog4j.appender.FilterLog.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FilterLog.source=CentralFilteredHadoopServiceLogs\nlog4j.appender.FilterLog.component=${component}\nlog4j.appender.FilterLog.whitelistFileName=${whitelist.filename}\nlog4j.appender.FilterLog.OSType=Linux\n"
+        }
+      }
+    },
+    {
+      "hbase-env" : {
+        "properties" : {
+          "hbase_regionserver_heapsize" : "4000m",
+          "hbase_master_heapsize" : "1000m",
+          "phoenix_sql_enabled" : "true",
+          "content" : "\n# Set environment variables here.\n\n# The java implementation to use. Java 1.6 required.\nexport JAVA_HOME={{java64_home}}\n\n# HBase Configuration directory\nexport HBASE_CONF_DIR=${HBASE_CONF_DIR:-{{hbase_conf_dir}}}\n\n# Extra Java CLASSPATH elements. Optional.\nexport HBASE_CLASSPATH=${HBASE_CLASSPATH}\n\n\n# The maximum amount of heap to use, in MB. Default is 1000.\n# export HBASE_HEAPSIZE=1000\n\n# Extra Java runtime options.\n# Below are what we set by default. May only work with SUN JVM.\n# For more on why as well as other possible settings,\n# see http://wiki.apache.org/hadoop/PerformanceTuning\nexport SERVER_GC_OPTS=\"-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:{{log_dir}}/gc.log-`date +'%Y%m%d%H%M'`\"\n# Uncomment below to enable java garbage collection logging.\n# export HBASE_OPTS=\"$HBASE_OPTS -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$HBASE_HOME/logs/gc-hbase.log\"\n\n# Uncomment and adjust to enable JMX exporting\n# See jmxremote.password and jmxremote.access in $JRE_HOME/lib/management to configure remote password access.\n# More details at: http://java.sun.com/javase/6/docs/technotes/guides/management/agent.html\n#\n# export HBASE_JMX_BASE=\"-Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false\"\n# If you want to configure BucketCache, specify '-XX: MaxDirectMemorySize=' with proper direct memory size\n# export HBASE_THRIFT_OPTS=\"$HBASE_JMX_BASE -Dcom.sun.management.jmxremote.port=10103\"\n# export HBASE_ZOOKEEPER_OPTS=\"$HBASE_JMX_BASE -Dcom.sun.management.jmxremote.port=10104\"\n\n# File naming hosts on which HRegionServers will run. $HBASE_HOME/conf/regionservers by default.\nexport HBASE_REGIONSERVERS=${HBASE_CONF_DIR}/regionservers\n\n# Extra ssh options. Empty by default.\n# export HBASE_SSH_OPTS=\"-o ConnectTimeout=1 -o SendEnv=HBASE_CONF_DIR\"\n\n# Where log files are stored. $HBASE_HOME/logs by default.\nexport HBASE_LOG_DIR={{log_dir}}\n\n# A string representing this instance of hbase. $USER by default.\n# export HBASE_IDENT_STRING=$USER\n\n# The scheduling priority for daemon processes. See 'man nice'.\n# export HBASE_NICENESS=10\n\n# The directory where pid files are stored. /tmp by default.\nexport HBASE_PID_DIR={{pid_dir}}\n\n# Seconds to sleep between slave commands. Unset by default. This\n# can be useful in large clusters, where, e.g., slave rsyncs can\n# otherwise arrive faster than the master can service them.\n# export HBASE_SLAVE_SLEEP=0.1\n\n# Tell HBase whether it should manage it's own instance of Zookeeper or not.\nexport HBASE_MANAGES_ZK=false\n\n{% if security_enabled %}\nexport HBASE_OPTS=\"$HBASE_OPTS -XX:+UseConcMarkSweepGC -XX:ErrorFile={{log_dir}}/hs_err_pid%p.log -Djava.security.auth.login.config={{client_jaas_config_file}}\"\nexport HBASE_MASTER_OPTS=\"$HBASE_MASTER_OPTS -Xmx{{master_heapsize}} -Djava.security.auth.login.config={{master_jaas_config_file}} -Dwhitelist.filename=core-whitelist.res,hbase-whitelist.res -Dcomponent=master\"\nexport HBASE_REGIONSERVER_OPTS=\"$HBASE_REGIONSERVER_OPTS -Xmn{{regionserver_xmn_size}} -XX:CMSInitiatingOccupancyFraction=70  -Xms{{regionserver_heapsize}} -Xmx{{regionserver_heapsize}} {% if hbase_max_direct_memory_size %} -XX:MaxDirectMemorySize={{hbase_max_direct_memory_size}}m {% endif %} -Djava.security.auth.login.config={{regionserver_jaas_config_file}} -Dwhitelist.filename=core-whitelist.res,hbase-whitelist.res -Dcomponent=regionserver\"\n{% else %}\nexport HBASE_OPTS=\"$HBASE_OPTS -XX:+UseConcMarkSweepGC -XX:ErrorFile={{log_dir}}/hs_err_pid%p.log\"\nexport HBASE_MASTER_OPTS=\"$HBASE_MASTER_OPTS -Xmx{{master_heapsize}} -Dwhitelist.filename=core-whitelist.res,hbase-whitelist.res -Dcomponent=master\"\nexport HBASE_REGIONSERVER_OPTS=\"$HBASE_REGIONSERVER_OPTS -Xmn{{regionserver_xmn_size}} -XX:CMSInitiatingOccupancyFraction=70  -Xms{{regionserver_heapsize}} -Xmx{{regionserver_heapsize}} {% if hbase_max_direct_memory_size %} -XX:MaxDirectMemorySize={{hbase_max_direct_memory_size}}m {% endif %} -Dwhitelist.filename=core-whitelist.res,hbase-whitelist.res -Dcomponent=regionserver\"\n{% endif %}"
+        }
+      }
+    },
+    {
+      "hbase-log4j" : {
+        "properties" : {
+          "content" : "\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n\n\n# Define some default values that can be overridden by system properties\nhbase.root.logger=INFO,console\nhbase.security.logger=INFO,console\nhbase.log.dir=.\nhbase.log.file=hbase.log\n\n# Define the root logger to the system property \"hbase.root.logger\".\nlog4j.rootLogger=${hbase.root.logger}, ETW, FilterLog\n\n# Logging Threshold\nlog4j.threshold=INFO\n\n#\n# Daily Rolling File Appender\n#\nlog4j.appender.DRFA=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.DRFA.File=${hbase.log.dir}/${hbase.log.file}\n\n# Rollver at midnight\nlog4j.appender.DRFA.DatePattern=.yyyy-MM-dd\n\n# 30-day backup\n#log4j.appender.DRFA.MaxBackupIndex=30\nlog4j.appender.DRFA.layout=org.apache.log4j.PatternLayout\n\n# Pattern format: Date LogLevel LoggerName LogMessage\nlog4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c{2}: %m%n\n\n# Rolling File Appender properties\nhbase.log.maxfilesize=256MB\nhbase.log.maxbackupindex=20\n\n# Rolling File Appender\nlog4j.appender.RFA=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFA.File=${hbase.log.dir}/${hbase.log.file}\n\nlog4j.appender.RFA.MaxFileSize=${hbase.log.maxfilesize}\nlog4j.appender.RFA.MaxBackupIndex=${hbase.log.maxbackupindex}\n\nlog4j.appender.RFA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c{2}: %m%n\n\n#\n# Security audit appender\n#\nhbase.security.log.file=SecurityAuth.audit\nhbase.security.log.maxfilesize=256MB\nhbase.security.log.maxbackupindex=20\nlog4j.appender.RFAS=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFAS.File=${hbase.log.dir}/${hbase.security.log.file}\nlog4j.appender.RFAS.MaxFileSize=${hbase.security.log.maxfilesize}\nlog4j.appender.RFAS.MaxBackupIndex=${hbase.security.log.maxbackupindex}\nlog4j.appender.RFAS.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFAS.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\nlog4j.category.SecurityLogger=${hbase.security.logger}\nlog4j.additivity.SecurityLogger=false\n#log4j.logger.SecurityLogger.org.apache.hadoop.hbase.security.access.AccessController=TRACE\n\n#\n# Null Appender\n#\nlog4j.appender.NullAppender=org.apache.log4j.varia.NullAppender\n\n#\n# console\n# Add \"console\" to rootlogger above if you want to use this\n#\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c{2}: %m%n\n\n# Custom Logging levels\n\nlog4j.logger.org.apache.zookeeper=INFO\n#log4j.logger.org.apache.hadoop.fs.FSNamesystem=DEBUG\nlog4j.logger.org.apache.hadoop.hbase=DEBUG\n# Make these two classes INFO-level. Make them DEBUG to see more zk debug.\nlog4j.logger.org.apache.hadoop.hbase.zookeeper.ZKUtil=INFO\nlog4j.logger.org.apache.hadoop.hbase.zookeeper.ZooKeeperWatcher=INFO\n#log4j.logger.org.apache.hadoop.dfs=DEBUG\n# Set this class to log INFO only otherwise its OTT\n# Enable this to get detailed connection error/retry logging.\n# log4j.logger.org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation=TRACE\n\n\n# Uncomment this line to enable tracing on _every_ RPC call (this can be a lot of output)\n#log4j.logger.org.apache.hadoop.ipc.HBaseServer.trace=DEBUG\n\n# Uncomment the below if you want to remove logging of client region caching'\n# and scan of .META. messages\n# log4j.logger.org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation=INFO\n# log4j.logger.org.apache.hadoop.hbase.client.MetaScanner=INFO\n\n#EtwLog Appender\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=${component}\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# FilterLog Appender\n# Sends filtered HDP service logs to our storage account\nlog4j.appender.FilterLog=com.microsoft.log4jappender.FilterLogAppender\nlog4j.appender.FilterLog.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FilterLog.source=CentralFilteredHadoopServiceLogs\nlog4j.appender.FilterLog.component=${component}\nlog4j.appender.FilterLog.whitelistFileName=${whitelist.filename}\nlog4j.appender.FilterLog.OSType=Linux\n"
+        }
+      }
+    },
+    {
+      "ams-site" : {
+        "properties" : {
+          "timeline.metrics.hbase.init.check.enabled" : "false",
+          "timeline.metrics.whitelist.file" : "/etc/ambari-metrics-collector/conf/whitelistedmetrics.txt",
+          "timeline.metrics.service.use.groupBy.aggregators" : "false",
+          "timeline.metrics.service.rpc.address" : "0.0.0.0:30200",
+          "timeline.metrics.service.operation.mode" : "embedded",
+          "timeline.metrics.service.watcher.disabled" : "true",
+          "timeline.metrics.hbase.fifo.compaction.enabled" : "false"
+        }
+      }
+    },
+    {
+      "mapred-site" : {
+        "properties" : {
+          "mapreduce.task.io.sort.mb" : "256",
+          "mapreduce.reduce.maxattempts" : "10",
+          "mapreduce.cluster.local.dir" : "/mnt/resource/hadoop/mapred/local",
+          "mapreduce.shuffle.transferTo.allowed" : "true",
+          "mapreduce.reduce.java.opts" : "-Xmx1024m",
+          "mapreduce.map.memory.mb" : "768",
+          "yarn.app.mapreduce.client.job.max-retries" : "30",
+          "mapreduce.am.max-attempts" : "5",
+          "yarn.app.mapreduce.am.command-opts" : "-Xmx512m",
+          "yarn.app.mapreduce.am.staging-dir" : "/mapreducestaging",
+          "mapreduce.reduce.memory.mb" : "1536",
+          "mapreduce.fileoutputcommitter.algorithm.version" : "2",
+          "mapreduce.map.java.opts" : "-Xmx512m",
+          "mapreduce.map.maxattempts" : "10",
+          "yarn.app.mapreduce.am.resource.mb" : "768"
+        }
+      }
+    },
+    {
+      "hbase-site" : {
+        "properties" : {
+          "hbase.fs.shutdown.hook.wait" : "600000",
+          "hbase.shutdown.hook" : "true",
+          "io.storefile.bloom.block.size" : "131072",
+          "hbase.regionserver.hlog.blocksize" : "134217728",
+          "hbase.hstore.blockingStoreFiles" : "100",
+          "hbase.master.distributed.log.splitting" : "true",
+          "hbase.region.server.rpc.scheduler.factory.class" : "org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory",
+          "phoenix.functions.allowUserDefinedFunctions" : "true",
+          "zookeeper.session.timeout" : "120000",
+          "hbase.rootdir" : "/hbase",
+          "hbase.cluster.distributed" : "true",
+          "hbase.hregion.majorcompaction" : "0",
+          "hfile.index.block.max.size" : "131072",
+          "hbase.rest.port" : "8090",
+          "hbase.regionserver.optionalcacheflushinterval" : "7200000",
+          "dfs.support.append" : "false",
+          "hbase.master.namespace.init.timeout" : "2400000",
+          "hbase.coprocessor.region.classes" : "org.apache.hadoop.hbase.security.access.SecureBulkLoadEndpoint",
+          "hbase.zookeeper.property.clientPort" : "2181",
+          "hbase.rpc.controllerfactory.class" : "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory",
+          "hbase.hstore.compaction.max.size" : "32212254720",
+          "hbase.regionserver.wal.codec" : "org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec",
+          "hbase.defaults.for.version.skip" : "true"
+        }
+      }
+    },
+    {
+      "oozie-env" : {
+        "properties" : {
+          "content" : "\n#!/bin/bash\n\nif [ -d \"/usr/lib/bigtop-tomcat\" ]; then\n  export OOZIE_CONFIG=${OOZIE_CONFIG:-/etc/oozie/conf}\n  export CATALINA_BASE=${CATALINA_BASE:-{{oozie_server_dir}}}\n  export CATALINA_TMPDIR=${CATALINA_TMPDIR:-/var/tmp/oozie}\n  export OOZIE_CATALINA_HOME=/usr/lib/bigtop-tomcat\nfi\n\n#Set JAVA HOME\nexport JAVA_HOME={{java_home}}\n\nexport JRE_HOME=${JAVA_HOME}\n\n# Set Oozie specific environment variables here.\n\n# Settings for the Embedded Tomcat that runs Oozie\n# Java System properties for Oozie should be specified in this variable\n#\n# export CATALINA_OPTS=\n\n# Oozie configuration file to load from Oozie configuration directory\n#\n# export OOZIE_CONFIG_FILE=oozie-site.xml\n\n# Oozie logs directory\n#\nexport OOZIE_LOG={{oozie_log_dir}}\n\n# Oozie pid directory\n#\nexport CATALINA_PID={{pid_file}}\n\n#Location of the data for oozie\nexport OOZIE_DATA={{oozie_data_dir}}\n\n# Oozie Log4J configuration file to load from Oozie configuration directory\n#\n# export OOZIE_LOG4J_FILE=oozie-log4j.properties\n\n# Reload interval of the Log4J configuration file, in seconds\n#\n# export OOZIE_LOG4J_RELOAD=10\n\n# The port Oozie server runs\n#\nexport OOZIE_HTTP_PORT={{oozie_server_port}}\n\n# The admin port Oozie server runs\n#\nexport OOZIE_ADMIN_PORT={{oozie_server_admin_port}}\n\n# The host name Oozie server runs on\n#\n# export OOZIE_HTTP_HOSTNAME=`hostname -f`\n\n# The base URL for callback URLs to Oozie\n#\n# export OOZIE_BASE_URL=\"http://${OOZIE_HTTP_HOSTNAME}:${OOZIE_HTTP_PORT}/oozie\"\nexport JAVA_LIBRARY_PATH={{hadoop_lib_home}}/native/Linux-amd64-64\n\n# At least 1 minute of retry time to account for server downtime during\n# upgrade/downgrade\nexport OOZIE_CLIENT_OPTS=\"${OOZIE_CLIENT_OPTS} -Doozie.connection.retry.count=5 \"\n\n# This is needed so that Oozie does not run into OOM or GC Overhead limit\n# exceeded exceptions. If the oozie server is handling large number of\n# workflows/coordinator jobs, the memory settings may need to be revised\nexport CATALINA_OPTS=\"${CATALINA_OPTS} -Xmx2048m -XX:MaxPermSize=256m -Dwhitelist.filename=core-whitelist.res,oozie-whitelist.res -Dcomponent=oozie\""
+        }
+      }
+    },
+    {
+      "hdfs-log4j" : {
+        "properties" : {
+          "content" : "\n#\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#  http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing,\n# software distributed under the License is distributed on an\n# \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n# KIND, either express or implied.  See the License for the\n# specific language governing permissions and limitations\n# under the License.\n#\n\n\n# Define some default values that can be overridden by system properties\nhadoop.root.logger=INFO,console\nhadoop.log.dir=.\nhadoop.log.file=hadoop.log\n\n\n# Define the root logger to the system property \"hadoop.root.logger\".\nlog4j.rootLogger=${hadoop.root.logger}, EventCounter, ETW, FilterLog\n\n# Logging Threshold\nlog4j.threshhold=ALL\n\n#\n# Daily Rolling File Appender\n#\n\nlog4j.appender.DRFA=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.DRFA.File=${hadoop.log.dir}/${hadoop.log.file}\n\n# Rollver at midnight\nlog4j.appender.DRFA.DatePattern=.yyyy-MM-dd\n\n# 30-day backup\n#log4j.appender.DRFA.MaxBackupIndex=30\nlog4j.appender.DRFA.layout=org.apache.log4j.PatternLayout\n\n# Pattern format: Date LogLevel LoggerName LogMessage\nlog4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\n# Debugging Pattern format\n#log4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} (%F:%M(%L)) - %m%n\n\n\n#\n# console\n# Add \"console\" to rootlogger above if you want to use this\n#\n\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\n\n#\n# TaskLog Appender\n#\n\n#Default values\nhadoop.tasklog.taskid=null\nhadoop.tasklog.iscleanup=false\nhadoop.tasklog.noKeepSplits=4\nhadoop.tasklog.totalLogFileSize=100\nhadoop.tasklog.purgeLogSplits=true\nhadoop.tasklog.logsRetainHours=12\n\nlog4j.appender.TLA=org.apache.hadoop.mapred.TaskLogAppender\nlog4j.appender.TLA.taskId=${hadoop.tasklog.taskid}\nlog4j.appender.TLA.isCleanup=${hadoop.tasklog.iscleanup}\nlog4j.appender.TLA.totalLogFileSize=${hadoop.tasklog.totalLogFileSize}\n\nlog4j.appender.TLA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.TLA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\n\n#\n#Security audit appender\n#\nhadoop.security.logger=INFO,console\nhadoop.security.log.maxfilesize=256MB\nhadoop.security.log.maxbackupindex=20\nlog4j.category.SecurityLogger=${hadoop.security.logger}\nhadoop.security.log.file=SecurityAuth.audit\nlog4j.appender.DRFAS=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.DRFAS.File=${hadoop.log.dir}/${hadoop.security.log.file}\nlog4j.appender.DRFAS.layout=org.apache.log4j.PatternLayout\nlog4j.appender.DRFAS.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\nlog4j.appender.DRFAS.DatePattern=.yyyy-MM-dd\n\nlog4j.appender.RFAS=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFAS.File=${hadoop.log.dir}/${hadoop.security.log.file}\nlog4j.appender.RFAS.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFAS.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\nlog4j.appender.RFAS.MaxFileSize=${hadoop.security.log.maxfilesize}\nlog4j.appender.RFAS.MaxBackupIndex=${hadoop.security.log.maxbackupindex}\n\n#\n# hdfs audit logging\n#\nhdfs.audit.logger=INFO,console\nlog4j.logger.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.audit=${hdfs.audit.logger}\nlog4j.additivity.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.audit=false\nlog4j.appender.DRFAAUDIT=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.DRFAAUDIT.File=${hadoop.log.dir}/hdfs-audit.log\nlog4j.appender.DRFAAUDIT.layout=org.apache.log4j.PatternLayout\nlog4j.appender.DRFAAUDIT.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %m%n\nlog4j.appender.DRFAAUDIT.DatePattern=.yyyy-MM-dd\n\n#\n# mapred audit logging\n#\nmapred.audit.logger=INFO,console\nlog4j.logger.org.apache.hadoop.mapred.AuditLogger=${mapred.audit.logger}\nlog4j.additivity.org.apache.hadoop.mapred.AuditLogger=false\nlog4j.appender.MRAUDIT=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.MRAUDIT.File=${hadoop.log.dir}/mapred-audit.log\nlog4j.appender.MRAUDIT.layout=org.apache.log4j.PatternLayout\nlog4j.appender.MRAUDIT.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %m%n\nlog4j.appender.MRAUDIT.DatePattern=.yyyy-MM-dd\n\n#\n# Rolling File Appender\n#\n\nlog4j.appender.RFA=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFA.File=${hadoop.log.dir}/${hadoop.log.file}\n\n# Logfile size and and 30-day backups\nlog4j.appender.RFA.MaxFileSize=256MB\nlog4j.appender.RFA.MaxBackupIndex=10\n\nlog4j.appender.RFA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} - %m%n\nlog4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} (%F:%M(%L)) - %m%n\n\n\n# Custom Logging levels\n\nhadoop.metrics.log.level=WARN\n#log4j.logger.org.apache.hadoop.mapred.JobTracker=DEBUG\n#log4j.logger.org.apache.hadoop.mapred.TaskTracker=DEBUG\n#log4j.logger.org.apache.hadoop.fs.FSNamesystem=DEBUG\nlog4j.logger.org.apache.hadoop.metrics2=${hadoop.metrics.log.level}\n\n# Jets3t library\nlog4j.logger.org.jets3t.service.impl.rest.httpclient.RestS3Service=ERROR\n\n#\n# Null Appender\n# Trap security logger on the hadoop client side\n#\nlog4j.appender.NullAppender=org.apache.log4j.varia.NullAppender\n\n#\n# Event Counter Appender\n# Sends counts of logging messages at different severity levels to Hadoop Metrics.\n#\nlog4j.appender.EventCounter=org.apache.hadoop.log.metrics.EventCounter\n\n# Removes \"deprecated\" messages\nlog4j.logger.org.apache.hadoop.conf.Configuration.deprecation=WARN\n\n#EtwLog Appender\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=${component}\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# FilterLog Appender\n# Sends filtered HDP service logs to our storage account\nlog4j.appender.FilterLog=com.microsoft.log4jappender.FilterLogAppender\nlog4j.appender.FilterLog.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FilterLog.source=CentralFilteredHadoopServiceLogs\nlog4j.appender.FilterLog.component=${component}\nlog4j.appender.FilterLog.whitelistFileName=NA\nlog4j.appender.FilterLog.OSType=Linux\n\n#\n# rm amlauncher logging\n#\n\nlog4j.logger.org.apache.hadoop.yarn.server.resourcemanager.amlauncher.AMLauncher=${hadoop.root.logger}, ETW, AMFilterLog\nlog4j.additivity.org.apache.hadoop.yarn.server.resourcemanager.amlauncher.AMLauncher=false\nlog4j.appender.AMFilterLog=com.microsoft.log4jappender.FilterLogAppender\nlog4j.appender.AMFilterLog.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.AMFilterLog.source=CentralFilteredHadoopServiceLogs\nlog4j.appender.AMFilterLog.component=${component}\nlog4j.appender.AMFilterLog.whitelistFileName=${whitelist.filename}\nlog4j.appender.AMFilterLog.OSType=Linux"
+        }
+      }
+    },
+    {
+      "hive-site" : {
+        "properties" : {
+          "hive.hmshandler.retry.interval" : "1000",
+          "tez.runtime.shuffle.connect.timeout" : "30000",
+          "hive.vectorized.execution.reduce.enabled" : "true",
+          "fs.azure.delete.threads" : "128",
+          "hive.vectorized.execution.enabled" : "true",
+          "hive.auto.convert.join.noconditionaltask" : "true",
+          "hive.stats.fetch.column.stats" : "true",
+          "hive.metastore.warehouse.dir" : "/hive/warehouse",
+          "hive.execution.engine" : "tez",
+          "hive.cbo.enable" : "true",
+          "hive.metastore.schema.verification" : "true",
+          "hive.tez.container.size" : "1536",
+          "hive.metastore.connect.retries" : "5",
+          "hive.server2.support.dynamic.service.discovery" : "true",
+          "hive.cluster.delegation.token.store.zookeeper.connectString" : "zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181",
+          "hive.metastore.uris" : "thrift://hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:9083,thrift://hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:9083",
+          "hive.exec.dynamic.partition.mode" : "nonstrict",
+          "hive.tez.java.opts" : "-server -Xms1024m -Xmx1024m -Djava.net.preferIPv4Stack=true -XX:NewRatio=8 -XX:+UseNUMA -XX:+UseParallelGC",
+          "tez.shuffle-vertex-manager.max-src-fraction" : "0.95",
+          "hive.server2.transport.mode" : "http",
+          "hive.server2.thrift.http.path" : "/",
+          "hive.cluster.delegation.token.store.zookeeper.znode" : "/hive/cluster/delegation",
+          "datanucleus.connectionPool.maxIdle" : "2",
+          "hive.metastore.execute.setugi" : "false",
+          "fs.azure.rename.threads" : "128",
+          "hive.server2.clear.dangling.scratchdir" : "true",
+          "hive.zookeeper.quorum" : "zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181",
+          "hive.cluster.delegation.token.store.class" : "org.apache.hadoop.hive.thrift.ZooKeeperTokenStore",
+          "hive.zookeeper.client.port" : "2181",
+          "hive.enforce.sorting" : "true",
+          "hive.server2.thrift.http.port" : "10001",
+          "hive.tez.auto.reducer.parallelism" : "true",
+          "hive.mv.files.thread" : "128",
+          "hive.exim.uri.scheme.whitelist" : "wasb,hdfs,pfile",
+          "hive.security.metastore.authorization.manager" : "org.apache.hadoop.hive.ql.security.authorization.MetaStoreAuthzAPIAuthorizerEmbedOnly",
+          "tez.shuffle-vertex-manager.min-src-fraction" : "0.9",
+          "datanucleus.autoCreateSchema" : "false",
+          "datanucleus.fixedDatastore" : "true",
+          "hive.security.authorization.enabled" : "false",
+          "hive.hmshandler.retry.attempts" : "5",
+          "hive.tez.min.partition.factor" : "1f",
+          "hive.user.install.directory" : "/user",
+          "hive.tez.max.partition.factor" : "3f",
+          "hive.stats.fetch.partition.stats" : "true",
+          "hive.tez.exec.print.summary" : "true",
+          "hive.server2.zookeeper.namespace" : "hiveserver2",
+          "hive.server2.enable.doAs" : "false",
+          "hive.enforce.bucketing" : "true",
+          "hive.exec.scratchdir" : "hdfs://mycluster/tmp/hive",
+          "hive.exec.dynamic.partition" : "true",
+          "hive.scratchdir.lock" : "true",
+          "hive.stats.autogather" : "true",
+          "hive.zookeeper.namespace" : "hive_zookeeper_namespace",
+          "hive.optimize.sort.dynamic.partition" : "true"
+        }
+      }
+    },
+    {
+      "tez-site" : {
+        "properties" : {
+          "tez.history.logging.service.class" : "org.apache.tez.dag.history.logging.ats.ATSHistoryLoggingService",
+          "tez.dag.recovery.enabled" : "true",
+          "tez.am.container.reuse.locality.delay-allocation-millis" : "0",
+          "tez.am.resource.memory.mb" : "1536",
+          "tez.cluster.additional.classpath.prefix" : "/usr/hdp/${hdp.version}/hadoop/hadoop-azure-2.6.0.${hdp.version}.jar:/etc/hadoop/conf/secure:/usr/hdp/${hdp.version}/hadoop/lib/hadoop-lzo-0.6.0.${hdp.version}.jar:/usr/lib/hdinsight-logging/*",
+          "tez.am.max.app.attempts" : "2",
+          "tez.history.logging.timeline.num-dags-per-group" : "5",
+          "tez.am.java.opts" : "-Xmx1024m",
+          "tez.staging-dir" : "/tezstaging/${user.name}/staging"
+        }
+      }
+    },
+    {
+      "webhcat-site" : {
+        "properties" : {
+          "templeton.port" : "30111",
+          "templeton.hadoop.queue.name" : "joblauncher",
+          "templeton.hive.extra.files" : "/usr/hdp/${hdp.version}/tez/conf/tez-site.xml",
+          "templeton.enable.job.reconnect.default" : "true",
+          "templeton.mapper.memory.mb" : "1024",
+          "templeton.hive.properties" : "hive.metastore.local=false,hive.metastore.uris=thrift://hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:9083\\,thrift://hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:9083,hive.user.install.directory=/user,hive.root.logger=WARN\\,console,hive.exec.pre.hooks=org.apache.hadoop.hive.ql.hooks.ATSHook,hive.exec.post.hooks=org.apache.hadoop.hive.ql.hooks.ATSHook,hive.exec.failure.hooks=org.apache.hadoop.hive.ql.hooks.ATSHook",
+          "templeton.sqoop.home" : "/usr/hdp/${hdp.version}/sqoop",
+          "yarn.app.mapreduce.client.job.retry-interval" : "1000",
+          "yarn.app.mapreduce.client.max-retries" : "2",
+          "templeton.streaming.jar" : "wasb:///hdp/apps/${hdp.version}/mapreduce/hadoop-streaming.jar",
+          "templeton.sqoop.archive" : "wasb:///hdp/apps/${hdp.version}/sqoop/sqoop.tar.gz",
+          "templeton.hive.archive" : "wasb:///hdp/apps/${hdp.version}/hive/hive.tar.gz",
+          "yarn.resourcemanager.connect.max-wait.ms" : "40000",
+          "templeton.pig.archive" : "wasb:///hdp/apps/${hdp.version}/pig/pig.tar.gz",
+          "yarn.resourcemanager.connect.retry-interval.ms" : "10000",
+          "templeton.jobs.listorder" : "lexicographicaldesc",
+          "templeton.sqoop.path" : "/usr/hdp/${hdp.version}/sqoop/bin/sqoop",
+          "fs.azure.skip.metrics" : "true"
+        }
+      }
+    },
+    {
+      "core-site" : {
+        "properties" : {
+          "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
+          "fs.azure.page.blob.dir" : "/hbase/WALs,/hbase/oldWALs,/mapreducestaging,/hbase/MasterProcWALs,/atshistory,/tezstaging,/ams/hbase",
+          "fs.azure.read.request.size" : "4194304",
+          "hadoop.proxyuser.oozie.groups" : "*",
+          "fs.AbstractFileSystem.wasb.impl" : "org.apache.hadoop.fs.azure.Wasb",
+          "fs.azure.io.read.tolerate.concurrent.append" : "true",
+          "fs.azure.write.request.size" : "4194304",
+          "hadoop.proxyuser.hive.groups" : "*",
+          "hadoop.proxyuser.hcat.groups" : "*",
+          "ha.zookeeper.quorum" : "zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181",
+          "fs.azure.io.copyblob.retry.max.retries" : "60"
+        }
+      }
+    },
+    {
+      "oozie-log4j" : {
+        "properties" : {
+          "content" : "\n#\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#  http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License. See accompanying LICENSE file.\n#\n\n# If the Java System property 'oozie.log.dir' is not defined at Oozie start up time\n# XLogService sets its value to '${oozie.home}/logs'\n\nlog4j.appender.oozie=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.oozie.DatePattern='.'yyyy-MM-dd-HH\nlog4j.appender.oozie.File=${oozie.log.dir}/oozie.log\nlog4j.appender.oozie.Append=true\nlog4j.appender.oozie.layout=org.apache.log4j.PatternLayout\nlog4j.appender.oozie.layout.ConversionPattern=%d{ISO8601} %5p %c{1}:%L - SERVER[${oozie.instance.id}] %m%n\n\nlog4j.appender.oozieops=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.oozieops.DatePattern='.'yyyy-MM-dd\nlog4j.appender.oozieops.File=${oozie.log.dir}/oozie-ops.log\nlog4j.appender.oozie.MaxFileSize=80MB\nlog4j.appender.oozie.MaxBackupIndex=10\nlog4j.appender.oozieops.Append=true\nlog4j.appender.oozieops.layout=org.apache.log4j.PatternLayout\nlog4j.appender.oozieops.layout.ConversionPattern=%d{ISO8601} %5p %c{1}:%L - %m%n\n\nlog4j.appender.oozieinstrumentation=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.oozieinstrumentation.DatePattern='.'yyyy-MM-dd\nlog4j.appender.oozieinstrumentation.File=${oozie.log.dir}/oozie-instrumentation.log\nlog4j.appender.oozieinstrumentation.Append=true\nlog4j.appender.oozieinstrumentation.layout=org.apache.log4j.PatternLayout\nlog4j.appender.oozieinstrumentation.layout.ConversionPattern=%d{ISO8601} %5p %c{1}:%L - %m%n\n\nlog4j.appender.oozieaudit=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.oozieaudit.DatePattern='.'yyyy-MM-dd\nlog4j.appender.oozieaudit.File=${oozie.log.dir}/oozie-audit.log\nlog4j.appender.oozieaudit.Append=true\nlog4j.appender.oozieaudit.layout=org.apache.log4j.PatternLayout\nlog4j.appender.oozieaudit.layout.ConversionPattern=%d{ISO8601} %5p %c{1}:%L - %m%n\n\nlog4j.appender.openjpa=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.openjpa.DatePattern='.'yyyy-MM-dd\nlog4j.appender.openjpa.File=${oozie.log.dir}/oozie-jpa.log\nlog4j.appender.openjpa.Append=true\nlog4j.appender.openjpa.layout=org.apache.log4j.PatternLayout\nlog4j.appender.openjpa.layout.ConversionPattern=%d{ISO8601} %5p %c{1}:%L - %m%n\n\nlog4j.logger.openjpa=INFO, openjpa, ETW, FullPIILogs\nlog4j.logger.oozieops=INFO, oozieops, ETW, FullPIILogs\nlog4j.logger.oozieinstrumentation=ALL, oozieinstrumentation, ETW, FullPIILogs\nlog4j.logger.oozieaudit=ALL, oozieaudit, ETW, FullPIILogs\nlog4j.logger.org.apache.oozie=INFO, oozie, ETW, FullPIILogs\nlog4j.logger.org.apache.hadoop=WARN, oozie, ETW, FullPIILogs\nlog4j.logger.org.mortbay=WARN, oozie, ETW, FullPIILogs\nlog4j.logger.org.hsqldb=WARN, oozie, ETW, FullPIILogs\nlog4j.logger.org.apache.oozie.action.hadoop=ALL, oozie, ETW, FullPIILogs\nlog4j.logger.org.apache.hadoop.security.authentication.server=INFO, oozie, ETW, FullPIILogs\nlog4j.rootLogger=INFO, ETW, FullPIILogs\n\n#EtwLog Appender\n\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=${component}\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# Full PII log Appender\n# Sends  PII HDP service logs to our storage account\nlog4j.appender.FullPIILogs=com.microsoft.log4jappender.FullPIILogAppender\nlog4j.appender.FullPIILogs.component=oozie\nlog4j.appender.FullPIILogs.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FullPIILogs.Threshold=INFO\nlog4j.appender.FullPIILogs.source=CentralFullServicePIILogs\nlog4j.appender.FullPIILogs.OSType=Linux\nlog4j.appender.FullPIILogs.SuffixHadoopEntryType=true\n"
+        }
+      }
+    },
+    {
+      "hive-exec-log4j" : {
+        "properties" : {
+          "content" : "\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n\n# Define some default values that can be overridden by system properties\n\nhive.log.threshold=ALL\nhive.root.logger=INFO,FA\nhive.log.dir=${java.io.tmpdir}/${user.name}\nhive.query.id=hadoop\nhive.log.file=${hive.query.id}.log\n\n# Define the root logger to the system property \"hadoop.root.logger\".\nlog4j.rootLogger=${hive.root.logger}, EventCounter,FullPIILogs\n\n# Logging Threshold\nlog4j.threshhold=${hive.log.threshold}\n\n#\n# File Appender\n#\n\nlog4j.appender.FA=org.apache.log4j.FileAppender\nlog4j.appender.FA.File=${hive.log.dir}/${hive.log.file}\nlog4j.appender.FA.layout=org.apache.log4j.PatternLayout\n\n# Pattern format: Date LogLevel LoggerName LogMessage\n#log4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\n# Debugging Pattern format\nlog4j.appender.FA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} (%F:%M(%L)) - %m%n\n\n\n#\n# console\n# Add \"console\" to rootlogger above if you want to use this\n#\n\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\n\n#custom logging levels\n#log4j.logger.xxx=DEBUG\n\n#\n# Event Counter Appender\n# Sends counts of logging messages at different severity levels to Hadoop Metrics.\n#\nlog4j.appender.EventCounter=org.apache.hadoop.hive.shims.HiveEventCounter\n\n\nlog4j.category.DataNucleus=WARN,FA,FullPIILogs\nlog4j.category.Datastore=WARN,FA,FullPIILogs\nlog4j.category.Datastore.Schema=WARN,FA,FullPIILogs\nlog4j.category.JPOX.Datastore=WARN,FA,FullPIILogs\nlog4j.category.JPOX.Plugin=WARN,FA,FullPIILogs\nlog4j.category.JPOX.MetaData=WARN,FA,FullPIILogs\nlog4j.category.JPOX.Query=WARN,FA,FullPIILogs\nlog4j.category.JPOX.General=WARN,FA,FullPIILogs\nlog4j.category.JPOX.Enhancer=WARN,FA,FullPIILogs\n\n\n# Silence useless ZK logs\nlog4j.logger.org.apache.zookeeper.server.NIOServerCnxn=ERROR,FA,FullPIILogs\nlog4j.logger.org.apache.zookeeper.ClientCnxnSocketNIO=ERROR,FA,FullPIILogs\n\n# Full PII log Appender\n# Sends  PII HDP service logs to our storage account\nlog4j.appender.FullPIILogs=com.microsoft.log4jappender.FullPIILogAppender\nlog4j.appender.FullPIILogs.component=hive\nlog4j.appender.FullPIILogs.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FullPIILogs.Threshold=INFO\nlog4j.appender.FullPIILogs.source=CentralFullServicePIILogs\nlog4j.appender.FullPIILogs.OSType=Linux\nlog4j.appender.FullPIILogs.SuffixHadoopEntryType=true\n"
+        }
+      }
+    },
+    {
+      "ams-log4j" : {
+        "properties" : {
+          "content" : "\n#\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n# Define some default values that can be overridden by system properties\nams.log.dir=.\nams.log.file=ambari-metrics-collector.log\n\n# Root logger option\nlog4j.rootLogger=INFO,file,ETW,FilterLog\n\n# Direct log messages to a log file\nlog4j.appender.file=org.apache.log4j.RollingFileAppender\nlog4j.appender.file.File=${ams.log.dir}/${ams.log.file}\nlog4j.appender.file.MaxFileSize=80MB\nlog4j.appender.file.MaxBackupIndex=10\nlog4j.appender.file.layout=org.apache.log4j.PatternLayout\nlog4j.appender.file.layout.ConversionPattern=%d{ABSOLUTE} %5p [%t] %c{1}:%L - %m%n\n\n#EtwLog Appender\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=ambari-metrics-collector\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# FilterLog Appender\n# Sends filtered HDP service logs to our storage account\nlog4j.appender.FilterLog=com.microsoft.log4jappender.FilterLogAppender\nlog4j.appender.FilterLog.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FilterLog.source=CentralFilteredHadoopServiceLogs\nlog4j.appender.FilterLog.component=ambari-metrics-collector\nlog4j.appender.FilterLog.whitelistFileName=NA\nlog4j.appender.FilterLog.OSType=Linux"
+        }
+      }
+    },
+    {
+      "ams-hbase-env" : {
+        "properties" : {
+          "hbase_regionserver_xmn_max" : "512m",
+          "hbase_regionserver_heapsize" : "756m",
+          "hbase_regionserver_xmn_ratio" : "0.2",
+          "hbase_master_heapsize" : "320m",
+          "hbase_master_xmn_size" : "64m",
+          "content" : "\n# Set environment variables here.\n\n# The java implementation to use. Java 1.6 required.\nexport JAVA_HOME={{java64_home}}\n\n# HBase Configuration directory\nexport HBASE_CONF_DIR=${HBASE_CONF_DIR:-{{hbase_conf_dir}}}\n\n# Extra Java CLASSPATH elements. Optional.\nadditional_cp=/usr/hdp/current/hadoop-client/hadoop-azure.jar:/usr/hdp/current/hadoop-client/lib/*:/usr/lib/hdinsight-datalake/*\n\nif [  -n \"${HBASE_CLASSPATH}\" ];\nthen\n  export HBASE_CLASSPATH=${HBASE_CLASSPATH}:$additional_cp\nelse\n  export HBASE_CLASSPATH=$additional_cp\nfi\n\n# The maximum amount of heap to use for hbase shell.\n export HBASE_SHELL_OPTS=\"-Xmx256m\"\n\n# Extra Java runtime options.\n# Below are what we set by default. May only work with SUN JVM.\n# For more on why as well as other possible settings,\n# see http://wiki.apache.org/hadoop/PerformanceTuning\nexport HBASE_OPTS=\"-XX:+UseConcMarkSweepGC -XX:ErrorFile={{hbase_log_dir}}/hs_err_pid%p.log -Djava.io.tmpdir={{hbase_tmp_dir}}\"\nexport SERVER_GC_OPTS=\"-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:{{hbase_log_dir}}/gc.log-`date +'%Y%m%d%H%M'`\"\n# Uncomment below to enable java garbage collection logging.\n# export HBASE_OPTS=\"$HBASE_OPTS -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:$HBASE_HOME/logs/gc-hbase.log\"\n\n# Uncomment and adjust to enable JMX exporting\n# See jmxremote.password and jmxremote.access in $JRE_HOME/lib/management to configure remote password access.\n# More details at: http://java.sun.com/javase/6/docs/technotes/guides/management/agent.html\n#\n# export HBASE_JMX_BASE=\"-Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false\"\n\n{% if java_version < 8 %}\nexport HBASE_MASTER_OPTS=\" -XX:PermSize=64m -XX:MaxPermSize={{hbase_master_maxperm_size}} -Xms{{hbase_heapsize}} -Xmx{{hbase_heapsize}} -Xmn{{hbase_master_xmn_size}} -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly\"\nexport HBASE_REGIONSERVER_OPTS=\"-XX:MaxPermSize=128m -Xmn{{regionserver_xmn_size}} -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly -Xms{{regionserver_heapsize}} -Xmx{{regionserver_heapsize}}\"\n{% else %}\nexport HBASE_MASTER_OPTS=\" -Xms{{hbase_heapsize}} -Xmx{{hbase_heapsize}} -Xmn{{hbase_master_xmn_size}} -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly\"\nexport HBASE_REGIONSERVER_OPTS=\" -Xmn{{regionserver_xmn_size}} -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly -Xms{{regionserver_heapsize}} -Xmx{{regionserver_heapsize}}\"\n{% endif %}\n\n\n# export HBASE_THRIFT_OPTS=\"$HBASE_JMX_BASE -Dcom.sun.management.jmxremote.port=10103\"\n# export HBASE_ZOOKEEPER_OPTS=\"$HBASE_JMX_BASE -Dcom.sun.management.jmxremote.port=10104\"\n\n# File naming hosts on which HRegionServers will run. $HBASE_HOME/conf/regionservers by default.\nexport HBASE_REGIONSERVERS=${HBASE_CONF_DIR}/regionservers\n\n# Extra ssh options. Empty by default.\n# export HBASE_SSH_OPTS=\"-o ConnectTimeout=1 -o SendEnv=HBASE_CONF_DIR\"\n\n# Where log files are stored. $HBASE_HOME/logs by default.\nexport HBASE_LOG_DIR={{hbase_log_dir}}\n\n# A string representing this instance of hbase. $USER by default.\n# export HBASE_IDENT_STRING=$USER\n\n# The scheduling priority for daemon processes. See 'man nice'.\n# export HBASE_NICENESS=10\n\n# The directory where pid files are stored. /tmp by default.\nexport HBASE_PID_DIR={{hbase_pid_dir}}\n\n# Seconds to sleep between slave commands. Unset by default. This\n# can be useful in large clusters, where, e.g., slave rsyncs can\n# otherwise arrive faster than the master can service them.\n# export HBASE_SLAVE_SLEEP=0.1\n\n# Tell HBase whether it should manage it's own instance of Zookeeper or not.\nexport HBASE_MANAGES_ZK=false\n\n{% if security_enabled %}\nexport HBASE_OPTS=\"$HBASE_OPTS -Djava.security.auth.login.config={{client_jaas_config_file}}\"\nexport HBASE_MASTER_OPTS=\"$HBASE_MASTER_OPTS -Djava.security.auth.login.config={{master_jaas_config_file}}\"\nexport HBASE_REGIONSERVER_OPTS=\"$HBASE_REGIONSERVER_OPTS -Djava.security.auth.login.config={{regionserver_jaas_config_file}}\"\nexport HBASE_ZOOKEEPER_OPTS=\"$HBASE_ZOOKEEPER_OPTS -Djava.security.auth.login.config={{ams_zookeeper_jaas_config_file}}\"\n{% endif %}\n\n# use embedded native libs\n_HADOOP_NATIVE_LIB=\"/usr/lib/ams-hbase/lib/hadoop-native/\"\nexport HBASE_OPTS=\"$HBASE_OPTS -Djava.library.path=${_HADOOP_NATIVE_LIB}\"\n\n# Unset HADOOP_HOME to avoid importing HADOOP installed cluster related configs like: /usr/hdp/2.2.0.0-2041/hadoop/conf/\nexport HADOOP_HOME={{ams_hbase_home_dir}}\nexport HBASE_ROOT_LOGGER=\"${HBASE_ROOT_LOGGER:-\"INFO,RFA\"},ETW,FilterLog\"\n"
+        }
+      }
+    },
+    {
+      "hdfs-site" : {
+        "properties" : {
+          "dfs.ha.fencing.methods" : "shell(/bin/true)",
+          "dfs.client.failover.proxy.provider.mycluster" : "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider",
+          "dfs.replication" : "3",
+          "dfs.nameservices" : "mycluster",
+          "dfs.datanode.ipc.address" : "0.0.0.0:30020",
+          "dfs.replication.max" : "50",
+          "dfs.webhdfs.enabled" : "false",
+          "dfs.namenode.http-address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:30070",
+          "dfs.datanode.https.address" : "0.0.0.0:30475",
+          "dfs.namenode.rpc-address.mycluster.nn2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8020",
+          "dfs.namenode.rpc-address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8020",
+          "dfs.namenode.rpc-address.mycluster.nn1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8020",
+          "dfs.datanode.data.dir" : "/mnt/resource/hadoop/hdfs/data",
+          "dfs.namenode.https-address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:30470",
+          "dfs.namenode.shared.edits.dir" : "qjournal://zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8485;zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8485;zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8485/mycluster",
+          "dfs.ha.namenodes.mycluster" : "nn1,nn2",
+          "dfs.datanode.address" : "0.0.0.0:30010",
+          "dfs.journalnode.edits.dir" : "/hadoop/hdfs/journal",
+          "dfs.namenode.datanode.registration.ip-hostname-check" : "false",
+          "dfs.namenode.http-address.mycluster.nn1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:30070",
+          "dfs.namenode.http-address.mycluster.nn2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:30070",
+          "dfs.namenode.https-address.mycluster.nn1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:30470",
+          "dfs.namenode.safemode.threshold-pct" : "0.99f",
+          "dfs.permissions.enabled" : "false",
+          "dfs.namenode.https-address.mycluster.nn2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:30470",
+          "dfs.datanode.http.address" : "0.0.0.0:30075",
+          "dfs.ha.automatic-failover.enabled" : "true"
+        }
+      }
+    },
+    {
+      "yarn-site" : {
+        "properties" : {
+          "yarn.resourcemanager.zk-address" : "zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181",
+          "yarn.log.server.url" : "http://hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:19888/jobhistory/logs",
+          "yarn.resourcemanager.admin.address.rm1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8141",
+          "yarn.timeline-service.entity-group-fs-store.active-dir" : "/atshistory/active",
+          "yarn.timeline-service.entity-group-fs-store.group-id-plugin-classes" : "org.apache.tez.dag.history.logging.ats.TimelineCachePluginImpl",
+          "yarn.resourcemanager.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8050",
+          "yarn.resourcemanager.admin.address.rm2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8141",
+          "yarn.resourcemanager.ha.automatic-failover.zk-base-path" : "/yarn-leader-election",
+          "yarn.nodemanager.recovery.dir" : "{{yarn_log_dir_prefix}}/nodemanager/recovery-state",
+          "yarn.client.failover-proxy-provider" : "org.apache.hadoop.yarn.client.ConfiguredRMFailoverProxyProvider",
+          "yarn.application.classpath" : "$HADOOP_CONF_DIR,/usr/hdp/current/hadoop-client/*,/usr/hdp/current/hadoop-client/lib/*,/usr/hdp/current/hadoop-hdfs-client/*,/usr/hdp/current/hadoop-hdfs-client/lib/*,/usr/hdp/current/hadoop-yarn-client/*,/usr/hdp/current/hadoop-yarn-client/lib/*",
+          "yarn.timeline-service.client.fd-retain-secs" : "90",
+          "hadoop.registry.rm.enabled" : "false",
+          "yarn.admin.acl" : "",
+          "yarn.resourcemanager.bind-host" : "0.0.0.0",
+          "yarn.nodemanager.address" : "0.0.0.0:30050",
+          "yarn.resourcemanager.address.rm1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8050",
+          "yarn.resourcemanager.webapp.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8088",
+          "yarn.acl.enable" : "false",
+          "yarn.resourcemanager.address.rm2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8050",
+          "yarn.resourcemanager.ha.enabled" : "true",
+          "yarn.timeline-service.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:10200",
+          "yarn.timeline-service.version" : "1.5",
+          "yarn.client.nodemanager-connect.retry-interval-ms" : "10000",
+          "yarn.resourcemanager.cluster-id" : "yarn-cluster",
+          "yarn.timeline-service.enabled" : "true",
+          "yarn.nodemanager.local-dirs" : "/mnt/resource/hadoop/yarn/local",
+          "yarn.timeline-service.leveldb-timeline-store.path" : "/hadoop/yarn/timeline",
+          "yarn.nodemanager.recovery.enabled" : "true",
+          "yarn.resourcemanager.webapp.delegation-token-auth-filter.enabled" : "false",
+          "yarn.resourcemanager.zk-timeout-ms" : "10000",
+          "yarn.resourcemanager.max-completed-applications" : "1000",
+          "yarn.resourcemanager.am.max-attempts" : "5",
+          "yarn.timeline-service.client.internal-timers-ttl-secs" : "150",
+          "yarn.resourcemanager.hostname.rm2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net",
+          "yarn.nodemanager.webapp.address" : "0.0.0.0:30060",
+          "yarn.resourcemanager.hostname.rm1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net",
+          "yarn.resourcemanager.work-preserving-recovery.enabled" : "true",
+          "yarn.resourcemanager.zk-acl" : "world:anyone:rwcda",
+          "yarn.resourcemanager.store.class" : "org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore",
+          "yarn.http.policy" : "HTTP_ONLY",
+          "yarn.client.nodemanager-connect.max-wait-ms" : "60000",
+          "yarn.timeline-service.entity-group-fs-store.done-dir" : "/atshistory/done",
+          "yarn.resourcemanager.webapp.address.rm2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8088",
+          "yarn.resourcemanager.zk-state-store.parent-path" : "/rmstore",
+          "yarn.resourcemanager.webapp.address.rm1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8088",
+          "yarn.resourcemanager.ha.rm-ids" : "rm1,rm2",
+          "hadoop.registry.zk.quorum" : "zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181",
+          "yarn.timeline-service.generic-application-history.hdinsight.filter-container-meta-info" : "true",
+          "yarn.resourcemanager.nodes.exclude-path" : "/etc/hadoop/conf/yarn.exclude",
+          "yarn.timeline-service.generic-application-history.save-non-am-container-meta-info" : "true",
+          "yarn.resourcemanager.admin.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8141",
+          "yarn.resourcemanager.resource-tracker.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8025",
+          "yarn.resourcemanager.scheduler.address.rm1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8030",
+          "yarn.resourcemanager.scheduler.address.rm2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8030",
+          "yarn.nodemanager.delete.debug-delay-sec" : "600",
+          "yarn.resourcemanager.fs.state-store.retry-policy-spec" : "2000, 500",
+          "yarn.log-aggregation.retain-seconds" : "604800",
+          "yarn.nodemanager.resource.memory-mb" : "5632",
+          "yarn.timeline-service.entity-file.fs-support-append" : "false",
+          "yarn.resourcemanager.hostname" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net",
+          "yarn.resourcemanager.connect.max-wait.ms" : "7200000",
+          "yarn.resourcemanager.connect.retry-interval.ms" : "30000",
+          "yarn.timeline-service.webapp.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8188",
+          "yarn.scheduler.minimum-allocation-mb" : "768",
+          "yarn.resourcemanager.zk-num-retries" : "1000",
+          "yarn.timeline-service.entity-group-fs-store.summary-store" : "org.apache.hadoop.yarn.server.timeline.RollingLevelDBTimelineStore",
+          "yarn.resourcemanager.zk-retry-interval-ms" : "1000",
+          "yarn.app.mapreduce.am.job.recovery.enable" : "true",
+          "yarn.timeline-service.client.max-retries" : "30",
+          "yarn.timeline-service.client.retry-interval-ms" : "1000",
+          "yarn.resourcemanager.resource-tracker.address.rm1" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8025",
+          "yarn.resourcemanager.resource-tracker.address.rm2" : "hn1-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8025",
+          "yarn.scheduler.maximum-allocation-mb" : "5632",
+          "yarn.timeline-service.store-class" : "org.apache.hadoop.yarn.server.timeline.HdInsightEntityGroupFSTimelineStore",
+          "yarn.timeline-service.bind-host" : "0.0.0.0",
+          "yarn.app.mapreduce.am.create-intermediate-jh-base-dir" : "true",
+          "yarn.resourcemanager.webapp.https.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8090",
+          "yarn.timeline-service.webapp.https.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8190",
+          "yarn.resourcemanager.fs.state-store.uri" : " ",
+          "yarn.resourcemanager.recovery.enabled" : "true",
+          "yarn.resourcemanager.scheduler.address" : "hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:8030",
+          "yarn.timeline-service.ttl-ms" : "604800000",
+          "yarn.resourcemanager.work-preserving-recovery.scheduling-wait-ms" : "10000",
+          "yarn.nodemanager.log-dirs" : "/mnt/resource/hadoop/yarn/log"
+        }
+      }
+    },
+    {
+      "ams-hbase-log4j" : {
+        "properties" : {
+          "content" : "\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n\n\n# Define some default values that can be overridden by system properties\nhbase.root.logger=INFO,console\nhbase.security.logger=INFO,console\nhbase.log.dir=.\nhbase.log.file=hbase.log\n\n# Define the root logger to the system property \"hbase.root.logger\".\nlog4j.rootLogger=${hbase.root.logger}\n\n# Logging Threshold\nlog4j.threshold=ALL\n\n#\n# Daily Rolling File Appender\n#\nlog4j.appender.DRFA=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.DRFA.File=${hbase.log.dir}/${hbase.log.file}\n\n# Rollver at midnight\nlog4j.appender.DRFA.DatePattern=.yyyy-MM-dd\n\n# 10-day backup\n#log4j.appender.DRFA.MaxBackupIndex=10\nlog4j.appender.DRFA.layout=org.apache.log4j.PatternLayout\n\n# Pattern format: Date LogLevel LoggerName LogMessage\nlog4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c{2}: %m%n\n\n# Rolling File Appender properties\nhbase.log.maxfilesize=256MB\nhbase.log.maxbackupindex=20\n\n# Rolling File Appender\nlog4j.appender.RFA=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFA.File=${hbase.log.dir}/${hbase.log.file}\n\nlog4j.appender.RFA.MaxFileSize=${hbase.log.maxfilesize}\nlog4j.appender.RFA.MaxBackupIndex=${hbase.log.maxbackupindex}\n\nlog4j.appender.RFA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c{2}: %m%n\n\n#\n# Security audit appender\n#\nhbase.security.log.file=SecurityAuth.audit\nhbase.security.log.maxfilesize=256MB\nhbase.security.log.maxbackupindex=20\nlog4j.appender.RFAS=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFAS.File=${hbase.log.dir}/${hbase.security.log.file}\nlog4j.appender.RFAS.MaxFileSize=${hbase.security.log.maxfilesize}\nlog4j.appender.RFAS.MaxBackupIndex=${hbase.security.log.maxbackupindex}\nlog4j.appender.RFAS.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFAS.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\nlog4j.category.SecurityLogger=${hbase.security.logger}\nlog4j.additivity.SecurityLogger=false\n#log4j.logger.SecurityLogger.org.apache.hadoop.hbase.security.access.AccessController=TRACE\n\n#\n# Null Appender\n#\nlog4j.appender.NullAppender=org.apache.log4j.varia.NullAppender\n\n#\n# console\n# Add \"console\" to rootlogger above if you want to use this\n#\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c{2}: %m%n\n\n# Custom Logging levels\n\nlog4j.logger.org.apache.zookeeper=INFO\n#log4j.logger.org.apache.hadoop.fs.FSNamesystem=DEBUG\nlog4j.logger.org.apache.hadoop.hbase=INFO\n# Make these two classes INFO-level. Make them DEBUG to see more zk debug.\nlog4j.logger.org.apache.hadoop.hbase.zookeeper.ZKUtil=INFO\nlog4j.logger.org.apache.hadoop.hbase.zookeeper.ZooKeeperWatcher=INFO\n#log4j.logger.org.apache.hadoop.dfs=DEBUG\n# Set this class to log INFO only otherwise its OTT\n# Enable this to get detailed connection error/retry logging.\n# log4j.logger.org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation=TRACE\n\n\n# Uncomment this line to enable tracing on _every_ RPC call (this can be a lot of output)\n#log4j.logger.org.apache.hadoop.ipc.HBaseServer.trace=DEBUG\n\n# Uncomment the below if you want to remove logging of client region caching'\n# and scan of .META. messages\n# log4j.logger.org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation=INFO\n# log4j.logger.org.apache.hadoop.hbase.client.MetaScanner=INFO\n\n#EtwLog Appender\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=ams-hbase\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# FilterLog Appender\n# Sends filtered HDP service logs to our storage account\nlog4j.appender.FilterLog=com.microsoft.log4jappender.FilterLogAppender\nlog4j.appender.FilterLog.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FilterLog.source=CentralFilteredHadoopServiceLogs\nlog4j.appender.FilterLog.component=ams-hbase\nlog4j.appender.FilterLog.whitelistFileName=NA\nlog4j.appender.FilterLog.OSType=Linux"
+        }
+      }
+    },
+    {
+      "hive-log4j" : {
+        "properties" : {
+          "content" : "\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n\n\n# Define some default values that can be overridden by system properties\nhive.log.threshold=ALL\nhive.root.logger=DEBUG,DRFA\nhive.log.dir=${java.io.tmpdir}/${user.name}\nhive.log.file=hive.log\n\n# Define the root logger to the system property \"hadoop.root.logger\".\nlog4j.rootLogger=${hive.root.logger}, EventCounter, ETW, FullPIILogs\n\n# Logging Threshold\nlog4j.threshold=${hive.log.threshold}\n\n#\n# Daily Rolling File Appender\n#\n# Use the PidDailyerRollingFileAppend class instead if you want to use separate log files\n# for different CLI session.\n#\n# log4j.appender.DRFA=org.apache.hadoop.hive.ql.log.PidDailyRollingFileAppender\n\nlog4j.appender.DRFA=org.apache.log4j.DailyRollingFileAppender\n\nlog4j.appender.DRFA.File=${hive.log.dir}/${hive.log.file}\n\n# Rollver at midnight\nlog4j.appender.DRFA.DatePattern=.yyyy-MM-dd\n\n# 30-day backup\n#log4j.appender.DRFA.MaxBackupIndex=30\nlog4j.appender.DRFA.layout=org.apache.log4j.PatternLayout\n\n# Pattern format: Date LogLevel LoggerName LogMessage\n#log4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n\n# Debugging Pattern format\nlog4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %-5p [%t]: %c{2} (%F:%M(%L)) - %m%n\n\n\n#\n# console\n# Add \"console\" to rootlogger above if you want to use this\n#\n\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} [%t]: %p %c{2}: %m%n\nlog4j.appender.console.encoding=UTF-8\n\n#custom logging levels\n#log4j.logger.xxx=DEBUG\n\n#\n# Event Counter Appender\n# Sends counts of logging messages at different severity levels to Hadoop Metrics.\n#\nlog4j.appender.EventCounter=org.apache.hadoop.hive.shims.HiveEventCounter\n\n\nlog4j.category.DataNucleus=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.Datastore=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.Datastore.Schema=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX.Datastore=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX.Plugin=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX.MetaData=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX.Query=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX.General=WARN,DRFA,ETW,FullPIILogs\nlog4j.category.JPOX.Enhancer=WARN,DRFA,ETW,FullPIILogs\n\n\n# Silence useless ZK logs\nlog4j.logger.org.apache.zookeeper.server.NIOServerCnxn=WARN,DRFA\nlog4j.logger.org.apache.zookeeper.ClientCnxnSocketNIO=WARN,DRFA\n\n#EtwLog Appender\n#sends HDP service logs to customer storage account\nlog4j.appender.ETW=com.microsoft.log4jappender.EtwAppender\nlog4j.appender.ETW.source=HadoopServiceLog\nlog4j.appender.ETW.component=hive\nlog4j.appender.ETW.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.ETW.OSType=Linux\n\n# Full PII log Appender\n# Sends  PII HDP service logs to our storage account\nlog4j.appender.FullPIILogs=com.microsoft.log4jappender.FullPIILogAppender\nlog4j.appender.FullPIILogs.component=hive\nlog4j.appender.FullPIILogs.layout=org.apache.log4j.TTCCLayout\nlog4j.appender.FullPIILogs.Threshold=INFO\nlog4j.appender.FullPIILogs.source=CentralFullServicePIILogs\nlog4j.appender.FullPIILogs.OSType=Linux\nlog4j.appender.FullPIILogs.SuffixHadoopEntryType=true\n"
+        }
+      }
+    },
+    {
+      "hadoop-env" : {
+        "properties" : {
+          "content" : "\n# Set Hadoop-specific environment variables here.\n\n# The only required environment variable is JAVA_HOME.  All others are\n# optional.  When running a distributed configuration it is best to\n# set JAVA_HOME in this file, so that it is correctly defined on\n# remote nodes.\n\n# The java implementation to use.  Required.\nexport JAVA_HOME={{java_home}}\nexport HADOOP_HOME_WARN_SUPPRESS=1\n\n# Hadoop home directory\nexport HADOOP_HOME=${HADOOP_HOME:-/usr/lib/hadoop}\n\n# Hadoop Configuration Directory\n#TODO: if env var set that can cause problems\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-{{hadoop_conf_dir}}}\n\n{# this is different for HDP1 #}\n# Path to jsvc required by secure HDP 2.0 datanode\nexport JSVC_HOME={{jsvc_path}}\n\n\n# The maximum amount of heap to use, in MB. Default is 1000.\nexport HADOOP_HEAPSIZE=\"{{hadoop_heapsize}}\"\n\nexport HADOOP_NAMENODE_INIT_HEAPSIZE=\"-Xms{{namenode_heapsize}}\"\n\n# Extra Java runtime options.  Empty by default.\nexport HADOOP_OPTS=\"-Djava.net.preferIPv4Stack=true ${HADOOP_OPTS}\"\n\n# Command specific options appended to HADOOP_OPTS when specified\nexport HADOOP_NAMENODE_OPTS=\"-server -XX:ParallelGCThreads=8 -XX:+UseConcMarkSweepGC -XX:ErrorFile={{hdfs_log_dir_prefix}}/$USER/hs_err_pid%p.log -XX:NewSize={{namenode_opt_newsize}} -XX:MaxNewSize={{namenode_opt_maxnewsize}} -Xloggc:{{hdfs_log_dir_prefix}}/$USER/gc.log-`date +'%Y%m%d%H%M'` -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xms{{namenode_heapsize}} -Xmx{{namenode_heapsize}} -Dhadoop.security.logger=INFO,DRFAS -Dhdfs.audit.logger=INFO,DRFAAUDIT -Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=namenode ${HADOOP_NAMENODE_OPTS}\"\nHADOOP_JOBTRACKER_OPTS=\"-server -XX:ParallelGCThreads=8 -XX:+UseConcMarkSweepGC -XX:ErrorFile={{hdfs_log_dir_prefix}}/$USER/hs_err_pid%p.log -XX:NewSize={{jtnode_opt_newsize}} -XX:MaxNewSize={{jtnode_opt_maxnewsize}} -Xloggc:{{hdfs_log_dir_prefix}}/$USER/gc.log-`date +'%Y%m%d%H%M'` -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xmx{{jtnode_heapsize}} -Dhadoop.security.logger=INFO,DRFAS -Dmapred.audit.logger=INFO,MRAUDIT -Dhadoop.mapreduce.jobsummary.logger=INFO,JSA ${HADOOP_JOBTRACKER_OPTS}\"\n\nHADOOP_TASKTRACKER_OPTS=\"-server -Xmx{{ttnode_heapsize}} -Dhadoop.security.logger=ERROR,console -Dmapred.audit.logger=ERROR,console ${HADOOP_TASKTRACKER_OPTS}\"\nHADOOP_DATANODE_OPTS=\"-Xmx{{dtnode_heapsize}} -Dhadoop.security.logger=ERROR,DRFAS -Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=datanode ${HADOOP_DATANODE_OPTS}\"\nHADOOP_BALANCER_OPTS=\"-server -Xmx{{hadoop_heapsize}}m ${HADOOP_BALANCER_OPTS}\"\n\nexport HADOOP_SECONDARYNAMENODE_OPTS=\"-server -XX:ParallelGCThreads=8 -XX:+UseConcMarkSweepGC -XX:ErrorFile={{hdfs_log_dir_prefix}}/$USER/hs_err_pid%p.log -XX:NewSize={{namenode_opt_newsize}} -XX:MaxNewSize={{namenode_opt_maxnewsize}} -Xloggc:{{hdfs_log_dir_prefix}}/$USER/gc.log-`date +'%Y%m%d%H%M'` -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps ${HADOOP_NAMENODE_INIT_HEAPSIZE} -Xmx{{namenode_heapsize}} -Dhadoop.security.logger=INFO,DRFAS -Dhdfs.audit.logger=INFO,DRFAAUDIT -Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=secondarynamenode ${HADOOP_SECONDARYNAMENODE_OPTS}\"\n\n# The following applies to multiple commands (fs, dfs, fsck, distcp etc)\nexport HADOOP_CLIENT_OPTS=\"-Xmx${HADOOP_HEAPSIZE}m $HADOOP_CLIENT_OPTS\"\n# On secure datanodes, user to run the datanode as after dropping privileges\nexport HADOOP_SECURE_DN_USER={{hdfs_user}}\n\n# Extra ssh options.  Empty by default.\nexport HADOOP_SSH_OPTS=\"-o ConnectTimeout=5 -o SendEnv=HADOOP_CONF_DIR\"\n\n# Where log files are stored.  $HADOOP_HOME/logs by default.\nexport HADOOP_LOG_DIR={{hdfs_log_dir_prefix}}/$USER\n\n# History server logs\nexport HADOOP_MAPRED_LOG_DIR={{mapred_log_dir_prefix}}/$USER\n\n# Where log files are stored in the secure data environment.\nexport HADOOP_SECURE_DN_LOG_DIR={{hdfs_log_dir_prefix}}/$HADOOP_SECURE_DN_USER\n\n# File naming remote slave hosts.  $HADOOP_HOME/conf/slaves by default.\n# export HADOOP_SLAVES=${HADOOP_HOME}/conf/slaves\n\n# host:path where hadoop code should be rsync'd from.  Unset by default.\n# export HADOOP_MASTER=master:/home/$USER/src/hadoop\n\n# Seconds to sleep between slave commands.  Unset by default.  This\n# can be useful in large clusters, where, e.g., slave rsyncs can\n# otherwise arrive faster than the master can service them.\n# export HADOOP_SLAVE_SLEEP=0.1\n\n# The directory where pid files are stored. /tmp by default.\nexport HADOOP_PID_DIR={{hadoop_pid_dir_prefix}}/$USER\nexport HADOOP_SECURE_DN_PID_DIR={{hadoop_pid_dir_prefix}}/$HADOOP_SECURE_DN_USER\n\n# History server pid\nexport HADOOP_MAPRED_PID_DIR={{mapred_pid_dir_prefix}}/$USER\n\nYARN_RESOURCEMANAGER_OPTS=\"-Dyarn.server.resourcemanager.appsummary.logger=INFO,RMSUMMARY -Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=resourcemanager\"\n\n# A string representing this instance of hadoop. $USER by default.\nexport HADOOP_IDENT_STRING=$USER\n\n# The scheduling priority for daemon processes.  See 'man nice'.\n\n# export HADOOP_NICENESS=10\n\n# Use libraries from standard classpath\nJAVA_JDBC_LIBS=\"\"\n#Add libraries required by mysql connector\nfor jarFile in `ls /usr/share/java/*mysql* 2>/dev/null`\ndo\n  JAVA_JDBC_LIBS=${JAVA_JDBC_LIBS}:$jarFile\ndone\n#Add libraries required by oracle connector\nfor jarFile in `ls /usr/share/java/*ojdbc* 2>/dev/null`\ndo\n  JAVA_JDBC_LIBS=${JAVA_JDBC_LIBS}:$jarFile\ndone\n#Add libraries required by nodemanager\nMAPREDUCE_LIBS={{mapreduce_libs_path}}\nexport HADOOP_CLASSPATH=${HADOOP_CLASSPATH}${JAVA_JDBC_LIBS}:${MAPREDUCE_LIBS}\n\nif [ -d \"/usr/lib/tez\" ]; then\n  export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/lib/tez/*:/usr/lib/tez/lib/*:/etc/tez/conf\nfi\n\n# Setting path to hdfs command line\nexport HADOOP_LIBEXEC_DIR={{hadoop_libexec_dir}}\n\n#Mostly required for hadoop 2.0\nexport JAVA_LIBRARY_PATH=${JAVA_LIBRARY_PATH}:/usr/lib/hadoop/lib/native/Linux-amd64-64"
+        }
+      }
+    },
+    {
+      "yarn-env" : {
+        "properties" : {
+          "content" : "\nexport HADOOP_YARN_HOME={{hadoop_yarn_home}}\nexport YARN_LOG_DIR={{yarn_log_dir_prefix}}/$USER\nexport YARN_PID_DIR={{yarn_pid_dir_prefix}}/$USER\nexport HADOOP_LIBEXEC_DIR={{hadoop_libexec_dir}}\nexport JAVA_HOME={{java64_home}}\n\n# User for YARN daemons\nexport HADOOP_YARN_USER=${HADOOP_YARN_USER:-yarn}\n\n# resolve links - $0 may be a softlink\nexport YARN_CONF_DIR=\"${YARN_CONF_DIR:-$HADOOP_YARN_HOME/conf}\"\n\n# some Java parameters\n# export JAVA_HOME=/home/y/libexec/jdk1.6.0/\nif [ \"$JAVA_HOME\" != \"\" ]; then\n  #echo \"run java in $JAVA_HOME\"\n  JAVA_HOME=$JAVA_HOME\nfi\n\nif [ \"$JAVA_HOME\" = \"\" ]; then\n  echo \"Error: JAVA_HOME is not set.\"\n  exit 1\nfi\n\nJAVA=$JAVA_HOME/bin/java\nJAVA_HEAP_MAX=-Xmx1000m\n\n# For setting YARN specific HEAP sizes please use this\n# Parameter and set appropriately\nYARN_HEAPSIZE={{yarn_heapsize}}\n\n# check envvars which might override default args\nif [ \"$YARN_HEAPSIZE\" != \"\" ]; then\n  JAVA_HEAP_MAX=\"-Xmx\"\"$YARN_HEAPSIZE\"\"m\"\nfi\n\n# Resource Manager specific parameters\n\n# Specify the max Heapsize for the ResourceManager using a numerical value\n# in the scale of MB. For example, to specify an jvm option of -Xmx1000m, set\n# the value to 1000.\n# This value will be overridden by an Xmx setting specified in either YARN_OPTS\n# and/or YARN_RESOURCEMANAGER_OPTS.\n# If not specified, the default value will be picked from either YARN_HEAPMAX\n# or JAVA_HEAP_MAX with YARN_HEAPMAX as the preferred option of the two.\nexport YARN_RESOURCEMANAGER_HEAPSIZE={{resourcemanager_heapsize}}\n\n# Specify the JVM options to be used when starting the ResourceManager.\n# These options will be appended to the options specified as YARN_OPTS\n# and therefore may override any similar flags set in YARN_OPTS\n#export YARN_RESOURCEMANAGER_OPTS=\n\n# Node Manager specific parameters\n\n# Specify the max Heapsize for the NodeManager using a numerical value\n# in the scale of MB. For example, to specify an jvm option of -Xmx1000m, set\n# the value to 1000.\n# This value will be overridden by an Xmx setting specified in either YARN_OPTS\n# and/or YARN_NODEMANAGER_OPTS.\n# If not specified, the default value will be picked from either YARN_HEAPMAX\n# or JAVA_HEAP_MAX with YARN_HEAPMAX as the preferred option of the two.\nexport YARN_NODEMANAGER_HEAPSIZE={{nodemanager_heapsize}}\n\n# Specify the max Heapsize for the HistoryManager using a numerical value\n# in the scale of MB. For example, to specify an jvm option of -Xmx1000m, set\n# the value to 1024.\n# This value will be overridden by an Xmx setting specified in either YARN_OPTS\n# and/or YARN_HISTORYSERVER_OPTS.\n# If not specified, the default value will be picked from either YARN_HEAPMAX\n# or JAVA_HEAP_MAX with YARN_HEAPMAX as the preferred option of the two.\nexport YARN_HISTORYSERVER_HEAPSIZE={{apptimelineserver_heapsize}}\nexport YARN_TIMELINESERVER_HEAPSIZE={{apptimelineserver_heapsize}}\nexport YARN_TIMELINESERVER_OPTS=\"-Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=apptimelineserver\"\n\n# Specify the JVM options to be used when starting the NodeManager.\n# These options will be appended to the options specified as YARN_OPTS\n# and therefore may override any similar flags set in YARN_OPTS\nexport YARN_NODEMANAGER_OPTS=\"-Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=nodemanager\"\n\n# so that filenames w/ spaces are handled correctly in loops below\nIFS=\n\n\n# default log directory and file\nif [ \"$YARN_LOG_DIR\" = \"\" ]; then\n  YARN_LOG_DIR=\"$HADOOP_YARN_HOME/logs\"\nfi\nif [ \"$YARN_LOGFILE\" = \"\" ]; then\n  YARN_LOGFILE='yarn.log'\nfi\n\n# default policy file for service-level authorization\nif [ \"$YARN_POLICYFILE\" = \"\" ]; then\n  YARN_POLICYFILE=\"hadoop-policy.xml\"\nfi\n\n# restore ordinary behaviour\nunset IFS\n\n\nYARN_OPTS=\"$YARN_OPTS -Dhadoop.log.dir=$YARN_LOG_DIR\"\nYARN_OPTS=\"$YARN_OPTS -Dyarn.log.dir=$YARN_LOG_DIR\"\nYARN_OPTS=\"$YARN_OPTS -Dhadoop.log.file=$YARN_LOGFILE\"\nYARN_OPTS=\"$YARN_OPTS -Dyarn.log.file=$YARN_LOGFILE\"\nYARN_OPTS=\"$YARN_OPTS -Dyarn.home.dir=$YARN_COMMON_HOME\"\nYARN_OPTS=\"$YARN_OPTS -Dyarn.id.str=$YARN_IDENT_STRING\"\nYARN_OPTS=\"$YARN_OPTS -Dhadoop.root.logger=${YARN_ROOT_LOGGER:-INFO,console}\"\nYARN_OPTS=\"$YARN_OPTS -Dyarn.root.logger=${YARN_ROOT_LOGGER:-INFO,console}\"\nif [ \"x$JAVA_LIBRARY_PATH\" != \"x\" ]; then\n  YARN_OPTS=\"$YARN_OPTS -Djava.library.path=$JAVA_LIBRARY_PATH\"\nfi\nYARN_OPTS=\"$YARN_OPTS -Dyarn.policy.file=$YARN_POLICYFILE\""
+        }
+      }
+    },
+    {
+      "zookeeper-env" : {
+        "properties" : {
+          "content" : "\nexport JAVA_HOME={{java64_home}}\nexport ZOOKEEPER_HOME={{zk_home}}\nexport ZOO_LOG_DIR={{zk_log_dir}}\nexport ZOOPIDFILE={{zk_pid_file}}\nexport SERVER_JVMFLAGS=\"{{zk_server_heapsize}}  -Dwhitelist.filename=NA -Dcomponent=zookeeper-server\"\nexport JAVA=$JAVA_HOME/bin/java\nexport CLASSPATH=$CLASSPATH:/usr/share/zookeeper/*\nexport CLIENT_JVMFLAGS=\"-Dwhitelist.filename=NA -Dcomponent=zookeeper-client\"\n\n{% if security_enabled %}\nexport SERVER_JVMFLAGS=\"$SERVER_JVMFLAGS -Djava.security.auth.login.config={{zk_server_jaas_file}} \"\nexport CLIENT_JVMFLAGS=\"$CLIENT_JVMFLAGS -Djava.security.auth.login.config={{zk_client_jaas_file}}\"\n{% endif %}"
+        }
+      }
+    },
+    {
+      "oozie-site" : {
+        "properties" : {
+          "oozie.service.JPAService.validate.db.connection.eviction.interval" : "45000",
+          "oozie.base.url" : "http://hn0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:11000/oozie",
+          "oozie.zookeeper.namespace" : "oozie",
+          "oozie.service.URIHandlerService.uri.handlers" : "org.apache.oozie.dependency.FSURIHandler,org.apache.oozie.dependency.HCatURIHandler",
+          "oozie.service.JPAService.connection.properties" : "lockTimeout=120000",
+          "oozie.authentication.simple.anonymous.allowed" : "true",
+          "oozie.service.JPAService.validate.db.connection.eviction.num" : "10",
+          "oozie.service.coord.push.check.requeue.interval" : "30000",
+          "oozie.services.ext" : "org.apache.oozie.service.JMSAccessorService,org.apache.oozie.service.PartitionDependencyManagerService,org.apache.oozie.service.HCatAccessorService, org.apache.oozie.service.ZKLocksService,org.apache.oozie.service.ZKXLogStreamingService,org.apache.oozie.service.ZKJobsConcurrencyService,org.apache.oozie.service.ZKUUIDService",
+          "oozie.service.JPAService.validate.db.connection" : "true",
+          "oozie.service.PurgeService.older.than" : "3",
+          "oozie.service.JPAService.create.db.schema" : "false",
+          "oozie.system.id" : "oozie-${user.name}",
+          "oozie.systemmode" : "NORMAL",
+          "oozie.authentication.type" : "simple",
+          "oozie.service.HadoopAccessorService.supported.filesystems" : "hdfs,hftp,webhdfs,asv,wasb,asvs,wasbs",
+          "oozie.service.AuthorizationService.security.enabled" : "false",
+          "oozie.zookeeper.connection.string" : "zk0-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk2-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181,zk3-aws-te.0qten02bszce3ldzlarkvn51ve.ix.internal.cloudapp.net:2181"
+        }
+      }
+    },
+    {
+      "mapred-env" : {
+        "properties" : {
+          "content" : "\n# export JAVA_HOME=/home/y/libexec/jdk1.6.0/\n\nexport HADOOP_JOB_HISTORYSERVER_HEAPSIZE={{jobhistory_heapsize}}\n\nexport HADOOP_MAPRED_ROOT_LOGGER=INFO,RFA\n\nexport HADOOP_JOB_HISTORYSERVER_OPTS=\"-Dwhitelist.filename=core-whitelist.res,coremanual-whitelist.res -Dcomponent=historyserver\"\n#export HADOOP_MAPRED_LOG_DIR=\"\" # Where log files are stored.  $HADOOP_MAPRED_HOME/logs by default.\n#export HADOOP_JHS_LOGGER=INFO,RFA # Hadoop JobSummary logger.\n#export HADOOP_MAPRED_PID_DIR= # The pid files are stored. /tmp by default.\n#export HADOOP_MAPRED_IDENT_STRING= #A string representing this instance of hadoop. $USER by default\n#export HADOOP_MAPRED_NICENESS= #The scheduling priority for daemons. Defaults to 0.\nexport HADOOP_OPTS=\"-Dhdp.version=$HDP_VERSION $HADOOP_OPTS\"\n  "
+        }
+      }
+    },
+    {
+      "cluster-env" : {
+        "properties" : {
+          "pig_tar_destination_folder" : "wasb:///hdp/apps/{{ hdp_stack_version }}/pig/",
+          "mapreduce_tar_destination_folder" : "wasb:///hdp/apps/{{ hdp_stack_version }}/mapreduce/",
+          "tez_tar_destination_folder" : "wasb:///hdp/apps/{{ hdp_stack_version }}/tez/",
+          "hadoop-streaming_tar_destination_folder" : "wasb:///hdp/apps/{{ hdp_stack_version }}/mapreduce/",
+          "sqoop_tar_destination_folder" : "wasb:///hdp/apps/{{ hdp_stack_version }}/sqoop/",
+          "hive_tar_destination_folder" : "wasb:///hdp/apps/{{ hdp_stack_version }}/hive/"
+        }
+      }
+    }
+  ],
+  "host_groups" : [
+    {
+      "components" : [
+        {
+          "name" : "HBASE_REGIONSERVER"
+        },
+        {
+          "name" : "METRICS_MONITOR"
+        },
+        {
+          "name" : "DATANODE"
+        },
+        {
+          "name" : "NODEMANAGER"
+        },
+        {
+          "name" : "PHOENIX_QUERY_SERVER"
+        },
+        {
+          "name" : "TEZ_CLIENT"
+        },
+        {
+          "name" : "SQOOP"
+        },
+        {
+          "name" : "HBASE_CLIENT"
+        },
+        {
+          "name" : "OOZIE_CLIENT"
+        },
+        {
+          "name" : "HIVE_CLIENT"
+        }
+      ],
+      "configurations" : [ ],
+      "name" : "workernode",
+      "cardinality" : "1"
+    },
+    {
+      "components" : [
+        {
+          "name" : "HIVE_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "HBASE_CLIENT"
+        },
+        {
+          "name" : "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name" : "HCAT"
+        },
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "SQOOP"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "OOZIE_CLIENT"
+        },
+        {
+          "name" : "TEZ_CLIENT"
+        },
+        {
+          "name" : "METRICS_MONITOR"
+        },
+        {
+          "name" : "PIG"
+        }
+      ],
+      "configurations" : [ ],
+      "name" : "edgenode",
+      "cardinality" : "1"
+    },
+    {
+      "components" : [
+        {
+          "name" : "APP_TIMELINE_SERVER",
+          "provision_action" : "INSTALL_ONLY"
+        },
+        {
+          "name" : "HISTORYSERVER",
+          "provision_action" : "INSTALL_ONLY"
+        },
+        {
+          "name" : "HBASE_CLIENT"
+        },
+        {
+          "name" : "PIG"
+        },
+        {
+          "name" : "HCAT"
+        },
+        {
+          "name" : "METRICS_COLLECTOR"
+        },
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "HIVE_SERVER"
+        },
+        {
+          "name" : "ZKFC"
+        },
+        {
+          "name" : "METRICS_MONITOR"
+        },
+        {
+          "name" : "RESOURCEMANAGER"
+        },
+        {
+          "name" : "HIVE_CLIENT"
+        },
+        {
+          "name" : "TEZ_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "NAMENODE"
+        },
+        {
+          "name" : "WEBHCAT_SERVER"
+        },
+        {
+          "name" : "SQOOP"
+        },
+        {
+          "name" : "OOZIE_CLIENT"
+        },
+        {
+          "name" : "HIVE_METASTORE"
+        },
+        {
+          "name" : "OOZIE_SERVER"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "AMBARI_SERVER"
+        }
+      ],
+      "configurations" : [ ],
+      "name" : "headnode0",
+      "cardinality" : "1"
+    },
+    {
+      "components" : [
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "METRICS_MONITOR"
+        },
+        {
+          "name" : "OOZIE_SERVER"
+        },
+        {
+          "name" : "HIVE_CLIENT"
+        },
+        {
+          "name" : "WEBHCAT_SERVER"
+        },
+        {
+          "name" : "TEZ_CLIENT"
+        },
+        {
+          "name" : "HIVE_METASTORE"
+        },
+        {
+          "name" : "OOZIE_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "HISTORYSERVER",
+          "provision_action" : "INSTALL_ONLY"
+        },
+        {
+          "name" : "HBASE_CLIENT"
+        },
+        {
+          "name" : "APP_TIMELINE_SERVER",
+          "provision_action" : "INSTALL_ONLY"
+        },
+        {
+          "name" : "RESOURCEMANAGER"
+        },
+        {
+          "name" : "NAMENODE"
+        },
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "ZKFC"
+        },
+        {
+          "name" : "HIVE_SERVER"
+        }
+      ],
+      "configurations" : [ ],
+      "name" : "headnode1",
+      "cardinality" : "1"
+    },
+    {
+      "components" : [
+        {
+          "name" : "JOURNALNODE"
+        },
+        {
+          "name" : "METRICS_MONITOR"
+        },
+        {
+          "name" : "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name" : "HBASE_MASTER"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "ZOOKEEPER_SERVER"
+        },
+        {
+          "name" : "HBASE_CLIENT"
+        }
+      ],
+      "configurations" : [ ],
+      "name" : "zookeepernode",
+      "cardinality" : "1"
+    }
+  ],
+  "settings" : [
+    {
+      "recovery_settings" : [
+        {
+          "recovery_enabled" : "true"
+        }
+      ]
+    }
+  ],
+  "Blueprints" : {
+    "blueprint_name" : "hadoop_hbase_ha",
+    "stack_name" : "HDP",
+    "stack_version" : "2.5",
+    "security" : {
+      "type" : "NONE"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+# Copyright 2016 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: infoworks
+  author: saikrishna <saikrishna@infoworks.io>
+  description: Runs Dataproc & Infoworks
+  version: 1.0
+
+imports:
+- path: config.jinja
+- name: infoworks-stack.jinja
+  path: templates/infoworks-stack.jinja
+- name: iw-product.jinja
+  path: templates/iw-product.jinja
+- name: network.jinja
+  path: templates/network.jinja
+- name: dataproc-cluster.jinja
+  path: templates/dataproc-cluster.jinja
+
+- name: cluster-setup.sh
+  path: scripts/cluster-setup.sh
+#- name: deployapp.sh
+#  path: scripts/deployapp.sh
+#- name: install-python.sh
+#  path: scripts/install-python.sh
+
+
+properties:
+  region:
+    type: string
+    description: "Google Cloud Region to deploy infoworks stack"
+    default: "us-central1"
+  zone:
+    type: string
+    description: "Google Cloud Zone to deploy infoworks stack"
+    default: "us-central1-a"
+  ipCidrRange:
+    type: string
+    description: "Subnet to place infoworks VMs in, must be valid CIDR"
+    default: "10.234.0.0/24"
+  infoworksMachineType:
+    type: string
+    description: "Machine type for the VM running infoworks"
+    default: "n1-standard-4"
+  dataprocmasterMachineType:
+    type: string
+    description: "Machine type for the VM running DataProc Master"
+    default: "n1-standard-8"
+  dataprocworkerMachineType:
+    type: string
+    description: "Machine type for the VM running DataProc Worker"
+    default: "n1-highmem-4"
+  

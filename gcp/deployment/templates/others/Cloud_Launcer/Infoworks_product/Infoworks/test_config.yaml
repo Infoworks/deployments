@@ -1,0 +1,9 @@
+imports:
+- path: dp.jinja
+- path: edgenode.jinja
+
+resources:
+- name: dp
+  type: dp.jinja
+- name: edgenode
+  type: edgenode.jinja

@@ -1,0 +1,10 @@
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+BDUTIL_DIR=/usr/local/share/google/dataproc/bdutil-dataproc-20170626-125907-RC1
+DATAPROC_AGENT_JAR=/usr/local/share/google/dataproc/agent-20170626-125907-RC1.jar
+DATAPROC_COMMON_COMPONENTS="openjdk-8-jdk libjansi-java python-numpy libmysql-java hadoop-client hive pig spark-core spark-python spark-r autofs nfs-common libhdfs0 libsnappy1 libatlas3-base libopenblas-base libapr1 vim git bash-completion spark-yarn-shuffle spark-datanucleus spark-extras hadoop-lzo"
+DATAPROC_MASTER_COMPONENTS="hadoop-hdfs-namenode hadoop-yarn-resourcemanager mysql-server"
+DATAPROC_MASTER_EXCLUSIVE_COMPONENTS="hadoop-mapreduce-historyserver hive-metastore hive-server2 nfs-kernel-server spark-history-server"
+DATAPROC_MASTER_STANDALONE_COMPONENTS="hadoop-hdfs-secondarynamenode"
+DATAPROC_MASTER_HA_COMPONENTS="hadoop-hdfs-journalnode hadoop-hdfs-zkfc zookeeper-server"
+DATAPROC_WORKER_COMPONENTS="hadoop-hdfs-datanode hadoop-yarn-nodemanager"
+ALPN_JAR=/usr/local/share/google/alpn/alpn-boot-8.1.7.v20160121.jar

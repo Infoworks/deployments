@@ -1,0 +1,7 @@
+{
+  "defaultDeploymentType": "MULTI_VM",
+  "imageName": "edgenode-dataproc",
+  "projectId": "click-to-deploy-images",
+  "templateName": "infoworks",
+  "useSolutionPackage": "true"
+}

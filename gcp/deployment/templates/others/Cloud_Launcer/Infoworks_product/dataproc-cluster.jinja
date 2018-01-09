@@ -1,0 +1,25 @@
+resources:
+- type: compute.v1.instance
+  name: testclu
+  properties:
+    clusterName: test
+    gceClusterConfig:
+    zoneUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-a
+    networkUri: https://www.googleapis.com/compute/v1/projects/dataproctest2/global/networks/default
+    
+masterConfig:
+  numMasters: 3
+  machineType: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-f/machineTypes/n1-standard-2
+  diskConfig:
+  bootDiskSizeGb: 500
+  numLocalSsds: 0
+
+  workerConfig:
+      numInstances: 2
+      machineType: https://www.googleapis.com/compute/v1/projects/dataproctest2/zones/us-central1-f/machineTypes/n1-standard-2
+      diskConfig:
+        bootDiskSizeGb: 500
+        numLocalSsds: 0
+
+# initializationActions:
+ #     executableFile: gs://iw-store/gcpha.sh

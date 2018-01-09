@@ -1,0 +1,7 @@
+{
+  "defaultDeploymentType": "MULTI_VM",
+  "imageName": "edgenode-dataproc",
+  "projectId": "dataproctest2",
+  "templateName": "nonexistent_template",
+  "useSolutionPackage": "true"
+}

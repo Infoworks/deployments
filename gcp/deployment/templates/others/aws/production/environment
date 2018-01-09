@@ -1,0 +1,2 @@
+export JAVA_HOME=/opt/jdk1.8.0_144
+export PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/jdk1.8.0_144/bin:/opt/jdk1.8.0_144/jre/bin

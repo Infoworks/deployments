@@ -1,0 +1,62 @@
+{
+  "blueprint": "iw-test",
+  "default_password": "admin",
+  "host_groups": [
+    {
+      "name": "headnode0",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-16-189.us-west-2.compute.internal"
+        }
+      ]
+    },
+    {
+      "name": "headnode1",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-18-210.us-west-2.compute.internal"
+        }
+      ]
+    },
+    {
+      "name": "workernode",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-26-170.us-west-2.compute.internal"
+        }
+      ]
+    },
+    {
+      "name": "workernode",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-18-77.us-west-2.compute.internal"
+        }
+      ]
+    },
+    {
+      "name": "zookeepernode",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-26-170.us-west-2.compute.internal"
+        }
+      ]
+    },
+    {
+      "name": "zookeepernode",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-18-77.us-west-2.compute.internal"
+        }
+      ]
+    },
+    {
+      "name": "zookeepernode",
+      "hosts": [
+        {
+          "fqdn": "ip-172-31-29-248.us-west-2.compute.internal"
+        }
+      ]
+    }
+  ]
+}
