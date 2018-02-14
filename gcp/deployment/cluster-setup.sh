@@ -15,10 +15,10 @@ sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/hbase-conf/hbase-s
 sed -i -e "s/\${PROJECT_ID}/${PROJECT}/g" /etc/alternatives/hadoop-conf/core-site.xml
 sed -i -e "s/\${PROJECT_ID}/${PROJECT}/g" /etc/alternatives/hadoop-conf/mapred-site.xml
 #Install Infoworks APP
-wget https://raw.githubusercontent.com/Infoworks/deployments/master/gcp/deployment/deployapp.sh
-bash deployapp.sh
-rm -rf deployapp.sh
-wget https://raw.githubusercontent.com/Infoworks/deployments/master/gcp/deployment/install-python.sh
-bash install-python.sh
-rm -rf install-python.sh
+#wget https://raw.githubusercontent.com/Infoworks/deployments/master/gcp/deployment/deployapp.sh
+#bash deployapp.sh
+#rm -rf deployapp.sh
+#wget https://raw.githubusercontent.com/Infoworks/deployments/master/gcp/deployment/install-python.sh
+#bash install-python.sh
+#rm -rf install-python.sh
 mv /opt/syslog /var/log/
