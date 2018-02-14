@@ -20,7 +20,7 @@ mv gcs-connector-latest-hadoop2.jar /usr/lib/hadoop/lib/
 wget https://storage.googleapis.com/hadoop-lib/bigquery/bigquery-connector-latest-hadoop2.jar
 mv bigquery-connector-latest-hadoop2.jar /usr/lib/hadoop/lib/
 apt-get -y install hive hive-jdbc hive-hcatalog tez hbase --force-yes
-apt-get install python-setuptools libmysql-java
+apt-get install python-setuptools libmysql-java -y
 ln -s /usr/share/java/mysql.jar /usr/lib/hive/lib/mysql.jar
 apt-get -y install spark-extras spark-core spark-python spark-datanucleus spark-r spark-yarn-shuffle --force-yes
 mkdir -p /hadoop/spark/{tmp,work}
