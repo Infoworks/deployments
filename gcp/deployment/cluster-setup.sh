@@ -9,6 +9,7 @@ sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/hadoop-conf/yarn-s
 sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/hive-conf/hive-site.xml
 sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/hive-hcatalog-conf/hive-site.xml
 sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/spark-conf/spark-defaults.conf
+sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/spark-conf/hive-site.xml
 sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/zookeeper-conf/zoo.cfg
 sed -i -e "s/\${CLUSTER_NAME}/${CLUSTER}/g" /etc/alternatives/hbase-conf/hbase-site.xml
 sed -i -e "s/\${PROJECT_ID}/${PROJECT}/g" /etc/alternatives/hadoop-conf/core-site.xml
