@@ -11,6 +11,8 @@ sudo bash stack-install.sh --write-gcm
 curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
 sudo bash install-logging-agent.sh -y
 rm -rf install-logging-agent.sh stack-install.sh
+wget https://raw.githubusercontent.com/Infoworks/deployments/master/gcp/deployment/configs/environment
+mv environment /etc
 echo "deb http://storage.googleapis.com/dataproc-bigtop-repo/v1.2.20/ dataproc contrib" | sudo tee -a /etc/apt/sources.list.d/dataproc.list
 echo "deb-src http://storage.googleapis.com/dataproc-bigtop-repo/v1.2.20/ dataproc contrib" | sudo tee -a /etc/apt/sources.list.d/dataproc.list
 apt-get update
