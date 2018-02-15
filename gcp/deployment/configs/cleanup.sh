@@ -28,6 +28,6 @@ unset HISTFILE
 print_green 'Cleanup log files'
 find /var/log -type f | while read f; do echo -ne '' > $f; done
 
-history -c
+
 print_green 'cleanup complete!'
 rm cleanup.sh
