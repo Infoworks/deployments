@@ -32,11 +32,15 @@ wget https://github.com/Infoworks/deployments/raw/master/gcp/deployment/configs/
 rm -rf /etc/alternatives/hadoop-conf/*
 tar xzf hadoop_1.2.20.tar.gz -C /etc/alternatives/hadoop-conf/
 rm -rf hadoop_1.2.20.tar.gz
+wget https://github.com/Infoworks/deployments/raw/master/gcp/deployment/configs/hive_1.2.20.tar.gz
+rm -rf /etc/alternatives/hive-conf/*
+tar xzf hive_1.2.20.tar.gz -C /etc/alternatives/hive-conf/
+rm -rf hive_1.2.20.tar.gz
 wget https://github.com/Infoworks/deployments/raw/master/gcp/deployment/configs/spark_1.2.20.tar.gz
 rm -rf /etc/alternatives/spark-conf/*
 tar xzf spark_1.2.20.tar.gz -C /etc/alternatives/spark-conf/
 rm -rf spark_1.2.20.tar.gz
-cp -r /etc/alternatives/hive-conf/hive-site.xml /etc/alternatives/hive-hcatalog-conf/
+cp /etc/alternatives/hive-conf/hive-site.xml /etc/alternatives/hive-hcatalog-conf/
 wget https://github.com/Infoworks/deployments/raw/master/gcp/deployment/configs/zoo_1.2.20.tar.gz
 rm -rf /etc/alternatives/zookeeper-conf/*
 tar xzf zoo_1.2.20.tar.gz -C /etc/alternatives/zookeeper-conf/
