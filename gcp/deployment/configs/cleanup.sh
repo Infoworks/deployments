@@ -10,11 +10,12 @@ function print_green {
 
 print_green 'Clean Apt'
 apt-get -y autoremove
-aptitude clean
-aptitude autoclean
+apt-get clean
+apt-get autoclean
 
 print_green 'Remove SSH keys'
 [ -f /home/*/.ssh/authorized_keys ] && rm /home/*/.ssh/authorized_keys
+[ -f /root/.ssh/authorized_keys ] && rm /root/.ssh/authorized_keys
  
 print_green 'Cleanup log files'
 find /var/log -type f | while read f; do echo -ne '' > $f; done
@@ -24,4 +25,9 @@ unset HISTFILE
 [ -f /root/.bash_history ] && rm /root/.bash_history
 [ -f /home/*/.bash_history ] && rm /home/*/.bash_history
 
+print_green 'Cleanup log files'
+find /var/log -type f | while read f; do echo -ne '' > $f; done
+
+history -c
 print_green 'cleanup complete!'
+rm cleanup.sh
