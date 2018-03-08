@@ -111,8 +111,8 @@ _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
     _get_namenode_hostname namenode_hostname `hostname -f`
-    hiveserver_hostname="hive2://$namenode_hostname:10000"
-    sparkmaster_hostname="spark://$namenode_hostname:7077"
+    hiveserver_hostname=$namenode_hostname
+    sparkmaster_hostname=$namenode_hostname
 
     #input parameters prompted by start.sh
     expect <<-EOF
@@ -161,6 +161,14 @@ EOF
     k2=$(source /opt/infoworks/bin/env.sh; /opt/infoworks/apricot-meteor/infoworks_python/infoworks/bin/infoworks_security.sh -encrypt -p "$k2")
     k3=$(source /opt/infoworks/bin/env.sh; /opt/infoworks/apricot-meteor/infoworks_python/infoworks/bin/infoworks_security.sh -encrypt -p "$k3")
     echo "" >> /opt/infoworks/conf/conf.properties
+    echo "" >> /opt/infoworks/conf/conf.properties
+    echo  "#iw cdw overrides" >> /opt/infoworks/conf/conf.properties
+    echo  "modified_time_as_cksum=true" >> /opt/infoworks/conf/conf.properties
+    echo  "storage_format=orc" >> /opt/infoworks/conf/conf.properties
+    echo  "iw_hdfs_prefix=wasb://" >> /opt/infoworks/conf/conf.properties
+    echo  "cdc_start_time_place_holder=cdc_start_time" >> /opt/infoworks/conf/conf.properties
+    echo  "cdc_end_time_place_holder=cdc_end_time" >> /opt/infoworks/conf/conf.properties
+    echo "" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties    
     echo  "#iw cdw properties" >> /opt/infoworks/conf/conf.properties
     echo  "iw_cdw_k1=$k1" >> /opt/infoworks/conf/conf.properties
@@ -173,6 +181,9 @@ EOF
     if [ "$?" != "0" ]; then
         return 1;
     fi
+    
+    eval cd /opt/infoworks/bin/migrate/ && ./iw_migration.sh
+
 }
 
 #install expect tool for interactive mode to input paramenters
