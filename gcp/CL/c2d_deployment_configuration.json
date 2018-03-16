@@ -1,0 +1,7 @@
+{
+  "defaultDeploymentType": "MULTI_VM",
+  "imageName": "infoworks-edge-node",
+  "projectId": "iw-public",
+  "templateName": "nonexistent_template",
+  "useSolutionPackage": true
+}

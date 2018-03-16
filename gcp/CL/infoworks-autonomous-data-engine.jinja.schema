@@ -1,0 +1,169 @@
+imports:
+  - path: dataproc_tier.jinja
+  - path: mongodb_tier.jinja
+  - path: infoworks_tier.jinja
+
+info:
+  version: '1.0'
+  title: Infoworks Autonomous Data Engine Template
+
+required:
+  - zone
+  - network
+  - dataproc_master_machineType
+  - dataproc_worker_machineType
+  - dataproc_master_bootDiskSizeGb
+  - dataproc_worker_bootDiskSizeGb
+  - workerNodes
+  - iw_machineType
+  - iw_bootDiskType
+  - iw_bootDiskSizeGb
+  - servers_machineType
+  - servers_bootDiskType
+  - servers_bootDiskSizeGb
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+  workerNodes:
+    type: integer
+    default: 2
+    minimum: 2
+  dataproc_master_machineType:
+    type: string
+    default: n1-standard-2
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.7490234375
+  dataproc_worker_machineType:
+    type: string
+    default: n1-standard-2
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.7490234375
+  dataproc_externalIP:
+    type: string
+    enum:
+      - Ephemeral
+      - None
+    default: Ephemeral
+  dataproc_master_bootDiskSizeGb:
+    type: integer
+    default: 500
+    minimum: 10
+    maximum: 10000
+  dataproc_worker_bootDiskSizeGb:
+    type: integer
+    default: 500
+    minimum: 10
+    maximum: 10000
+  iw_machineType:
+    type: string
+    default: n1-standard-2
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.7490234375
+  iw_externalIP:
+    type: string
+    enum:
+      - Ephemeral
+      - None
+    default: Ephemeral
+  iw_bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  iw_bootDiskSizeGb:
+    type: integer
+    default: 50
+    minimum: 20
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: iw_bootDiskType
+  enableTcp3000:
+    type: boolean
+    default: True
+  tcp3000SourceRanges:
+    type: string
+
+  servers_machineType:
+    type: string
+    default: n1-highmem-2
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 1.690000057220459
+  servers_externalIP:
+    type: string
+    enum:
+      - Ephemeral
+      - None
+    default: Ephemeral
+  servers_bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  servers_bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: servers_bootDiskType
+  servers_disk_data_type:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  servers_disk_data_sizeGb:
+    type: integer
+    default: 1000
+    minimum: 10
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: servers_disk_data_type
+
+
+
+outputs:
+  deployment:
+    type: string
+  project:
+    type: string
