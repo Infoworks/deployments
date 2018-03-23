@@ -1,0 +1,78 @@
+imports:
+  - name: common.py
+    path: common/common.py
+  - name: default.py
+    path: common/default.py
+  - name: password.py
+    path: common/password.py
+  - name: path_utils.jinja
+    path: common/path_utils.jinja
+
+info:
+  version: '1.0'
+  title: Infoworks Autonomous Data Engine Template
+
+required:
+  - zone
+  - machineType
+  - wmachineType
+  - workerNodes
+  - network
+  - bootDiskSizeGb
+  - wbootDiskSizeGb
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+  workerNodes:
+    type: integer
+    default: 5
+    minimum: 2
+  machineType:
+    type: string
+    default: n1-highmem-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 4
+        minRamGb: 14.9990234375
+  wmachineType:
+    type: string
+    default: n1-standard-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 4
+        minRamGb: 14.9990234375
+  externalIP:
+    type: string
+    enum:
+      - Ephemeral
+      - None
+    default: Ephemeral
+  bootDiskSizeGb:
+    type: integer
+    default: 200
+    minimum: 100
+  wbootDiskSizeGb:
+    type: integer
+    default: 400
+    minimum: 100
+

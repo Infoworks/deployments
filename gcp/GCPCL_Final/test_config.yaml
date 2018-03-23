@@ -1,0 +1,6 @@
+imports:
+- path: infoworks-autonomous-data-engine.jinja
+
+resources:
+- name: infoworks-autonomous-data-engine
+  type: infoworks-autonomous-data-engine.jinja
