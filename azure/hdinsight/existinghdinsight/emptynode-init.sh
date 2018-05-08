@@ -5,8 +5,8 @@ export p2=$2
 export p3=$3
 export p4=$4
 
-export edgeNodeSetup="edge-node-setup.sh"
-export sparkInstall="spark-install.sh"
+export edgeNodeSetup="https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/edgenode-setup.sh"
+export sparkInstall="https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/spark-install.sh"
 
 #Print parameters
 echo "$p1 $p2 $p3 $p4" > /tmp/parameters.txt
