@@ -8,6 +8,8 @@ export p4=$4
 export edgeNodeSetup="edge-node-setup.sh"
 export sparkInstall="spark-install.sh"
 
+#Print parameters
+echo "$p1 $p2 $p3 $p4" > /tmp/parameters.txt
 
 _timestamp(){
 	date +%H:%M:%S
@@ -48,10 +50,14 @@ _init(){
 
 	if [ $(_is_edgenode) == 1 ]; then
 		eval /bin/bash /tmp/${edgeNodeSetup} $p1 $p2 $p3
+		sleep 2
+		if [ $p4 == true ]; then
+		eval /bin/bash /tmp/${sparkInstall} $p1 $p2 $p3
+		fi
 	fi
 
 	#run the script
-	eval /bin/bash /tmp/${sparkInstall} $p1 $p2 $p3
+	
 
 	rm -rf /tmp/${edgeNodeSetup}
 	rm -rf /tmp/${sparkInstall}
