@@ -49,14 +49,15 @@ _init(){
 	sed -i 's/\r//g' /tmp/sparkInstall.sh
 
 	if [ $(_is_edgenode) == 1 ]; then
+		if [ $p4 != False ]; then
+		eval /bin/bash /tmp/sparkInstall.sh $p1 $p2 $p3
+		fi
+		sleep 2
 		eval /bin/bash /tmp/edgeNodeSetup.sh $p1 $p2 $p3
+	else
+		eval /bin/bash /tmp/sparkInstall.sh $p1 $p2 $p3	
 	fi
 	
-	#run the script
-	if [ $p4 != False ]; then
-		eval /bin/bash /tmp/sparkInstall.sh $p1 $p2 $p3
-	fi
-
 	rm -rf /tmp/edgeNodeSetup.sh
 	rm -rf /tmp/sparkInstall.sh
 }
