@@ -42,25 +42,23 @@ _init(){
 
 	
 	#download script file using key
-	_download_file ${edgeNodeSetup} '/tmp/'${edgeNodeSetup}
-	_download_file ${sparkInstall} '/tmp/'${sparkInstall}
+	_download_file ${edgeNodeSetup} /tmp/edgeNodeSetup.sh
+	_download_file ${sparkInstall} /tmp/sparkInstall.sh
 
-	sed -i 's/\r//g' /tmp/${edgeNodeSetup}
-	sed -i 's/\r//g' /tmp/${sparkInstall}
+	sed -i 's/\r//g' /tmp/edgeNodeSetup.sh
+	sed -i 's/\r//g' /tmp/sparkInstall.sh
 
 	if [ $(_is_edgenode) == 1 ]; then
-		eval /bin/bash /tmp/${edgeNodeSetup} $p1 $p2 $p3
-		sleep 2
-		if [ $p4 == true ]; then
-		eval /bin/bash /tmp/${sparkInstall} $p1 $p2 $p3
-		fi
+		eval /bin/bash /tmp/edgeNodeSetup.sh $p1 $p2 $p3
+	fi
+	
+	#run the script
+	if [ $p4 != False ]; then
+		eval /bin/bash /tmp/sparkInstall.sh $p1 $p2 $p3
 	fi
 
-	#run the script
-	
-
-	rm -rf /tmp/${edgeNodeSetup}
-	rm -rf /tmp/${sparkInstall}
+	rm -rf /tmp/edgeNodeSetup.sh
+	rm -rf /tmp/sparkInstall.sh
 }
 
 _init
