@@ -23,6 +23,36 @@ _untar_file()
     fi
 }
 
+_test_is_headnode()
+{
+    short_hostname=`hostname -s`
+    if [[  $short_hostname == headnode* || $short_hostname == hn* ]]; then
+        echo 1;
+    else
+        echo 0;
+    fi
+}
+
+_test_is_datanode()
+{
+    short_hostname=`hostname -s`
+    if [[ $short_hostname == workernode* || $short_hostname == wn* ]]; then
+        echo 1;
+    else
+        echo 0;
+    fi
+}
+
+_test_is_zookeepernode()
+{
+    short_hostname=`hostname -s`
+    if [[ $short_hostname == zookeepernode* || $short_hostname == zk* ]]; then
+        echo 1;
+    else
+        echo 0;
+    fi
+}
+
 #find active namenode of the cluster
 _get_namenode_hostname(){
 
@@ -160,6 +190,29 @@ _init(){
 	sudo chown livy: /etc/livy/conf/*
 	sudo chown -R zeppelin:zeppelin /usr/hdp/$HDP_VERSION/zeppelin/webapps
 	sudo chown -R zeppelin:zeppelin /etc/zeppelin
+	echo "export HDP_VERSION=$HDP_VERSION" >> /etc/spark2/conf/spark-env.sh
+	
+	#start the demons based on host
+	if [ $long_hostname == $active_namenode_hostname ]; then
+		echo "[$(_timestamp)]: in active namenode"
+		echo "[$(_timestamp)]: starting livy server"
+		eval sudo -u livy /usr/hdp/$HDP_VERSION/livy/bin/livy-server start &
+		#Start Zeppelin
+		sudo -u zeppelin /usr/hdp/current/zeppelin-server/bin/zeppelin-daemon.sh start &
+		cd /usr/hdp/current/spark2-client
+		echo "[$(_timestamp)]: starting history server"
+		eval sudo -u spark ./sbin/start-history-server.sh
+		echo "[$(_timestamp)]: starting thrift server"
+		eval sudo -u hive ./sbin/start-thriftserver.sh --properties-file conf/spark-thrift-sparkconf.conf
+		
+		
+	elif [ $long_hostname == $secondary_namenode_hostname ]; then
+		cd /usr/hdp/current/spark2-client
+		echo "[$(_timestamp)]: starting thrift server"
+		eval sudo -u hive ./sbin/start-thriftserver.sh --properties-file conf/spark-thrift-sparkconf.conf
+	else
+		echo "[$(_timestamp)]: starting slaves"
+	fi
 }
 
 cluster_name=""
