@@ -40,8 +40,6 @@ _is_edgenode()
 
 _init(){
 
-	
-	#download script file using key
 	_download_file ${edgeNodeSetup} /tmp/edgeNodeSetup.sh
 	_download_file ${sparkInstall} /tmp/sparkInstall.sh
 
