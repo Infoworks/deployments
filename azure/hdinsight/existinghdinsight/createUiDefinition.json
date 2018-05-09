@@ -67,26 +67,7 @@
             "count": 1
         }
       ]
-    },
-    {
-          "name": "sparkSetup",
-          "type": "Microsoft.Common.DropDown",
-          "label": "Spark Setup",
-          "toolTip": "Initiate Spark Setup for EdgeNodeVM if it is true",
-          "constraints": {
-            "required": true,
-            "allowedValues": [
-              {
-                "label": "With Spark",
-                "value": "True"
-              },
-              {
-                "label": "Without Spark",
-                "value": "False"
-              }
-            ]
-          }  
-      }
+    }
   ],
     "outputs": {
       "clusterName": "[basics('clusterName')]",
