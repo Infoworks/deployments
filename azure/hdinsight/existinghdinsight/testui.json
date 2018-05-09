@@ -8,7 +8,7 @@
         "name": "clusterName",
         "type": "Microsoft.Common.TextBox",
         "label": "Cluster name",
-        "toolTip": "The name of the Existing HDInsight cluster.",
+        "toolTip": "The Cluster Name of the Existing HDInsight cluster.",
         "constraints": {
           "required": true,
           "regex": "^[a-z0-9]{3,24}$"
@@ -25,25 +25,15 @@
       },
       {
         "name": "clusterLoginPassword",
-        "type": "Microsoft.Compute.CredentialsCombo",
+        "type": "Microsoft.Common.PasswordBox",
         "label": {
-          "authenticationType": "Authentication type",
-          "password": "Password",
-          "confirmPassword": "Confirm password",
-          "sshPublicKey": "SSH public key"
-        },
-        "toolTip": {
-          "authenticationType": "Authentication type to login to the cluster vm",
-          "password": "ssh to a vm using a password",
-          "sshPublicKey": "ssh to a vm using a public key (pem file usually)"
+          "password": "Cluster Login Password"
         },
         "constraints": {
-          "required": true
-        },
-        "options": {
-          "hideConfirmation": false
-        },
-        "osPlatform": "Linux"
+          "required": true,
+          "regex": "^(?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])\\S{8,}$",
+          "validationMessage": "The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter."
+        }
       }
     ],
     "steps": [ 
@@ -68,7 +58,11 @@
               "allowedSizes": [
                 "Standard_D12_v2",
                 "Standard_D13_v2",
-                "Standard_D14_v2"
+                "Standard_D14_v2",
+                "Standard_D16_v3",
+                "Standard_D32_v3",
+                "Standard_E16_v3",
+                "Standard_E32_v3"
                 ]
             },
             "osPlatform": "Linux",
