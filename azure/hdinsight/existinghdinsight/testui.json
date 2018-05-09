@@ -22,7 +22,9 @@
         "toolTip": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards.",
         "osPlatform": "Linux",
         "constraints": {
-          "required": true
+          "required": true,
+          "regex": "^(?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])\\S{5,}$",
+          "validationMessage": "Text regex failed"
         }
       },
       {
