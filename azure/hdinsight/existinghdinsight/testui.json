@@ -18,7 +18,7 @@
         "name": "clusterLoginUserName",
         "type": "Microsoft.Compute.UserNameTextBox",
         "label": "Cluster Login Username",
-        "default": "admin",
+        "defaultValue": "admin",
         "toolTip": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards.",
         "osPlatform": "Linux",
         "constraints": {
