@@ -1,0 +1,107 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "clusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Existing HDInsight cluster. The cluster name should match with existing HDInsight cluster."
+      }
+    },
+    "clusterLoginUserName": {
+      "type": "string",
+      "defaultValue": "admin",
+      "metadata": {
+        "description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
+      }
+    },
+    "clusterLoginPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter."
+      }
+    },
+    "edgenodeVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D13_v2",
+      "metadata": {
+        "description": "The size of virtual machine to provision for infoworks node."
+      }
+    }
+  },
+  "variables": {
+    "scriptParameters": "[concat(parameters('clusterName'),' ',parameters('clusterLoginUserName'),' ',parameters('clusterLoginPassword'))]",
+    "applicationName": "Infoworks-Cloud-Data-Warehouse"
+  },
+  "resources": [
+    {
+        "name": "[concat(parameters('clusterName'),'/', variables('applicationName'))]",
+        "type": "Microsoft.HDInsight/clusters/applications",
+        "apiVersion": "2015-03-01-preview",
+        "dependsOn": [],
+        "properties": {
+            "marketPlaceIdentifier": "EmptyNode",
+            "computeProfile": {
+                "roles": [{
+                    "name": "edgenode",
+                    "targetInstanceCount": 1,
+                    "hardwareProfile": {
+                        "vmSize": "[parameters('edgenodeVmSize')]"
+                    }
+                }
+              ]
+            },
+            "installScriptActions": [{
+                "name": "[concat('emptynode','-' ,uniquestring(variables('applicationName')))]",
+                "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/edgenode-init.sh",
+                "roles": ["edgenode"],
+                "parameters": "[variables('scriptParameters')]"
+              }
+            ],
+            "uninstallScriptActions": [],
+            "httpsEndpoints": [
+              {
+            "subDomainSuffix": "cdw",
+            "destinationRole": "edgenode",
+            "destinationPort": 3000,
+            "description": "Access to infoworks",
+            "hasWebpage": true,
+            "disableGatewayAuth": true,
+            "accessModes": [
+              "WebPage"
+            ]
+          },
+          {
+            "subDomainSuffix": "api",
+            "destinationRole": "edgenode",
+            "destinationPort": 2999,
+            "description": "Access to infoworks REST API",
+            "hasWebpage": true,
+            "disableGatewayAuth": true,
+            "accessModes": [
+              "WebPage"
+            ]
+          },
+          {
+            "subDomainSuffix": "cub",
+            "destinationRole": "edgenode",
+            "destinationPort": 7005,
+            "description": "Access to infoworks access server for cube",
+            "hasWebpage": true,
+            "disableGatewayAuth": true,
+            "accessModes": [
+              "WebPage"
+            ]
+          }
+            ],
+            "applicationType": "CustomApplication"
+        }
+    }
+  ],
+  "outputs": {
+    "application": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.HDInsight/clusters/applications/',parameters('clusterName'), variables('applicationName')))]"
+    }
+  }
+}
