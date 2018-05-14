@@ -25,7 +25,7 @@ _download_file()
 }
 
 _init(){
- 	  _download_file ${sparkInstall} /tmp/sparkInstall.sh
+    _download_file ${sparkInstall} /tmp/sparkInstall.sh
     sed -i 's/\r//g' /tmp/sparkInstall.sh
     eval /bin/bash /tmp/sparkInstall.sh $p1 $p2 $p3
     rm -rf /tmp/sparkInstall.sh
