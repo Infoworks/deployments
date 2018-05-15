@@ -122,8 +122,8 @@ _init(){
 	apt-get install livy-$HDP_VERSION --allow-unauthenticated
 	
 	#download the spark config tar file
-	_download_file https://github.com/Infoworks/deployments/blob/master/azure/hdinsight/utility-infoworks/sparkconf.tar.gz?raw=true /sparkconf.tar.gz
-	_download_file https://github.com/Infoworks/deployments/blob/master/azure/hdinsight/utility-infoworks/webapps.tar.gz?raw=true /webapps.tar.gz
+	_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/sparkconf.tar.gz /sparkconf.tar.gz
+	_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/webapps.tar.gz /webapps.tar.gz
 	
 	# Untar the Spark config tar.
 	mkdir /spark-config
