@@ -122,7 +122,11 @@ _init(){
 	apt-get install livy-$HDP_VERSION --allow-unauthenticated
 	
 	#download the spark config tar file
-	_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/sparkconf.tar.gz /sparkconf.tar.gz
+	if [ ${HDP_VERSION} == "2.5.6.3-5" ]; then
+		_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/sparkconf.tar.gz /sparkconf.tar.gz
+	else
+		_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/sparkconf.tar.gz /sparkconf.tar.gz
+	fi
 	_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/webapps.tar.gz /webapps.tar.gz
 	
 	# Untar the Spark config tar.
@@ -165,7 +169,12 @@ _init(){
 	#update the master hostname in configuration files
 	sed -i 's|{{namenode-hostnames}}|thrift:\/\/'"${active_namenode_hostname}"':9083,thrift:\/\/'"${secondary_namenode_hostname}"':9083|g' /etc/spark2/$HDP_VERSION/0/hive-site.xml
 	sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"':18080|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
-
+	if [ ${HDP_VERSION} != "2.5.6.3-5" ]; then
+		sed -i 's|{{namenode-hostnames}}|'"${active_namenode_hostname}"'|g' /etc/zeppelin/$HDP_VERSION/0/interpreter.json
+		sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"'|g' /etc/zeppelin/$HDP_VERSION/0/interpreter.json
+		sed -i 's|{{zookeeper-hostnames}}|'"${zookeeper_hostnames_string}"'|g' /etc/zeppelin/$HDP_VERSION/0/interpreter.json
+	fi
+	
 	zookeeper_hostnames_string=""
 	for i in "${!zookeeper_hostnames[@]}"
 		do
