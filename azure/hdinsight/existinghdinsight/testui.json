@@ -16,12 +16,13 @@
       },
       {
         "name": "clusterLoginUserName",
-        "type": "Microsoft.Compute.UserNameTextBox",
+        "type": "Microsoft.Compute.TextBox",
         "label": "Cluster Login User Name",
         "toolTip": "Cluster login username for the HDInsight or Ambari.",
-        "osPlatform": "Linux",
         "constraints": {
-          "required": true
+          "required": true,
+          "regex": "^[a-zA-Z]([-a-zA-Z0-9]{0,20}[a-zA-Z0-9])$",
+          "validationMessage": "The Cluster name must be 20 characters or less and can contain letters, numbers, and hyphens (but the first must be letter and last character must be a letter or number)."
         }
       },
       {
@@ -33,9 +34,16 @@
         },
         "constraints": {
           "required": true,
-          "regex": "^(?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])\\S{8,}$",
-          "validationMessage": "The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter. Also, the password should not contain 3 consecutive letters from the username"
-        }
+          "regex": "^(?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])\\S{10,}$",
+          "validationMessage": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter. Also, the password should not contain 3 consecutive letters from the username"
+        },
+	"options": {
+          "hideConfirmation": true
+        },
+        "toolTip": {
+          "password": "Provide admin password for the Ambari"
+        },
+       	"visible": true
       },
       {
         "name": "sshUserName",
