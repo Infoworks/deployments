@@ -29,6 +29,7 @@
       {
 	"name": "ClusterType",
 	"label": "Cluster Type",
+	"type": "Microsoft.Common.TextBox",
     	"handler": "Microsoft.HDInsight",
     	"version": "0.0.1-preview",
     	"clusterFilters": {
