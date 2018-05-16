@@ -10,7 +10,7 @@
         "toolTip": "The name of the HDInsight cluster.",
         "constraints": {
           "required": true,
-          "regex": "^([a-zA-Z])([-a-zA-Z0-9]){1,58}$",     
+          "regex": "^([a-zA-Z])([-a-zA-Z0-9]){1,58}[a-zA-z]$",     
           "validationMessage": "The name must be 59 characters or less and can contain letters, numbers, and hyphens (but the first must be letter and last character must be a letter or number)."
         }
       },
