@@ -16,7 +16,7 @@
       },
       {
         "name": "clusterLoginUserName",
-        "type": "Microsoft.Compute.TextBox",
+        "type": "Microsoft.Common.TextBox",
         "label": "Cluster Login User Name",
         "toolTip": "Cluster login username for the HDInsight or Ambari.",
         "constraints": {
