@@ -2,7 +2,8 @@
     "handler": "Microsoft.Compute.MultiVm",
     "version": "0.1.2-preview",
     "parameters": {
-	{
+    "basics": [
+{
   "name": "text1",
   "type": "Microsoft.Common.TextBlock",
   "visible": true,
@@ -14,7 +15,6 @@
     }
   }
 },
-    "basics": [
       {
         "name": "clusterName",
         "type": "Microsoft.Common.TextBox",
