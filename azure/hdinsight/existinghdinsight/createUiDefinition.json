@@ -1,7 +1,7 @@
 {
     "handler": "Microsoft.Compute.MultiVm",
 
-    "version": "0.1.3",
+    "version": "0.1.2-preview",
     "parameters": {
         "basics": [{
                 "name": "adminUsername",
