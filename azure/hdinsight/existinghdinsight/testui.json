@@ -19,10 +19,9 @@
         "type": "Microsoft.Common.TextBox",
         "label": "Cluster Login User Name",
         "toolTip": "Cluster login username for the HDInsight or Ambari.",
+	"defaultValue": "admin",
         "constraints": {
-          "required": true,
-          "regex": "^[a-zA-Z]([-a-zA-Z0-9]{0,20}[a-zA-Z0-9])$",
-          "validationMessage": "The Cluster name must be 20 characters or less and can contain letters, numbers, and hyphens (but the first must be letter and last character must be a letter or number)."
+          "required": true
         }
       },
       {
