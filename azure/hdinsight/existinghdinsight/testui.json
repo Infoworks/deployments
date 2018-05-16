@@ -15,6 +15,14 @@
         }
       },
       {
+    	"handler": "Microsoft.HDInsight",
+    	"version": "0.0.1-preview",
+    	"clusterFilters": {
+        	"types": ["Hadoop", "HBase", "Storm", "Spark"],
+        	"versions": ["3.6"]
+    	}
+      },
+      {
         "name": "clusterLoginUserName",
         "type": "Microsoft.Common.TextBox",
         "label": "Cluster Login User Name",
@@ -49,6 +57,7 @@
         "type": "Microsoft.Compute.UserNameTextBox",
         "label": "SSH User Name",
         "toolTip": "SSH credentials can be used to remotely access the cluster.",
+	"defaultValue": "sshuser",
         "osPlatform": "Linux",
         "constraints": {
           "required": true,
@@ -75,7 +84,7 @@
           "required": true
         },
         "options": {
-          "hideConfirmation": false
+          "hideConfirmation": true
         },
         "osPlatform": "Linux"
       }
