@@ -1,24 +1,25 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
-  "handler": "Microsoft.Compute.MultiVm",
-  "version": "0.1.2-preview",
-  "parameters": {
+    "handler": "Microsoft.Compute.MultiVm",
+    "version": "0.1.2-preview",
+    "parameters": {
     "basics": [
       {
         "name": "clusterName",
         "type": "Microsoft.Common.TextBox",
         "label": "Cluster name",
-        "toolTip": "The Cluster Name of the Existing HDInsight cluster.",
+        "toolTip": "The name of the HDInsight cluster.",
         "constraints": {
           "required": true,
-          "regex": "^[a-z0-9]{3,24}$"
+          "regex": "(?:[a-zA-Z](?:[-a-zA-Z0-9]{0,58}[a-zA-Z0-9])?)",
+          "validationMessage": "The name must be 59 characters or less and can contain letters, numbers, and hyphens (but the first must be letter and last character must be a letter or number)."
         }
       },
       {
         "name": "clusterLoginUserName",
-        "type": "Microsoft.Common.TextBox",
-        "label": "Cluster Login Username",
-        "toolTip": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards.",
+        "type": "Microsoft.Compute.UserNameTextBox",
+        "label": "Cluster Login User Name",
+        "toolTip": "Cluster login username for the HDInsight or Ambari.",
+        "osPlatform": "Linux",
         "constraints": {
           "required": true
         }
@@ -33,50 +34,244 @@
         "constraints": {
           "required": true,
           "regex": "^(?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])\\S{8,}$",
-          "validationMessage": "The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter."
+          "validationMessage": "The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter. Also, the password should not contain 3 consecutive letters from the username"
         }
+      },
+      {
+        "name": "sshUserName",
+        "type": "Microsoft.Compute.UserNameTextBox",
+        "label": "SSH User Name",
+        "toolTip": "SSH credentials can be used to remotely access the cluster.",
+        "osPlatform": "Linux",
+        "constraints": {
+          "required": true,
+          "regex": "^(?!infoworks-user$).*$",
+          "validationMessage": "sshuser name cannot be infoworks-user"
+
+        }
+      },
+      {
+        "name": "SSHCredntials",
+        "type": "Microsoft.Compute.CredentialsCombo",
+        "label": {
+          "authenticationType": "Authentication type",
+          "password": "Password",
+          "confirmPassword": "Confirm password",
+          "sshPublicKey": "SSH public key"
+        },
+        "toolTip": {
+          "authenticationType": "Authentication type to login to the cluster vm",
+          "password": "ssh to a vm using a password",
+          "sshPublicKey": "ssh to a vm using a public key (pem file usually)"
+        },
+        "constraints": {
+          "required": true
+        },
+        "options": {
+          "hideConfirmation": false
+        },
+        "osPlatform": "Linux"
       }
     ],
-    "steps": [ 
+    "steps": [
       {
         "name": "SampleClusterConfig",
         "label": "Cluster Settings",
         "subLabel": {
-          "preValidation": "Configure the EdgeNode",
+          "preValidation": "Configure the cluster",
           "postValidation": "Done"
         },
-        "bladeTitle": "EdgeNode Size",
+        "bladeTitle": "Cluster Size",
         "elements": [
-        {
+          {
+            "name": "clusterNodeCount",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Number of Worker Nodes",
+            "toolTip": "The limit on the number of cluster nodes varies among Azure subscriptions. You can contact azure support to work on these limits.",
+            "defaultValue": "3",
+            "constraints": {
+              "required": true,
+              "regex": "^[1-9]([0-9]{0,45}$)",
+              "validationMessage": "Specify a valid number."
+            }
+          },
+          {
+            "name": "workerNodeVmSize",
+            "type": "Microsoft.Compute.SizeSelector",
+            "label": "Worker Nodes",
+            "toolTip": "The size of virtual machine to provision for each cluster node.",
+            "recommendedSizes": [
+              "Standard_D4_v2"
+            ],
+            "constraints": {
+              "allowedSizes": [
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2"
+              ]
+            },
+            "osPlatform": "Linux",
+            "count": "[steps('SampleClusterConfig').clusterNodeCount]"
+          },
+          {
+            "name": "headNodeVmSize",
+            "type": "Microsoft.Compute.SizeSelector",
+            "label": "Head Nodes",
+            "toolTip": "The size of virtual machine to provision for each cluster node.",
+            "recommendedSizes": [
+              "Standard_D13_v2"
+            ],
+            "constraints": {
+              "allowedSizes": [
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2"
+              ]
+            },
+            "osPlatform": "Linux",
+            "count": 2
+          },
+          {
+            "name": "zookeeperVmSize",
+            "type": "Microsoft.Compute.SizeSelector",
+            "label": "Zookeeper Node",
+            "toolTip": "The size of virtual machine to provision for each cluster node.",
+            "recommendedSizes": [
+              "Standard_A3"
+            ],
+            "constraints": {
+              "allowedSizes": [
+                "Standard_A2_v2",
+                "Standard_A3",
+                "Standard_A4_v2"
+              ]
+            },
+            "osPlatform": "Linux",
+            "count": 3
+          },
+          {
             "name": "edgenodeVmSize",
             "type": "Microsoft.Compute.SizeSelector",
             "label": "Infoworks Edge Node",
             "toolTip": "The size of virtual machine to provision for infoworks node.",
             "recommendedSizes": [
               "Standard_D13_v2"
-              ],
+            ],
             "constraints": {
               "allowedSizes": [
                 "Standard_D12_v2",
                 "Standard_D13_v2",
-                "Standard_D14_v2",
-                "Standard_D16_v3",
-                "Standard_D32_v3",
-                "Standard_E16_v3",
-                "Standard_E32_v3"
-                ]
+                "Standard_D14_v2"
+              ]
             },
             "osPlatform": "Linux",
             "count": 1
-        }
-      ]
-    }
-  ],
+          }
+        ]
+      },
+      {
+        "name": "StorageConfig",
+        "label": "Storage Settings",
+        "subLabel": {
+          "preValidation": "Configure the storage",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "Storage Settings",
+        "elements": [
+          {
+            "name": "storageAccount",
+            "type": "Microsoft.Storage.StorageAccountSelector",
+            "label": "Storage account",
+	    "toolTip": "Select an existing storage from resource group same as cluster or create new",
+            "defaultValue": {
+              "type": "Standard_LRS",
+	      "name": "[concat(replace(basics('clusterName'), '-', ''), take(replace(guid(), '-', ''), 10))]"
+            },
+	    "constraints": {
+              "regex": "^(?![basics('clusterName')]$).*$",
+              "validationMessage": "storage name cannot be same as cluster name"
+            }
+          }
+        ]
+      },
+      {
+        "name": "VnetConfig",
+        "label": "VNET Settings",
+        "subLabel": {
+          "preValidation": "Configure the virtual network",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "VNET Settings",
+        "elements": [
+          {
+                "name": "virtualNetwork",
+                "type": "Microsoft.Network.VirtualNetworkCombo",
+                "label": {
+                    "virtualNetwork": "Virtual network",
+                    "subnets": "Subnets"
+                },
+                "toolTip": {
+                    "virtualNetwork": "Name of the virtual network",
+                    "subnets": "Subnets for the virtual network"
+                },
+                "defaultValue": {
+                    "name": "VirtualNetwork",
+                    "addressPrefixSize": "/16"
+                },
+                "constraints": {
+                    "minAddressPrefixSize": "/16"
+                },
+                "subnets": {
+                    "subnet1": {
+
+                        "label": "Subnet",
+                        "defaultValue": {
+                            "name": "Subnet-1",
+                            "addressPrefixSize": "/24"
+                        },
+                        "constraints": {
+                            "minAddressPrefixSize": "/24",
+                            "minAddressCount": 12,
+                            "requireContiguousAddresses": false
+                        }
+                    }
+                }
+            }
+        ]
+      }
+    ],
     "outputs": {
+      "location": "[location()]",
       "clusterName": "[basics('clusterName')]",
       "clusterLoginUserName": "[basics('clusterLoginUserName')]",
+      "sshUserName": "[basics('sshUserName')]",
       "clusterLoginPassword": "[basics('clusterLoginPassword')]",
-      "edgenodeVmSize": "[steps('SampleClusterConfig').edgenodeVmSize]"
-      }
+      "sshPassword": "[basics('SSHCredntials').password]",
+      "authenticationType": "[basics('SSHCredntials').authenticationType]",
+      "sshKey": "[basics('SSHCredntials').sshPublicKey]",
+
+      "clusterNodeCount": "[steps('SampleClusterConfig').clusterNodeCount]",
+      "workerNodeVmSize": "[steps('SampleClusterConfig').workerNodeVmSize]",
+      "headNodeVmSize": "[steps('SampleClusterConfig').headNodeVmSize]",
+      "zookeeperVmSize": "[steps('SampleClusterConfig').zookeeperVmSize]",
+      "edgenodeVmSize": "[steps('SampleClusterConfig').edgenodeVmSize]",
+
+      "storageAccountNewOrExisting": "[steps('StorageConfig').storageAccount.newOrExisting]",
+      "storageAccountName": "[steps('StorageConfig').storageAccount.name]",
+      "storageAccountType": "[steps('StorageConfig').storageAccount.type]",
+      "existingStorageAccountRG": "[steps('StorageConfig').storageAccount.resourceGroup]",
+
+      "virtualNetworkNewOrExisting": "[steps('VnetConfig').virtualNetwork.newOrExisting]",
+      "virtualNetworkName": "[steps('VnetConfig').virtualNetwork.name]",
+      "addressPrefix": "[steps('VnetConfig').virtualNetwork.addressPrefix]",
+      "subnetName": "[steps('VnetConfig').virtualNetwork.subnets.subnet1.name]",
+      "subnetPrefix": "[steps('VnetConfig').virtualNetwork.subnets.subnet1.addressPrefix]",
+      "virtualNetworkResourceGroupName": "[steps('VnetConfig').virtualNetwork.resourceGroup]"
+    }
   }
 }
