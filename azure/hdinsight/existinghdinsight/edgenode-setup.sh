@@ -3,7 +3,7 @@
 
 set -x
 
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.3.3-azure/infoworks-2.3.3-azure.tar.gz
+export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.4.2-azure/infoworks-2.4.2-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
