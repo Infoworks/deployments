@@ -134,7 +134,14 @@ EOF1234
         echo "touch $configured_status_file"
         touch $configured_status_file
     fi
-
+    
+    prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
+    if [ $prefix == "adl:" ]; then
+        hdfs_prefix=adl:
+    else
+        hdfs_prefix=wasb:
+    fi
+    
     echo "Setting custom properties"
     k1=$(source /opt/infoworks/bin/env.sh; /opt/infoworks/apricot-meteor/infoworks_python/infoworks/bin/infoworks_security.sh -encrypt -p "$k1")
     k2=$(source /opt/infoworks/bin/env.sh; /opt/infoworks/apricot-meteor/infoworks_python/infoworks/bin/infoworks_security.sh -encrypt -p "$k2")
@@ -144,7 +151,7 @@ EOF1234
     echo  "#iw cdw overrides" >> /opt/infoworks/conf/conf.properties
     echo  "modified_time_as_cksum=true" >> /opt/infoworks/conf/conf.properties
     echo  "storage_format=orc" >> /opt/infoworks/conf/conf.properties
-    echo  "iw_hdfs_prefix=wasb://" >> /opt/infoworks/conf/conf.properties
+    echo  "iw_hdfs_prefix=${hdfs_prefix}//" >> /opt/infoworks/conf/conf.properties
     echo  "cdc_start_time_place_holder=cdc_start_time" >> /opt/infoworks/conf/conf.properties
     echo  "cdc_end_time_place_holder=cdc_end_time" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties
@@ -157,7 +164,7 @@ EOF1234
     echo "" >> /opt/infoworks/conf/conf.properties    
     echo  "#time zone properties" >> /opt/infoworks/conf/conf.properties
     echo  "db_time_zone=$k4" >> /opt/infoworks/conf/conf.properties
-    echo  "iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties 
+    echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties 
     echo  "iw_platform=hdinsight" >> /opt/infoworks/conf/conf.properties
     
     if [ "$?" != "0" ]; then
