@@ -128,7 +128,12 @@ _init(){
 		_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/sparkconf.tar.gz /sparkconf.tar.gz
 	fi
 	_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/webapps.tar.gz /webapps.tar.gz
-	
+	prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
+    	if [ $prefix == "adl:" ]; then
+        	hdfs_prefix=adl:
+    	else
+        	hdfs_prefix=wasb:
+    	fi
 	# Untar the Spark config tar.
 	mkdir /spark-config
 	_untar_file /sparkconf.tar.gz /spark-config/
@@ -139,7 +144,7 @@ _init(){
 	cp -r /spark-config/sparkconf/* /etc/spark2/$HDP_VERSION/0/
 	cp -r /spark-config/conf/* /etc/livy/conf/
 	cp -r /spark-config/zeppelinconf/* /etc/zeppelin/$HDP_VERSION/0/
-
+	sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
 	echo "[$(_timestamp)]: replace environment file"
 	#replace environment file
 	cp /spark-config/environment /etc/
