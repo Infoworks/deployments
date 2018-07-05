@@ -200,6 +200,8 @@ _init(){
 	sudo chown -R zeppelin:zeppelin /usr/hdp/$HDP_VERSION/zeppelin/webapps
 	sudo chown -R zeppelin:zeppelin /etc/zeppelin
 	echo "export HDP_VERSION=$HDP_VERSION" >> /etc/spark2/conf/spark-env.sh
+	unlink /etc/localtime
+	ln -s /usr/share/zoneinfo/UTC /etc/localtime
 	
 	#start the demons based on host
 	if [ $long_hostname == $active_namenode_hostname ]; then
