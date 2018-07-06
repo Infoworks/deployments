@@ -8,18 +8,6 @@
         "description": "The name of the Existing HDInsight cluster. The cluster name should match with existing HDInsight cluster."
       }
     },
-    "clusterLoginUserName": {
-      "type": "string",
-      "metadata": {
-        "description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
-      }
-    },
-    "clusterLoginPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The password must be at least 8 characters in length and must contain at least one digit, one non-alphanumeric character, one upper case letter and one lower case letter."
-      }
-    },
     "edgenodeVmSize": {
       "type": "string",
       "defaultValue": "Standard_D13_v2",
