@@ -29,7 +29,6 @@
     }
   },
   "variables": {
-    "scriptParameters": "[concat(parameters('clusterName'),' ',parameters('clusterLoginUserName'),' ',parameters('clusterLoginPassword'))]",
     "applicationName": "Infoworks-Cloud-Data-Warehouse"
   },
   "resources": [
@@ -50,13 +49,7 @@
                 }
               ]
             },
-            "installScriptActions": [{
-                "name": "[concat('emptynode','-' ,uniquestring(variables('applicationName')))]",
-                "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/edgenode-init.sh",
-                "roles": ["edgenode"],
-                "parameters": "[variables('scriptParameters')]"
-              }
-            ],
+            "installScriptActions": [],
             "uninstallScriptActions": [],
             "httpsEndpoints": [
               {
