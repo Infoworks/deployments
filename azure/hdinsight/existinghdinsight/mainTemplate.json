@@ -37,7 +37,12 @@
                 }
               ]
             },
-            "installScriptActions": [],
+            "installScriptActions": [{
+              "name": "[concat('emptynode','-' ,uniquestring(variables('applicationName')))]",
+              "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/dummy.sh",
+              "roles": ["edgenode"]
+              }
+            ],
             "uninstallScriptActions": [],
             "httpsEndpoints": [
               {
