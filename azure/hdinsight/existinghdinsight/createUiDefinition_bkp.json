@@ -410,6 +410,7 @@
             "VNetNewOrExisting": "[toLower(steps('cloudianNetworkConfig').VNet.newOrExisting)]",
             "VNetName": "[steps('cloudianNetworkConfig').VNet.name]",
             "VNetResourceGroup": "[steps('cloudianNetworkConfig').VNet.resourceGroup]",
+            "virtualNetworkExistingRGName": "[steps('networkSettings').vnetSpec.resourceGroup]",
             "VNetAddressPrefix": "[steps('cloudianNetworkConfig').VNet.addressPrefix]",
             "SubnetName": "[steps('cloudianNetworkConfig').VNet.subnets.cluster.name]",
             "SubnetAddressPrefix": "[steps('cloudianNetworkConfig').VNet.subnets.cluster.addressPrefix]",

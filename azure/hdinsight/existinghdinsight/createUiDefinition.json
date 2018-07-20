@@ -57,7 +57,6 @@
         "label": {
           "authenticationType": "Authentication type",
           "password": "Password",
-          "confirmPassword": "Confirm password",
           "sshPublicKey": "SSH public key"
         },
         "toolTip": {
@@ -69,7 +68,7 @@
           "required": true
         },
         "options": {
-          "hideConfirmation": false
+          "hideConfirmation": true
         },
         "osPlatform": "Linux"
       },
