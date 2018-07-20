@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "$schema": "http://json-schema.org/schema#",
   "id": "https://schema.management.azure.com/schemas/0.1.0-preview/CreateUIDefinition.MultiVm.json#",
   "type": "object",
@@ -21,6 +22,11 @@
         "0.1.0-preview"
       ]
     },
+=======
+    "handler": "Microsoft.Compute.MultiVm",
+
+    "version": "0.0.1-preview",
+>>>>>>> parent of 1dba9fa... Update createUiDefinition.json
     "parameters": {
         "basics": [{
                 "name": "adminUsername",
