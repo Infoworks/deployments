@@ -400,6 +400,7 @@
             }
         ],
         "outputs": {
+            "Location": "[location()]",
             "ClusterNamePrefix": "[steps('cloudianClusterConfig').ClusterName]",
             "VmCount": "[int(steps('cloudianClusterConfig').VmCount)]",
             "VmSize": "[steps('cloudianClusterConfig').VmSize]",
@@ -408,6 +409,7 @@
             "AdminCredential": "[coalesce(basics('adminCredentials').password,basics('adminCredentials').sshPublicKey)]",
             "VNetNewOrExisting": "[toLower(steps('cloudianNetworkConfig').VNet.newOrExisting)]",
             "VNetName": "[steps('cloudianNetworkConfig').VNet.name]",
+            "VNetResourceGroup": "[steps('cloudianNetworkConfig').VNet.resourceGroup]",
             "VNetAddressPrefix": "[steps('cloudianNetworkConfig').VNet.addressPrefix]",
             "SubnetName": "[steps('cloudianNetworkConfig').VNet.subnets.cluster.name]",
             "SubnetAddressPrefix": "[steps('cloudianNetworkConfig').VNet.subnets.cluster.addressPrefix]",
