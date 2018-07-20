@@ -36,6 +36,17 @@
                 "osPlatform": "Linux"
             }
         ],
+        "createDefinition": {
+        "createBlade": {
+            "name": "[bladeName]",
+            "extension": "[extension]"
+        },
+        "startboardPart": {
+            "name": "[partName]",
+            "extension": "[extension]"
+        },
+        "startboardPartKeyId": "id"
+    },
         "steps": [{
                 "name": "cloudianClusterConfig",
                 "label": "Cloudian Cluster Settings",
