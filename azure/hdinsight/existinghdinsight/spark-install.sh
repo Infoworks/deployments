@@ -137,13 +137,12 @@ _init(){
 	# Untar the Spark config tar.
 	mkdir /spark-config
 	_untar_file /sparkconf.tar.gz /spark-config/
-	_untar_file /webapps.tar.gz /usr/hdp/$HDP_VERSION/zeppelin/
+	
 	
 	echo "[$(_timestamp)]: coping conf folder to spark2"
 	#replace default config of spark in cluster
 	cp -r /spark-config/sparkconf/* /etc/spark2/$HDP_VERSION/0/
 	cp -r /spark-config/conf/* /etc/livy/conf/
-	cp -r /spark-config/zeppelinconf/* /etc/zeppelin/$HDP_VERSION/0/
 	sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
 	echo "[$(_timestamp)]: replace environment file"
 	#replace environment file
@@ -156,7 +155,7 @@ _init(){
 	mkdir /var/run/spark2
 	mkdir /var/log/livy2
 	mkdir /var/run/livy2
-	mkdir /var/run/zeppelin
+	
 	
 	echo "[$(_timestamp)]: changing permission of folders"
 	#change permission
@@ -168,7 +167,7 @@ _init(){
 	chown livy:hadoop /var/log/livy2
 	chmod 775 /var/log/livy2
 	chmod 777 /var/run/livy2
-	chown zeppelin:hadoop /var/run/zeppelin
+	
 	
 	echo "[$(_timestamp)]: replacing placeholders in conf files"
 	#update the master hostname in configuration files
@@ -186,9 +185,17 @@ _init(){
 
 	sed -i 's|{{zookeeper-hostnames}}|'"${zookeeper_hostnames_string}"'|g' /etc/livy/conf/livy.conf
 	if [ ${HDP_VERSION} != "2.5.6.3-5" ]; then
+		_untar_file /webapps.tar.gz /usr/hdp/$HDP_VERSION/zeppelin/
+		cp -r /spark-config/zeppelinconf/* /etc/zeppelin/$HDP_VERSION/0/
+		mkdir /var/run/zeppelin
+		chown zeppelin:hadoop /var/run/zeppelin
 		sed -i 's|{{namenode-hostnames}}|'"${active_namenode_hostname}"'|g' /etc/zeppelin/$HDP_VERSION/0/interpreter.json
 		sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"'|g' /etc/zeppelin/$HDP_VERSION/0/interpreter.json
 		sed -i 's|{{zookeeper-hostnames}}|'"${zookeeper_hostnames_string}"'|g' /etc/zeppelin/$HDP_VERSION/0/interpreter.json
+		sudo chown -R zeppelin:zeppelin /usr/hdp/$HDP_VERSION/zeppelin/webapps
+		sudo chown -R zeppelin:zeppelin /etc/zeppelin
+		#Start Zeppelin
+		sudo -u zeppelin /usr/hdp/current/zeppelin-server/bin/zeppelin-daemon.sh start &
 	fi
 
 	long_hostname=`hostname -f`
@@ -202,8 +209,6 @@ _init(){
 	chown -R spark: /etc/spark2/$HDP_VERSION/0/*
 	chown -R hive: /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
 	sudo chown livy: /etc/livy/conf/*
-	sudo chown -R zeppelin:zeppelin /usr/hdp/$HDP_VERSION/zeppelin/webapps
-	sudo chown -R zeppelin:zeppelin /etc/zeppelin
 	echo "export HDP_VERSION=$HDP_VERSION" >> /etc/spark2/conf/spark-env.sh
 	unlink /etc/localtime
 	ln -s /usr/share/zoneinfo/UTC /etc/localtime
@@ -213,8 +218,6 @@ _init(){
 		echo "[$(_timestamp)]: in active namenode"
 		echo "[$(_timestamp)]: starting livy server"
 		eval sudo -u livy /usr/hdp/$HDP_VERSION/livy/bin/livy-server start &
-		#Start Zeppelin
-		sudo -u zeppelin /usr/hdp/current/zeppelin-server/bin/zeppelin-daemon.sh start &
 		cd /usr/hdp/current/spark2-client
 		echo "[$(_timestamp)]: starting history server"
 		eval sudo -u spark ./sbin/start-history-server.sh
