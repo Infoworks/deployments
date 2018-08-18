@@ -3,7 +3,7 @@
 
 set -x
 
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.4.2-azure/infoworks-2.4.2-azure.tar.gz
+export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.5.0-azure/infoworks-2.5.0-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
@@ -174,10 +174,6 @@ EOF1234
     sleep 4
     source ${iw_home}/bin/env.sh
     su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
-    sleep 2
-    pushd /opt/infoworks/apricot-meteor/scripts
-    su -c "./iw_migration.sh" -s /bin/bash $username
-    popd
 }
 
 _delete_tar(){
