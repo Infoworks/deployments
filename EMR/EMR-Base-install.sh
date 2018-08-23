@@ -135,9 +135,10 @@ sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hive/conf/hive-site.xml
 
 sudo -u hdfs hdfs dfs -mkdir /user/${username}
 sudo -u hdfs hdfs dfs -chown -R ${username}:${username} /user/${username}
-
-##RUnning Infoworks
-eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 wget https://raw.githubusercontent.com/Infoworks/deployments/master/EMR/message.sh
 cat message.sh >> /etc/profile.d/motd.sh
 rm -rf message.sh
+
+##RUnning Infoworks
+eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+
