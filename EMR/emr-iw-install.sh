@@ -99,7 +99,7 @@ EOF1234
     sleep 4
     source ${iw_home}/bin/env.sh
     su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
-    sed -i -e "s/{{ZOOKEEPER_HOSTNAME}}/${Masternode}/g" $iw_home/cube-engine/conf/kylin_job_conf.xml
+    sed -i -e "s/{{ZOOKEEPER_HOST}}/${Masternode}/g" $iw_home/cube-engine/conf/kylin_job_conf.xml
 }
 _delete_tar(){
     if [ -f /opt/infoworks-*.tar.gz ]
