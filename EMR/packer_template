@@ -1,0 +1,20 @@
+{
+        "builders": [
+                {
+                        "type": "amazon-ebs",
+                        "region": "us-east-1",
+                        "source_ami": "ami-096826d39420ba9fe",
+                        "instance_type": "t2.micro",
+                        "subnet_id": "subnet-6a65b633",
+                        "ssh_username": "ec2-user",
+                        "ami_name": "IW_EMR_5.16.0-{{isotime | clean_ami_name}}",
+                        "ami_description": "Infoworks EdgeNode for EMR 5.16.0"
+                }
+        ],
+        "provisioners": [
+                {
+                        "type": "shell",
+                        "script": "emr-packer-script.sh"
+                }
+        ]
+}
