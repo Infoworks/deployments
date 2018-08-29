@@ -1,0 +1,40 @@
+{
+        "variables": {
+                "user_name": "infoworks"
+        },
+        "builders": [
+                {
+                        "type": "googlecompute",
+                        "project_id": "iw-cl-dev",
+                        "machine_type": "n1-standard-1",
+                        "source_image": "debian-9-stretch-v20180820",
+                        "region": "us-east1",
+                        "zone": "us-east1-b",
+                        "image_description": "Custom Image for IW Debian",
+                        "image_name": "iw-debian9",
+                        "image_family": "debian-9",
+                        "disk_size": "15",
+                        "ssh_username": "{{user `user_name`}}"
+                }
+        ],
+        "provisioners": [
+                {
+                        "type": "file",
+                        "source": "copytodest.tar.gz",
+                        "destination": "/tmp/copytodest.tar.gz"
+                },
+                {
+                        "type": "shell",
+                        "script": "image_init.sh"
+                },
+                {
+                        "type": "shell",
+                        "inline": [
+                                "echo 'Configuring Package'",
+                                "sudo tar xzf /tmp/copytodest.tar.gz -C /opt",
+                                "sudo chown -R {{user `user_name`}}:{{user `user_name`}} /opt/infoworks",
+                                "sudo rm -rf /tmp/copytodest.tar.gz"
+                        ]
+                }
+        ]
+}
