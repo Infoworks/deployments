@@ -131,8 +131,6 @@ sed -i -e "s/{{REALM}}/${Realm}/g" /etc/krb5.conf
 echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc ${username}@${Realm}"
 kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/${username}.keytab ${username}@${Realm}"
 chmod 0400 /etc/${username}.keytab
-sudo -u hdfs hdfs dfs -mkdir /user/${username}
-sudo -u hdfs hdfs dfs -chown -R ${username}:${username} /user/${username}
 
 
 ##Running Infoworks
