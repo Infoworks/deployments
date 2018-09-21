@@ -131,11 +131,9 @@ sed -i -e "s/{{REALM}}/${Realm}/g" /etc/krb5.conf
 echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc ${username}@${Realm}"
 kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/${username}.keytab ${username}@${Realm}"
 chmod 0400 /etc/${username}.keytab
-chown ${username}:${username} /etc/${username}.keytab
 sudo -u hdfs hdfs dfs -mkdir /user/${username}
 sudo -u hdfs hdfs dfs -chown -R ${username}:${username} /user/${username}
-kinit -k -t /etc/${username}.keytab ${username}@${Realm}
 
 
 ##Running Infoworks
-eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+eval _create_user && chown ${username}:${username} /etc/${username}.keytab && kinit -k -t /etc/${username}.keytab ${username}@${Realm} && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
