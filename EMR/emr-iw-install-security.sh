@@ -2,9 +2,9 @@
 
 export Masternode=$1
 export IW_VERSION=$2
-export Domain=$3
-export Realm=$4
-export Kpass=$5
+export Realm=$3
+export Kpass=$4
+export Domain=$(hostname -d)
 export principal=kadmin/admin
 export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/${IW_VERSION}/infoworks-${IW_VERSION}.tar.gz
 export app_name=infoworks
