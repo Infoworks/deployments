@@ -4,7 +4,8 @@ export Masternode=$1
 export IW_VERSION=$2
 export Domain=$3
 export Realm=$4
-
+export Kpass=$5
+export principal=kadmin/admin
 export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/${IW_VERSION}/infoworks-${IW_VERSION}.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
@@ -127,8 +128,13 @@ sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/zookeeper/conf/zoo.cfg
 sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/krb5.conf
 sed -i -e "s/{{DOMAIN}}/${Domain}/g" /etc/krb5.conf
 sed -i -e "s/{{REALM}}/${Realm}/g" /etc/krb5.conf
+echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc ${username}@${Realm}"
+kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/${username}.keytab ${username}@${Realm}"
+chmod 0400 /etc/${username}.keytab
+chown ${username}:${username} /etc/${username}.keytab
 sudo -u hdfs hdfs dfs -mkdir /user/${username}
 sudo -u hdfs hdfs dfs -chown -R ${username}:${username} /user/${username}
+kinit -k -t /etc/${username}.keytab ${username}@${Realm}
 
 
 ##Running Infoworks
