@@ -76,7 +76,7 @@ _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
 su -c "$iw_home/bin/start.sh all" $username <<EOF1234
-
+/usr/lib
 ${Masternode}
 
 ${Masternode}
