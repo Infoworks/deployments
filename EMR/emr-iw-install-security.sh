@@ -134,4 +134,4 @@ chmod 0400 /etc/${username}.keytab
 
 
 ##Running Infoworks
-eval _create_user && chown ${username}:${username} /etc/${username}.keytab && kinit -k -t /etc/${username}.keytab ${username}@${Realm} && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+eval _create_user && chown ${username}:${username} /etc/${username}.keytab && su -c "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
