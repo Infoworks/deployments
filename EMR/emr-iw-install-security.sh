@@ -78,8 +78,8 @@ _download_app(){
 _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
-su -c "$iw_home/bin/start.sh all" $username <<EOF1234
-
+su -c "$iw_home/bin/start.sh all" $username <<EOF12345
+/usr/lib
 ${Masternode}
 
 ${Masternode}
@@ -89,7 +89,7 @@ ${Masternode}
 ${Masternode}
 /usr/lib/spark
 
-EOF1234
+EOF12345
     echo "Checking for configurations status"
     if [ ! -f $configured_status_file ]; then
         echo "touch $configured_status_file"
