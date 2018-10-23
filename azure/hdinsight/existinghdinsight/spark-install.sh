@@ -1,5 +1,5 @@
 #!/bin/bash
-
+exec &> /var/log/spark_install.log
 _download_file()
 {
     srcurl=$1;
@@ -91,11 +91,11 @@ _list_hostnames(){
 	curl -u ${ambari_admin}:${ambari_pass} -k https://${cluster_name}.azurehdinsight.net/api/v1/clusters/${cluster_name}/hosts/ > cluster_hostnames.log
 	cat cluster_hostnames.log | grep host_name  | awk '{print $3}' | sed "s/\"//g" > cluster_hostnames.txt
 
-	while read line; do 
+	while read line; do
 		echo $line
-		if [[ $line == zk* ]]; then   
+		if [[ $line == zk* ]]; then
 	    	zookeeper_hostnames+=($line)
-	    fi  
+	    fi
 	done < cluster_hostnames.txt
 
 }
@@ -112,20 +112,26 @@ _init(){
 
 	#Determine Hortonworks Data Platform version
 	HDP_VERSION=`ls /usr/hdp/ -I current`
-	
+
 	echo "[$(_timestamp)]: finding namenode hostnames"
 	#get active namenode of cluster
 	_get_namenode_hostname active_namenode_hostname `hostname -f` "active"
 	_get_namenode_hostname secondary_namenode_hostname `hostname -f` "standby"
-	
-	#download livy package 
+
+	#download livy package
 	apt-get install livy-$HDP_VERSION --allow-unauthenticated
-	
+	security=$(grep -A 1 'acl.enable' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | cut -f 2 -d">" | cut -f 1 -d"<")
 	#download the spark config tar file
 	if [ ${HDP_VERSION} == "2.5.6.3-5" ]; then
 		_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/sparkconf.tar.gz /sparkconf.tar.gz
 	else
-		_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/sparkconf.tar.gz /sparkconf.tar.gz
+    if [ ${security} == "false" ]; then
+		    _download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/sparkconf_unsecured.tar.gz /sparkconf.tar.gz
+    elif [ ${security} == "true" ]; then
+		    _download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/sparkconf_secured.tar.gz /sparkconf.tar.gz
+    else
+        echo "not able to find security type"
+    fi
 	fi
 	_download_file https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/utility-infoworks/webapps.tar.gz /webapps.tar.gz
 	prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
@@ -137,26 +143,25 @@ _init(){
 	# Untar the Spark config tar.
 	mkdir /spark-config
 	_untar_file /sparkconf.tar.gz /spark-config/
-	
-	
+
+
 	echo "[$(_timestamp)]: coping conf folder to spark2"
 	#replace default config of spark in cluster
 	cp -r /spark-config/sparkconf/* /etc/spark2/$HDP_VERSION/0/
 	cp -r /spark-config/conf/* /etc/livy/conf/
-	sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
 	echo "[$(_timestamp)]: replace environment file"
 	#replace environment file
 	cp /spark-config/environment /etc/
 	source /etc/environment
-	
+
 	echo "[$(_timestamp)]: create few spark folders"
 	#create config directories
 	mkdir /var/log/spark2
 	mkdir /var/run/spark2
 	mkdir /var/log/livy2
 	mkdir /var/run/livy2
-	
-	
+
+
 	echo "[$(_timestamp)]: changing permission of folders"
 	#change permission
 	chmod 775 /var/log/spark2
@@ -167,13 +172,39 @@ _init(){
 	chown livy:hadoop /var/log/livy2
 	chmod 775 /var/log/livy2
 	chmod 777 /var/run/livy2
-	
-	
+
+
 	echo "[$(_timestamp)]: replacing placeholders in conf files"
 	#update the master hostname in configuration files
-	sed -i 's|{{namenode-hostnames}}|thrift:\/\/'"${active_namenode_hostname}"':9083,thrift:\/\/'"${secondary_namenode_hostname}"':9083|g' /etc/spark2/$HDP_VERSION/0/hive-site.xml
-	sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"':18080|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
-	
+  if [ ${security} == "false" ]; then
+    sed -i 's|{{namenode-hostnames}}|thrift:\/\/'"${active_namenode_hostname}"':9083,thrift:\/\/'"${secondary_namenode_hostname}"':9083|g' /etc/spark2/$HDP_VERSION/0/hive-site.xml
+	  sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"':18080|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    sed -i 's|{{HDP_VERSION}}|'"${HDP_VERSION}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
+    sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
+    sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+  elif [[ ${security} == "true" ]]; then
+    #statements
+    Admin_user=$(grep -A 1 'admin.acl' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | awk -F',' '{print $1}' | cut -f2 -d">")
+    Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
+    sed -i 's|{{HDP_VERSION}}|'"${HDP_VERSION}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
+    sed -i 's|{{ACTIVE_NN}|'"${active_namenode_hostname}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
+    sed -i 's|{{DOMAIN_NAME}}|'"${Domain_name}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
+    sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
+    sed -i 's|{{ZOOKEEPER_HOSTS}}|'"${zookeeper_hostnames_string}"'|g' /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
+    sed -i 's|{{ACTIVE_NN}|'"${active_namenode_hostname}"'|g' /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
+    sed -i 's|{{DOMAIN_NAME}}|'"${Domain_name}"'|g' /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
+    sed -i 's|{{DOMAIN_NAME}}|'"${Domain_name}"'|g' /etc/spark2/$HDP_VERSION/0/hive-site.xml
+    sed -i 's|{{namenode-hostnames}}|thrift:\/\/'"${active_namenode_hostname}"':9083,thrift:\/\/'"${secondary_namenode_hostname}"':9083|g' /etc/spark2/$HDP_VERSION/0/hive-site.xml
+    sed -i 's|{{ADMIN_USER}}|'"${Admin_user}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    sed -i 's|{{ZOOKEEPER_HOSTS}}|'"${zookeeper_hostnames_string}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    sed -i 's|{{CLUSTER_NAME}}|'"${cluster_name}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    sed -i 's|{{DOMAIN_NAME}}|'"${Domain_name}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"':18080|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+  else
+    echo "Not able find security cluster type"
+  fi
+
 	zookeeper_hostnames_string=""
 	for i in "${!zookeeper_hostnames[@]}"
 		do
@@ -199,12 +230,12 @@ _init(){
 	fi
 
 	long_hostname=`hostname -f`
-	
+
 	#remove all downloaded packages
 	rm -rf /spark-config
 	rm -rf /sparkconf22.tar.gz
 	rm -rf /webapps.tar.gz
-	
+
 	chown -R root: /etc/spark2/$HDP_VERSION/0/
 	chown -R spark: /etc/spark2/$HDP_VERSION/0/*
 	chown -R hive: /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
@@ -212,7 +243,7 @@ _init(){
 	echo "export HDP_VERSION=$HDP_VERSION" >> /etc/spark2/conf/spark-env.sh
 	unlink /etc/localtime
 	ln -s /usr/share/zoneinfo/UTC /etc/localtime
-	
+
 	#start the demons based on host
 	if [ $long_hostname == $active_namenode_hostname ]; then
 		echo "[$(_timestamp)]: in active namenode"
@@ -223,8 +254,8 @@ _init(){
 		eval sudo -u spark ./sbin/start-history-server.sh
 		echo "[$(_timestamp)]: starting thrift server"
 		eval sudo -u hive ./sbin/start-thriftserver.sh --properties-file conf/spark-thrift-sparkconf.conf
-		
-		
+
+
 	elif [ $long_hostname == $secondary_namenode_hostname ]; then
 		cd /usr/hdp/current/spark2-client
 		echo "[$(_timestamp)]: starting thrift server"
