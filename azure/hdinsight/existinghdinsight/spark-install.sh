@@ -183,6 +183,11 @@ _init(){
     sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
     sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
   elif [[ ${security} == "true" ]]; then
+    if [ -z ${active_namenode_hostname} ] && [ -z ${secondary_namenode_hostname} ]; then
+      host=$(hostname -f | cut -f2 -d'-')
+      active_namenode_hostname=hn0-$host
+      secondary_namenode_hostname=hn1-$host
+    fi
     #statements
     Admin_user=$(grep -A 1 'admin.acl' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | awk -F',' '{print $1}' | cut -f2 -d">")
     Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
