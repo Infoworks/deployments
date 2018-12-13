@@ -3,26 +3,19 @@
 
 set -x
 
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.6.0-azure/infoworks-2.6.0-azure.tar.gz
+export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.5.0-azure/infoworks-2.5.0-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
+export username=infoworks-user
+export password=infoworks-user
+
 export k1=$1
 export k2=$2
 export k3=$3
 export k4=$(date +"%Z")
-export HDP_VERSION=`ls /usr/hdp/ -I current`
-export security=$(grep -A 1 'acl.enable' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | cut -f 2 -d">" | cut -f 1 -d"<")
-export Admin_user=$(grep -A 1 'admin.acl' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | awk -F',' '{print $1}' | cut -f2 -d">")
-export Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
-if [ ${security} == "false" ]; then
-  export username=infoworks-user
-  export password=infoworks-user
-elif [ ${security} == "true" ]; then
-  export username="$Admin_user"
-  export password="$k3"
-fi
 
+printf "got parameters k1=%s k2=%s k3=%s k4=%s" "$k1" "$k2" "$k3" "$k4"
 
 #create system user with sudo permission
 _create_user(){
@@ -40,7 +33,7 @@ _create_user(){
                 [ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
             fi
             usermod -aG sudo $username || echo "Could not give sudo permission to $username"
-
+            
         else
             echo "Only root may add a user to the system"
             return 1
@@ -114,41 +107,8 @@ _get_namenode_hostname(){
 
         fi
     done
-    if [ ${security} == "true" ]; then
-      if [ -z ${active_namenode_hostname} ] && [ -z ${secondary_namenode_hostname} ]; then
-        host=$(hostname -f | cut -f2 -d'-')
-        namenode_hostname=hn0-$host
-      fi
-    fi
 }
 export -f _get_namenode_hostname
-
-_ticket_automation(){
-  user=$username
-  pass=$password
-  base_home_dir=$(hostname -d | tr '[:lower:]' '[:upper:]' | cut -f1 -d '.')
-su -c "/usr/bin/ktutil" $user <<EOF
-add_entry -password -p $user -k 1 -e des3-cbc-sha1-kd
-$pass
-add_entry -password -p $user -k 1 -e arcfour-hmac-md5
-$pass
-add_entry -password -p $user -k 1 -e des-hmac-sha1
-$pass
-add_entry -password -p $user -k 1 -e des-cbc-md5
-$pass
-add_entry -password -p $user -k 1 -e des-cbc-md4
-$pass
-wkt /home/$base_home_dir/$user/$user.keytab
-EOF
-sleep 2
-su -c "/usr/bin/kinit $user@$Domain_name -k -t /home/$base_home_dir/$user/$user.keytab" -s /bin/bash $user
-stat=$?
-if [ $stats != 0 ]; then
-        echo "Ticket not able to initialize, Start Infoworks Services manually."
-        exit 1
-fi
-}
-
 _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
@@ -174,14 +134,14 @@ EOF1234
         echo "touch $configured_status_file"
         touch $configured_status_file
     fi
-
+    
     prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
     if [ $prefix == "adl:" ]; then
         hdfs_prefix=adl:
     else
         hdfs_prefix=wasb:
     fi
-
+    
     echo "Setting custom properties"
     k1=$(source /opt/infoworks/bin/env.sh; /opt/infoworks/apricot-meteor/infoworks_python/infoworks/bin/infoworks_security.sh -encrypt -p "$k1")
     k2=$(source /opt/infoworks/bin/env.sh; /opt/infoworks/apricot-meteor/infoworks_python/infoworks/bin/infoworks_security.sh -encrypt -p "$k2")
@@ -195,18 +155,18 @@ EOF1234
     echo  "cdc_start_time_place_holder=cdc_start_time" >> /opt/infoworks/conf/conf.properties
     echo  "cdc_end_time_place_holder=cdc_end_time" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties
-    echo "" >> /opt/infoworks/conf/conf.properties
+    echo "" >> /opt/infoworks/conf/conf.properties    
     echo  "#iw cdw properties" >> /opt/infoworks/conf/conf.properties
     echo  "iw_cdw_k1=$k1" >> /opt/infoworks/conf/conf.properties
     echo  "iw_cdw_k2=$k2" >> /opt/infoworks/conf/conf.properties
     echo  "iw_cdw_k3=$k3" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties
-    echo "" >> /opt/infoworks/conf/conf.properties
+    echo "" >> /opt/infoworks/conf/conf.properties    
     echo  "#time zone properties" >> /opt/infoworks/conf/conf.properties
     echo  "db_time_zone=$k4" >> /opt/infoworks/conf/conf.properties
-    echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties
+    echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties 
     echo  "iw_platform=hdinsight" >> /opt/infoworks/conf/conf.properties
-
+    
     if [ "$?" != "0" ]; then
         return 1;
     fi
@@ -219,17 +179,12 @@ EOF1234
 _delete_tar(){
     if [ -f /opt/infoworks-*.tar.gz ]
     then
-        rm -rf /opt/infoworks-*.tar.gz
+        rm -rf /opt/infoworks-*.tar.gz 
     fi
 }
 #echo "HDP_VERSION=`hdp-select | grep spark-client | cut -f 3 -d- | tr -d ' '`" >> /etc/spark2/conf/spark-env.sh
 #install expect tool for interactive mode to input paramenters
 apt-get --assume-yes install expect
-[ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
-if [ ${security} == "false" ]; then
-  eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
-elif [ ${security} == "true" ]; then
-  eval _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
-else
-  echo "Not able figure out security type of cluster"
-fi
+[ $? != "0" ] && echo "Could not install 'expect' plugin" && exit 
+
+eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
