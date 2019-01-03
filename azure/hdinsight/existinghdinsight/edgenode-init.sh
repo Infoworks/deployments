@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#p1 = ClusterName; p2 = Ambari username; p3 = Ambari Login Password; p4 = For Security Enabled cluster LDAP user password
 export p1=$1
 export p2=$2
 export p3=$3
@@ -41,7 +41,7 @@ _init(){
 	sed -i 's/\r//g' /tmp/edgeNodeSetup.sh
 
 	if [ $(_is_edgenode) == 1 ]; then
-		eval /bin/bash /tmp/edgeNodeSetup.sh $p1 $p2 $p3
+		eval /bin/bash /tmp/edgeNodeSetup.sh $p1 $p2 $p3 $p4
 	fi
 	
 	rm -rf /tmp/edgeNodeSetup.sh
