@@ -1,7 +1,5 @@
-#!/bin/bash
+#!/bin/bash -e
 
-
-set -x
 
 export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.6.0-azure/infoworks-2.6.0-azure.tar.gz
 export app_name=infoworks
