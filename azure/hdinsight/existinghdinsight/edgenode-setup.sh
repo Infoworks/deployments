@@ -141,10 +141,13 @@ wkt /home/$base_home_dir/$user/$user.keytab
 EOF
 sleep 2
 su -c "/usr/bin/kinit $user@$Domain_name -k -t /home/$base_home_dir/$user/$user.keytab" -s /bin/bash $user
-stat=$?
-if [[ $stats != 0 ]]; then
-        echo "Ticket not able to initialize, Start Infoworks Services manually."
-        exit 1
+sleep 2
+kticket=`su -c "klist | grep $Domain_name" -s /bin/bash $user`
+if [ -n "$kticket" ]; then
+  echo "Kticket Initialized, proceeding further"
+else
+  echo "Ticket not able to initialize, Start Infoworks Services manually."
+  exit 1
 fi
 }
 
