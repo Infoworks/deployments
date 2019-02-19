@@ -104,7 +104,7 @@ _get_namenode_hostname(){
     for namenode_id in `echo $namenode_id_string | tr "," " "`
     do
         status=`hdfs haadmin -getServiceState $namenode_id`
-        if [ $status = "active" ]; then
+        if [[ $status = "active" ]]; then
             active_namenode=`hdfs getconf -confKey dfs.namenode.https-address.$hadoop_cluster_name.$namenode_id`
             IFS=':' read -ra $return_var<<< "$active_namenode"
             if [ "${!return_var}" == "" ]; then
@@ -142,7 +142,7 @@ EOF
 sleep 2
 su -c "/usr/bin/kinit $user@$Domain_name -k -t /home/$base_home_dir/$user/$user.keytab" -s /bin/bash $user
 stat=$?
-if [ $stats != 0 ]; then
+if [[ $stats != 0 ]]; then
         echo "Ticket not able to initialize, Start Infoworks Services manually."
         exit 1
 fi
@@ -175,7 +175,7 @@ EOF1234
     fi
 
     prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
-    if [ $prefix == "adl:" ]; then
+    if [[ $prefix == "adl:" ]]; then
         hdfs_prefix=adl:
     else
         hdfs_prefix=wasb:
