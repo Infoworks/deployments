@@ -1,0 +1,273 @@
+description:
+  author:
+    title: 'Infoworks.io, Inc.'
+    descriptionHtml: >-
+      Over 80% of big data projects fail to deploy to production because
+      implementation is a complex and resource intensive effort. Infoworks fully
+      automates the creation and operation of data workflows from source to
+      consumption, helping customers implement to production in a few days.
+      www.infoworks.io
+    shortDescription: >-
+      Over 80% of big data projects fail to deploy to production because
+      implementation is a complex and resource intensive effort. Infoworks fully
+      automates the creation and operation of data workflows from source to
+      consumption, helping customers implement to production in a few days.
+      www.infoworks.io
+  descriptionHtml: >-
+    Infoworks software eliminates Big Data complexity through automation.<br>
+
+
+
+     <br><p>
+
+
+
+    Infoworks automates the creation and operation of big data workflows from
+    source to consumption, both on premise and in the cloud. We help our
+    customers successfully implement to production in days or weeks using 5x
+    fewer people.
+
+    </p>
+
+    <ul>
+
+    <li>Automates delivery of data to BI and advanced analytics</li>
+
+    <li>Automates migration of data and workloads from legacy Data Warehouse
+    systems to big data platforms</li>
+
+    <li>Automates orchestration and management of data pipelines in
+    production</li></ul><br>
+
+    <p>
+
+    <b>Infoworks Solutions</b>
+
+    </p>
+
+    <ul>
+
+    <li>
+
+    <b>Automated Data Workflows for BI & Analytics </b><br>Increase agility with
+    automated data workflows for Business Intelligence and Advanced Analytics.
+    Rapidly meet changing data & analytics requirements, without needing skilled
+    resources</li><br>
+
+    <li>
+
+    <b>
+
+    Automated Data Warehouse Offload & Migration</b><br> Automatically convert
+    old data warehouse environments to big data and the cloud in days. Infoworks
+    converts and optimizes your old transformation logic and workflows
+    …automatically. We then provide an optimized operational environment to
+    track & manage production data pipelines.</li><br>
+
+    <li><b>
+
+    Automated Data Lake Creation & Management</b><br> Rapidly build your data
+    lake in days with zero coding, and easily handle incremental synchronization
+    performance, and governance. Build, synchronize and manage your data lake in
+    days, with no coding needed.</li>
+  logo: '@media/infoworks-autonomous-data-engine_store.png'
+  tagline: 'Any Source, Any Big Data Platform, Any Analytics'
+  title: Infoworks Autonomous Data Engine
+  url: 'http://www.infoworks.io'
+  version: 2.6.0
+  documentations:
+    - title: Getting Started Guide
+      url: 'http://docs.infoworks.io/cloud/gcp-getting-started-guide/'
+      description: >-
+        Getting started documentation for installing Infoworks Autonomous Data
+        Engine
+      destinations:
+        - DESTINATION_SOLUTION_DETAILS
+        - DESTINATION_POST_DEPLOY
+    - title: Product Documentation
+      url: 'http://docs.infoworks.io/version-2-6-0/'
+      destinations:
+        - DESTINATION_SOLUTION_DETAILS
+        - DESTINATION_POST_DEPLOY
+  support:
+    - title: Support
+      descriptionHtml: Infoworks comes with enhanced maintenance and support options
+      showSupportId: false
+      url: 'http://www.infoworks.io/contact/'
+  icon: '@media/infoworks-autonomous-data-engine_small.png'
+  softwareGroups:
+    - type: SOFTWARE_GROUP_OS
+      software:
+        - title: Debian 9
+    - software:
+        - title: DataProc
+          version: 1.2.22
+        - title: Metadata Server
+        - title: Infoworks ADE
+          version: 2.6.0
+input:
+  properties:
+    - name: zone
+      title: Zone
+    - name: network
+      title: Network name
+      section: NETWORKING
+    - name: subnetwork
+      title: Subnetwork name
+      section: NETWORKING
+    - name: dataproc_master_machineType
+      title: Master Machine Type
+      tooltip: >-
+        Machine types determine the specifications of your machines, such as the
+        amount of memory and virtual cores limits an Dataproc Master instances
+        will have. <a
+        href="https://cloud.google.com/compute/docs/machine-types">Learn
+        more</a>
+      section: DATAPROC_TIER
+    - name: dataproc_worker_machineType
+      title: Worker Machine Type
+      tooltip: >-
+        Machine types determine the specifications of your machines, such as the
+        amount of memory and virtual cores limits an Dataproc Worker instances
+        will have. <a
+        href="https://cloud.google.com/compute/docs/machine-types">Learn
+        more</a>
+      section: DATAPROC_TIER
+    - name: workerNodes
+      title: Dataproc Worker node count
+      tooltip: 'Number of Dataproc worker nodes in the cluster, it should be atleast 2'
+      validation: Choose a number greater than or equals to 2.
+      section: DATAPROC_TIER
+    - name: dataproc_master_bootDiskSizeGb
+      title: Master Primary disk size (GB)
+      tooltip: This is the size of your Dataproc Masters disk.
+      section: DATAPROC_TIER
+    - name: dataproc_worker_bootDiskSizeGb
+      title: Worker Primary disk size (GB)
+      tooltip: This is the size of your Dataproc Workers disk.
+      section: DATAPROC_TIER
+    - name: iw_machineType
+      title: Infoworks Node Machine type
+      tooltip: >-
+        The machine type determines the CPU and memory your Infoworks instance
+        will have. <a
+        href="https://cloud.google.com/compute/docs/machine-types">Learn
+        more</a>
+      section: INFOWORKS_TIER
+    - name: iw_bootDiskType
+      title: Infworks Node disk type
+      tooltip: This is the type of your Infoworks Node disk.
+      section: INFOWORKS_TIER
+    - name: iw_bootDiskSizeGb
+      title: Infoworks Node disk size (GB)
+      tooltip: This is the size of your Infoworks Node disk.
+      section: INFOWORKS_TIER
+    - name: servers_machineType
+      title: Metadata Server Machine type
+      tooltip: >-
+        The machine type determines the CPU and memory of your Metadata Server
+        instance. <a
+        href="https://cloud.google.com/compute/docs/machine-types">Learn
+        more</a>
+      section: METADB_TIER
+    - name: servers_bootDiskType
+      title: Metadata Server Boot disk type
+      tooltip: This is the type of metadata server boot disk.
+      section: METADB_TIER
+    - name: servers_bootDiskSizeGb
+      title: Metadata Server Boot disk size in GB
+      tooltip: This is the size of metadata server boot disk.
+      section: METADB_TIER
+    - name: servers_disk_data_type
+      title: Metadata Server Data disk type
+      tooltip: This is the type of metadata server data disk.
+      section: METADB_TIER
+    - name: servers_disk_data_sizeGb
+      title: Metadata Server Data disk size in GB
+      tooltip: >-
+        This is the size of metadata server data disk. Infoworks stores the
+        metadata in this volume.
+      section: METADB_TIER
+  sections:
+    - name: DATAPROC_TIER
+      title: Dataproc Settings
+    - name: INFOWORKS_TIER
+      title: Infoworks Node Settings
+    - name: METADB_TIER
+      title: Metadata Server Settings
+    - name: NETWORKING
+      title: Networking
+  boolean_groups:
+    - name: FIREWALL
+      title: Firewall
+      tooltip: >-
+        By default all incoming traffic from outside a network is blocked.
+        Select the type of network traffic you want to allow. <a
+        href="https://cloud.google.com/compute/docs/networking#firewalls">Learn
+        more</a>
+      subtext: >-
+        Add tags and firewall rules to allow specific network traffic from the
+        Internet
+runtime:
+  deployingMessage: Deployment can take several minutes to complete.
+  applicationTable:
+    rows:
+      - label: Instance
+        value: >-
+          <a href="{{ consoleUrl(outputs().infoworks_vmSelfLink) }}">{{
+          outputs().infoworks_vmName }}</a>
+      - label: Instance zone
+        value: '{{ properties().zone }}'
+  primaryButton:
+    label: SSH
+    type: TYPE_GCE_VM_SSH
+    action: '{{ outputs().infoworks_vmSelfLink }}'
+  secondaryButton:
+    label: Web Interface
+    type: TYPE_URL
+    action: 'http://{{ outputs().infoworks_ip }}'
+  suggestedActions:
+    - heading: Infoworks can be accessed using the following interfaces
+      description: 'Web Interface, Rest API & Cube Server'
+    - heading: Web Interface
+      description: >-
+        <a href="http://{{ outputs().infoworks_ip }}">Infoworks Web
+        Interface</a>
+    - heading: Rest API
+      description: >-
+        <a href="http://{{ outputs().infoworks_ip }}:2999">Infoworks Rest
+        API</a>
+    - heading: Cube Server
+      description: >-
+        <a href="http://{{ outputs().infoworks_ip }}:7005">Infoworks Cube
+        Server</a>
+    - heading: Request a license
+      description: This is a BYOL solution which requires a valid license to use
+    - heading: Accessing Infoworks ADE
+      description: >-
+        <a
+        href="http://docs.infoworks.io/cloud/gcp-getting-started-guide/#accessing_infoworks_ade">Learn
+        how to start using the web interface</a>
+    - heading: Manage License
+      description: >-
+        <a
+        href="http://docs.infoworks.io/cloud/gcp-getting-started-guide/#license_key">Learn
+        how to obtain and install a license key</a>
+    - heading: Configuration
+      description: >-
+        <a
+        href="http://docs.infoworks.io/cloud/gcp-getting-started-guide/#configuration">Learn
+        how to view Product Configuration</a>
+    - heading: Scale Cluster
+      description: >-
+        <a
+        href="http://docs.infoworks.io/cloud/gcp-getting-started-guide/#scaling_the_dataproc_cluster">Learn
+        how to scale the Dataproc cluster</a>
+    - heading: Infoworks Metadata Server Access
+      description: >-
+        <a
+        href="http://docs.infoworks.io/cloud/gcp-getting-started-guide/#metadata_server_access_credentials">Learn
+        how to connect to the storage layer of Infoworks Metadata Server</a>
+annotations:
+  autogenSpecType: MULTI_VM
+metadata_version: v1

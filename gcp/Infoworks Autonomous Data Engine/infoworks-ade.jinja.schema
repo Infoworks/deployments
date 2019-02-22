@@ -1,0 +1,142 @@
+imports:
+  - path: dataproc_tier.jinja
+  - path: metadb_tier.jinja
+  - path: infoworks_tier.jinja
+
+info:
+  version: '1.0'
+  title: Infoworks Autonomous Data Engine Template
+
+required:
+  - zone
+  - network
+  - dataproc_master_machineType
+  - dataproc_worker_machineType
+  - dataproc_master_bootDiskSizeGb
+  - dataproc_worker_bootDiskSizeGb
+  - workerNodes
+  - iw_machineType
+  - iw_bootDiskType
+  - iw_bootDiskSizeGb
+  - servers_machineType
+  - servers_bootDiskType
+  - servers_bootDiskSizeGb
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+  workerNodes:
+    type: integer
+    default: 5
+    minimum: 2
+  dataproc_master_machineType:
+    type: string
+    default: n1-highmem-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 4
+        minRamGb: 14.9990234375
+  dataproc_worker_machineType:
+    type: string
+    default: n1-standard-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 4
+        minRamGb: 14.9990234375
+  dataproc_master_bootDiskSizeGb:
+    type: integer
+    default: 200
+    minimum: 100
+  dataproc_worker_bootDiskSizeGb:
+    type: integer
+    default: 400
+    minimum: 100
+  iw_machineType:
+    type: string
+    default: n1-highmem-16
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 8
+        minRamGb: 51.9990234375
+  iw_bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  iw_bootDiskSizeGb:
+    type: integer
+    default: 200
+    minimum: 100
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: iw_bootDiskType
+  
+
+  servers_machineType:
+    type: string
+    default: n1-highmem-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 4
+        minRamGb: 25.9990234375
+  servers_bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  servers_bootDiskSizeGb:
+    type: integer
+    default: 50
+    minimum: 20
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: servers_bootDiskType
+  servers_disk_data_type:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  servers_disk_data_sizeGb:
+    type: integer
+    default: 300
+    minimum: 50
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: servers_disk_data_type
+
+
+
+outputs:
+  deployment:
+    type: string
+  project:
+    type: string
