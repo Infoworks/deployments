@@ -16,6 +16,8 @@ sudo -u hdfs hdfs dfs -chown -R infoworks:infoworks /user/infoworks
 /usr/hdp/current/spark2-client
 
 EOF1
+sleep 5
+./start.sh orchestrator
 else
 ./start.sh mongo all orchestrator
 fi
