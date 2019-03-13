@@ -1,0 +1,26 @@
+{
+        "variables": {
+                "user_name": "infoworks"
+        },
+        "builders": [
+                {
+                        "type": "googlecompute",
+                        "project_id": "infoworks-internal",
+                        "machine_type": "n1-standard-16",
+                        "source_image": "sandbox-hdp-infoworks",
+                        "region": "us-west2",
+                        "zone": "us-west2-a",
+                        "image_description": "Infoworks Sandbox HDP",
+                        "image_name": "infoworks-sandbox-264",
+                        "image_family": "centos-7",
+                        "disk_size": "30",
+                        "ssh_username": "{{user `user_name`}}"
+                }
+        ],
+        "provisioners": [
+                {
+                        "type": "shell",
+                        "script": "image_init.sh"
+                }
+        ]
+}
