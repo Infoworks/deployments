@@ -1,0 +1,59 @@
+
+resources:
+  - name: dataproc-tier
+    type: dataproc_tier.jinja
+    properties:
+      zone: {{ properties["zone"] }}
+      network: {{ properties["network"] }}
+      {% if properties.get("subnetwork") %}
+      subnetwork: {{ properties["subnetwork"] }}
+      {% endif %}
+      machineType: {{ properties["dataproc_master_machineType"] }}
+      wmachineType: {{ properties["dataproc_worker_machineType"] }}
+      bootDiskSizeGb: {{ properties["dataproc_master_bootDiskSizeGb"] }}
+      wbootDiskSizeGb: {{ properties["dataproc_worker_bootDiskSizeGb"] }}
+      workerNodes: {{ properties["workerNodes"] }}
+
+  - name: metadb-tier
+    type: metadb_tier.jinja
+    properties:
+      zone: {{ properties["zone"] }}
+      network: {{ properties["network"] }}
+      {% if properties.get("subnetwork") %}
+      subnetwork: {{ properties["subnetwork"] }}
+      {% endif %}
+      machineType: {{ properties["servers_machineType"] }}
+      bootDiskType: {{ properties["servers_bootDiskType"] }}
+      bootDiskSizeGb: {{ properties["servers_bootDiskSizeGb"] }}
+
+  - name: infoworks-tier
+    type: infoworks_tier.jinja
+    properties:
+      zone: {{ properties["zone"] }}
+      network: {{ properties["network"] }}
+      {% if properties.get("subnetwork") %}
+      subnetwork: {{ properties["subnetwork"] }}
+      {% endif %}
+      machineType: {{ properties["iw_machineType"] }}
+      bootDiskType: {{ properties["iw_bootDiskType"] }}
+      bootDiskSizeGb: {{ properties["iw_bootDiskSizeGb"] }}
+    metadata:
+      dependsOn:
+      - metadb-tier
+      - dataproc-tier
+  
+
+
+outputs:
+  - name: deployment
+    value: {{ deployment }}
+  - name: project
+    value: {{ project }}
+  - name: infoworks_vmId
+    value: $(ref.infoworks-tier.vmId)
+  - name: infoworks_ip
+    value: $(ref.{{ env['deployment'] }}-iw-e-0.networkInterfaces[0].accessConfigs[0].natIP)
+  - name: infoworks_vmName
+    value: $(ref.infoworks-tier.vmName)
+  - name: infoworks_vmSelfLink
+    value: $(ref.infoworks-tier.vmSelfLink)

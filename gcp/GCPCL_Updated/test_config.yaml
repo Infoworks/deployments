@@ -1,0 +1,6 @@
+imports:
+- path: infoworks-ade.jinja
+
+resources:
+- name: infoworks-ade
+  type: infoworks-ade.jinja

@@ -1,0 +1,50 @@
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set deployment = env["deployment"] %}
+{% set name = "%s-iw-tmpl" % env["name"] %}
+{% set instanceName = "%s-iw" % deployment %}
+{% set workerNodes = properties["workerNodes"] %}
+{% set zone = properties["zone"] %}
+{% set network = path_utils.networkPath(properties["network"]) %}
+{% set subnetwork = properties["subnetwork"] %}
+{% set machineType = properties["machineType"] %}
+{% set wmachineType = properties["wmachineType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
+{% set wbootDiskSizeGb = properties["wbootDiskSizeGb"] %}
+
+
+resources:
+- name: {{ name }}
+  type: dataproc.v1.cluster
+  properties:
+    clusterName: {{ instanceName }}
+    projectId: {{ env["project"] }}
+    region: global
+    config:
+      gceClusterConfig:
+        serviceAccountScopes:
+        - https://www.googleapis.com/auth/bigquery
+        - https://www.googleapis.com/auth/bigtable.admin.table
+        - https://www.googleapis.com/auth/bigtable.data
+        - https://www.googleapis.com/auth/cloud.useraccounts.readonly
+        - https://www.googleapis.com/auth/compute
+        - https://www.googleapis.com/auth/devstorage.full_control
+        - https://www.googleapis.com/auth/devstorage.read_write
+        - https://www.googleapis.com/auth/logging.write
+        zoneUri: {{ zone }}
+        subnetworkUri: {{ subnetwork }}
+      initializationActions:
+      - executableFile: gs://iw-store/gcpha.sh
+        executionTimeout: 600s
+      masterConfig:
+        diskConfig:
+          bootDiskSizeGb: {{ bootDiskSizeGb }}
+        machineTypeUri: {{ machineType }}
+        numInstances: 3
+      workerConfig:
+        diskConfig:
+          bootDiskSizeGb: {{ wbootDiskSizeGb }}
+        machineTypeUri: {{ wmachineType }}
+        numInstances: {{ workerNodes }}
+      softwareConfig:
+        imageVersion: 1.2.68-deb9
