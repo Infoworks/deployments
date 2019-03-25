@@ -14,10 +14,10 @@ export HDP_VERSION=`ls /usr/hdp/ -I current`
 export security=$(grep -A 1 'acl.enable' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | cut -f 2 -d">" | cut -f 1 -d"<")
 export Admin_user=$(grep -A 1 'admin.acl' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | awk -F',' '{print $1}' | cut -f2 -d">")
 export Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
-if [ ${security} == "false" ]; then
+if [[ ${security} == "false" ]]; then
   export username=infoworks-user
   export password=infoworks-user
-elif [ ${security} == "true" ]; then
+elif [[ ${security} == "true" ]]; then
   export username="$Admin_user"
   export password="$k4"
 fi
@@ -85,6 +85,35 @@ _download_app(){
     }
 }
 
+_ticket_automation(){
+  user=$username
+  pass=$password
+  export base_home_dir=$(hostname -d | tr '[:lower:]' '[:upper:]' | cut -f1 -d '.')
+su -c "/usr/bin/ktutil" $user <<EOF
+add_entry -password -p $user -k 1 -e des3-cbc-sha1-kd
+$pass
+add_entry -password -p $user -k 1 -e arcfour-hmac-md5
+$pass
+add_entry -password -p $user -k 1 -e des-hmac-sha1
+$pass
+add_entry -password -p $user -k 1 -e des-cbc-md5
+$pass
+add_entry -password -p $user -k 1 -e des-cbc-md4
+$pass
+wkt /home/$base_home_dir/$user/$user.keytab
+EOF
+sleep 2
+su -c "/usr/bin/kinit $user@$Domain_name -k -t /home/$base_home_dir/$user/$user.keytab" -s /bin/bash $user
+sleep 2
+kticket=`su -c "klist | grep $Domain_name" -s /bin/bash $user`
+if [ -n "$kticket" ]; then
+  echo "Kticket Initialized, proceeding further"
+else
+  echo "Ticket not able to initialize, Start Infoworks Services manually."
+  exit 1
+fi
+}
+
 #find active namenode of the cluster
 _get_namenode_hostname(){
 
@@ -113,43 +142,14 @@ _get_namenode_hostname(){
 
         fi
     done
-    if [ ${security} == "true" ]; then
+    if [[ ${security} == "true" ]]; then
       if [ -z ${active_namenode_hostname} ] && [ -z ${secondary_namenode_hostname} ]; then
         host=$(hostname -f | cut -f2 -d'-')
         namenode_hostname=hn0-$host
       fi
     fi
 }
-export -f _get_namenode_hostname
 
-_ticket_automation(){
-  user=$username
-  pass=$password
-  base_home_dir=$(hostname -d | tr '[:lower:]' '[:upper:]' | cut -f1 -d '.')
-su -c "/usr/bin/ktutil" $user <<EOF
-add_entry -password -p $user -k 1 -e des3-cbc-sha1-kd
-$pass
-add_entry -password -p $user -k 1 -e arcfour-hmac-md5
-$pass
-add_entry -password -p $user -k 1 -e des-hmac-sha1
-$pass
-add_entry -password -p $user -k 1 -e des-cbc-md5
-$pass
-add_entry -password -p $user -k 1 -e des-cbc-md4
-$pass
-wkt /home/$base_home_dir/$user/$user.keytab
-EOF
-sleep 2
-su -c "/usr/bin/kinit $user@$Domain_name -k -t /home/$base_home_dir/$user/$user.keytab" -s /bin/bash $user
-sleep 2
-kticket=`su -c "klist | grep $Domain_name" -s /bin/bash $user`
-if [ -n "$kticket" ]; then
-  echo "Kticket Initialized, proceeding further"
-else
-  echo "Ticket not able to initialize, Start Infoworks Services manually."
-  exit 1
-fi
-}
 
 _deploy_app(){
 
@@ -218,6 +218,14 @@ EOF1234
     sleep 4
     source ${iw_home}/bin/env.sh
     su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
+    ##Enabling Kerberos Related configs for ESP Cluster
+    if [[ ${security} == "true" ]];
+    then
+      sed -i -e "s/^#iw_security_kerberos_enabled.*$/iw_security_kerberos_enabled=true/" /opt/infoworks/conf/conf.properties
+      sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${Domain_name}/" /opt/infoworks/conf/conf.properties
+      sed -i -e "s/^#iw_security_kerberos_default_keytab_file.*$/iw_security_kerberos_default_keytab_file=\/home\/${base_home_dir}\/${username}\/${username}.keytab/" /opt/infoworks/conf/conf.properties
+      sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive\/_HOST@${Domain_name}/" /opt/infoworks/conf/conf.properties
+    fi
 }
 
 _delete_tar(){
@@ -230,9 +238,9 @@ _delete_tar(){
 #install expect tool for interactive mode to input paramenters
 apt-get --assume-yes install expect
 [ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
-if [ ${security} == "false" ]; then
+if [[ ${security} == "false" ]]; then
   eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
-elif [ ${security} == "true" ]; then
+elif [[ ${security} == "true" ]]; then
   eval _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
