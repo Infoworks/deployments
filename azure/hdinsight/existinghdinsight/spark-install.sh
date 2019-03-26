@@ -173,6 +173,14 @@ _init(){
 	chmod 775 /var/log/livy2
 	chmod 777 /var/run/livy2
 
+  zookeeper_hostnames_string=""
+	for i in "${!zookeeper_hostnames[@]}"
+		do
+		   	zookeeper_hostnames_string+=${zookeeper_hostnames[$i]}":2181"
+	  		if [[ $(( ${#zookeeper_hostnames[@]} - 1 )) > $i ]]; then
+				zookeeper_hostnames_string+=","
+			fi
+		done
 
 	echo "[$(_timestamp)]: replacing placeholders in conf files"
 	#update the master hostname in configuration files
@@ -209,16 +217,6 @@ _init(){
   else
     echo "Not able find security cluster type"
   fi
-
-	zookeeper_hostnames_string=""
-	for i in "${!zookeeper_hostnames[@]}"
-		do
-		   	zookeeper_hostnames_string+=${zookeeper_hostnames[$i]}":2181"
-	  		if [[ $(( ${#zookeeper_hostnames[@]} - 1 )) > $i ]]; then
-				zookeeper_hostnames_string+=","
-			fi
-		done
-
 	sed -i 's|{{zookeeper-hostnames}}|'"${zookeeper_hostnames_string}"'|g' /etc/livy/conf/livy.conf
 	if [ ${HDP_VERSION} != "2.5.6.3-5" ]; then
 		_untar_file /webapps.tar.gz /usr/hdp/$HDP_VERSION/zeppelin/
