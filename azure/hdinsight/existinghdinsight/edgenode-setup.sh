@@ -5,19 +5,19 @@ export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infow
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
-export k1=$1
-export k2=$2
-export k3=$3
-export k4=$4
-export k5=$(date +"%Z")
+export date=$(date +"%Z")
 export HDP_VERSION=`ls /usr/hdp/ -I current`
 export security=$(grep -A 1 'acl.enable' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | cut -f 2 -d">" | cut -f 1 -d"<")
 export Admin_user=$(grep -A 1 'admin.acl' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | awk -F',' '{print $1}' | cut -f2 -d">")
 export Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
+export k1=$1
+export k2=$2
+export k3=$3
 if [[ ${security} == "false" ]]; then
   export username=infoworks-user
   export password=infoworks-user
 elif [[ ${security} == "true" ]]; then
+  export k4=$4
   export username="$Admin_user"
   export password="$k4"
 fi
@@ -207,7 +207,7 @@ EOF1234
     echo "" >> /opt/infoworks/conf/conf.properties
     echo "" >> /opt/infoworks/conf/conf.properties
     echo  "#time zone properties" >> /opt/infoworks/conf/conf.properties
-    echo  "db_time_zone=$k5" >> /opt/infoworks/conf/conf.properties
+    echo  "db_time_zone=$date" >> /opt/infoworks/conf/conf.properties
     echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties
     echo  "iw_platform=hdinsight" >> /opt/infoworks/conf/conf.properties
 
