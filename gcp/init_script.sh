@@ -24,7 +24,7 @@ fi
 popd
 }
 _start_hdp() {
-curl -s -u admin:admin -H "X-Requested-By: ambari" -X PUT -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"infoworks"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' http://localhost:8080/api/v1/clusters/infoworks/services | grep requests > /tmp/request
+curl -s -u admin:admin -H "X-Requested-By: ambari" -X PUT -d '{"RequestInfo":{"context":"_PARSE_.START.ALL_SERVICES","operation_level":{"level":"CLUSTER","cluster_name":"Infoworks"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' http://localhost:8080/api/v1/clusters/Infoworks/services | grep requests > /tmp/request
 REQUEST_NUM=$(cat /tmp/request | awk '{print $3}' | tr -d '",')
 until curl -s -H "X-Requested-By: ambari" -X GET -u admin:admin $REQUEST_NUM | grep 'COMPLETED' > /dev/null; do echo -n .; sleep 1; done;
 }
