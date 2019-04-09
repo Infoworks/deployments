@@ -18,11 +18,7 @@ description:
 
 
 
-
-
      <br><p>
-
-
 
 
 
@@ -78,7 +74,7 @@ description:
   tagline: 'Any Source, Any Big Data Platform, Any Analytics'
   title: Infoworks Autonomous Data Engine
   url: 'http://www.infoworks.io'
-  version: 2.6.0
+  version: 2.7.0
   documentations:
     - title: Getting Started Guide
       url: 'http://docs.infoworks.io/cloud/gcp-getting-started-guide/'
@@ -89,7 +85,7 @@ description:
         - DESTINATION_SOLUTION_DETAILS
         - DESTINATION_POST_DEPLOY
     - title: Product Documentation
-      url: 'http://docs.infoworks.io/version-2-5-0/'
+      url: 'http://docs.infoworks.io/version-2-6-0/'
       destinations:
         - DESTINATION_SOLUTION_DETAILS
         - DESTINATION_POST_DEPLOY
@@ -105,10 +101,10 @@ description:
         - title: Debian 9
     - software:
         - title: DataProc
-          version: 1.2.22
+          version: 1.2.68
         - title: Metadata Server
         - title: Infoworks ADE
-          version: 2.6.0
+          version: 2.7.0
 input:
   properties:
     - name: zone

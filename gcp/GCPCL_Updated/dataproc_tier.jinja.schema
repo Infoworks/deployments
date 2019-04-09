@@ -29,6 +29,7 @@ properties:
       type: GCE_ZONE
   network:
     type: string
+    default: default
     x-googleProperty:
       type: GCE_NETWORK
   subnetwork:

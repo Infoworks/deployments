@@ -60,11 +60,12 @@ do
 			then
 				pushd /opt/infoworks/bin
 				su -c "$IW_HOME/bin/start.sh orchestrator" -s /bin/bash $username > /opt/infoworks/temp/installation.log
-                sleep 10		
-64	            su -c "$IW_HOME/bin/stop.sh orchestrator" -s /bin/bash $username > /opt/infoworks/temp/installation.log		
-65	            sleep 3		
-66	            su -c "$IW_HOME/bin/start.sh orchestrator" -s /bin/bash $username > /opt/infoworks/temp/installation.log
+                sleep 10
+                su -c "$IW_HOME/bin/stop.sh orchestrator" -s /bin/bash $username > /opt/infoworks/temp/installation.log
+                sleep 3
+                su -c "$IW_HOME/bin/start.sh orchestrator" -s /bin/bash $username > /opt/infoworks/temp/installation.log
 				popd
+                
 				break;
 			else
 				sleep 1

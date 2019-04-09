@@ -4,3 +4,6 @@ imports:
 resources:
 - name: infoworks-ade
   type: infoworks-ade.jinja
+  properties:
+    network: default
+
