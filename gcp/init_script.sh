@@ -17,6 +17,10 @@ sudo -u hdfs hdfs dfs -chown -R infoworks:infoworks /user/infoworks
 
 EOF1
 sleep 5
+./stop.sh notification rabbitmq
+sleep 5
+./start.sh notification rabbitmq
+sleep 5
 ./start.sh orchestrator
 else
 ./start.sh mongo all orchestrator
