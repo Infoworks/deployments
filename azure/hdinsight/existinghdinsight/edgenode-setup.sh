@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.7.1-beta1-azure/infoworks-2.7.1-beta1-azure.tar.gz
+export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.7.0.1-azure/infoworks-2.7.0.1-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
@@ -13,10 +13,10 @@ export Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
 export k1=$1
 export k2=$2
 export k3=$3
-if [[ ${security} == "false" ]]; then
+if [ "$security" == "false" ]; then
   export username=infoworks-user
   export password=infoworks-user
-elif [[ ${security} == "true" ]]; then
+elif [ "$security" == "true" ]; then
   export k4=$4
   export username="$Admin_user"
   export password="$k4"
@@ -133,7 +133,7 @@ _get_namenode_hostname(){
     for namenode_id in `echo $namenode_id_string | tr "," " "`
     do
         status=`hdfs haadmin -getServiceState $namenode_id`
-        if [[ $status = "active" ]]; then
+        if [ "$status" == "active" ]; then
             active_namenode=`hdfs getconf -confKey dfs.namenode.https-address.$hadoop_cluster_name.$namenode_id`
             IFS=':' read -ra $return_var<<< "$active_namenode"
             if [ "${!return_var}" == "" ]; then
@@ -142,7 +142,7 @@ _get_namenode_hostname(){
 
         fi
     done
-    if [[ ${security} == "true" ]]; then
+    if [ "$security" == "true" ]; then
       if [ -z ${active_namenode_hostname} ] && [ -z ${secondary_namenode_hostname} ]; then
         host=$(hostname -f | cut -f2 -d'-')
         namenode_hostname=hn0-$host
@@ -178,7 +178,7 @@ EOF1234
     fi
 
     prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
-    if [[ $prefix == "adl:" ]]; then
+    if [ "$prefix" == "adl:" ]; then
         hdfs_prefix=adl:
     else
         hdfs_prefix=wasb:
@@ -219,7 +219,7 @@ EOF1234
     source ${iw_home}/bin/env.sh
     su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
     ##Enabling Kerberos Related configs for ESP Cluster
-    if [[ ${security} == "true" ]];
+    if [ "$security" == "true" ];
     then
       sed -i -e "s/^#iw_security_kerberos_enabled.*$/iw_security_kerberos_enabled=true/" /opt/infoworks/conf/conf.properties
       sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${Domain_name}/" /opt/infoworks/conf/conf.properties
@@ -238,9 +238,9 @@ _delete_tar(){
 #install expect tool for interactive mode to input paramenters
 apt-get --assume-yes install expect
 [ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
-if [[ ${security} == "false" ]]; then
+if [ "$security" == "false" ]; then
   eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
-elif [[ ${security} == "true" ]]; then
+elif [ "$security" == "true" ]; then
   eval _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
