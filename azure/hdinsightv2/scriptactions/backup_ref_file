@@ -1,0 +1,47 @@
+python /var/lib/ambari-server/resources/scripts/configs.py -u admin -p IN11**rk1234 -n qa270nonesp -c core-site -l hn0-qa270n -a get
+
+
+test_is_headnode      1
+test_is_datanode      0
+test_is_zookeepernode 0
+test_is_first_datanode  0
+get_headnodes   hn0-qa270n.czdivgsjclaezduqs2blhxdgke.cx.internal.cloudapp.net,hn1-qa270n.czdivgsjclaezduqs2blhxdgke.cx.internal.cloudapp.net
+get_primary_headnode  hn0-qa270n.czdivgsjclaezduqs2blhxdgke.cx.internal.cloudapp.net
+get_secondary_headnode  hn1-qa270n.czdivgsjclaezduqs2blhxdgke.cx.internal.cloudapp.net
+get_primary_headnode_number 0
+get_secondary_headnode_number 1
+
+#!/bin/bash
+wget -O /tmp/HDInsightUtilities-v01.sh -q https://hdiconfigactions.blob.core.windows.net/linuxconfigactionmodulev01/HDInsightUtilities-v01.sh && source /tmp/HDInsightUtilities-v01.sh && rm -f /tmp/HDInsightUtilities-v01.sh
+mainnode=`get_primary_headnode`
+backupnode=`get_secondary_headnode`
+CLUSTERNAME=$(echo -e "import hdinsight_common.ClusterManifestParser as ClusterManifestParser\nprint ClusterManifestParser.parse_local_manifest().deployment.cluster_name" | python)
+
+USERID=$(echo -e "import hdinsight_common.Constants as Constants\nprint Constants.AMBARI_WATCHDOG_USERNAME" | python)
+
+echo "USERID=$USERID"
+
+PASSWD=$(echo -e "import hdinsight_common.ClusterManifestParser as ClusterManifestParser\nimport hdinsight_common.Constants as Constants\nimport base64\nbase64pwd = ClusterManifestParser.parse_local_manifest().ambari_users.usersmap[Constants.AMBARI_WATCHDOG_USERNAME].password\nprint base64.b64decode(base64pwd)" | python)
+
+coreSiteContent=$(/var/lib/ambari-server/resources/scripts/configs.py -u $USERID -p $PASSWD -n $CLUSTERNAME -c core-site -l $mainnode -a get 2> /dev/null || /var/lib/ambari-server/resources/scripts/configs.py -u $USERID -p $PASSWD -n $CLUSTERNAME -c core-site -l $backupnode -a get 2> /dev/null)
+stats=$(echo $?)
+if [ $stats != 0 ]; then
+#if [[ $coreSiteContent == *"Exception"* && $coreSiteContent == *"Unable to sign in"* ]]; then
+
+        echo "[ERROR] Username and password are invalid. Exiting!"
+        exit 134
+else
+	echo "It's good"
+fi
+
+source /tmp/HDInsightUtilities-v01.sh
+
+test_is_headnode
+test_is_datanode
+test_is_zookeepernode
+test_is_first_datanode
+get_headnodes
+get_primary_headnode
+get_secondary_headnode
+get_primary_headnode_number
+get_secondary_headnode_number

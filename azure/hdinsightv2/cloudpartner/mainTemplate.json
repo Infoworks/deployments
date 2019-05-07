@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+        "clusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the HDInsight cluster."
+            }
+        },
+        "edgeNodeSize": {
+            "type": "string",
+            "defaultValue": "Standard_D14_v2",
+            "allowedValues": [
+                "Standard_D13_V2",
+                "Standard_D12_V2"
+            ],
+            "metadata": {
+                "description": "Identity of the gallery package."
+            }
+        },
+        "galleryPackageIdentity": {
+            "type": "string",
+            "defaultValue": "InfoworksADE",
+            "metadata": {
+                "description" : "Identity of the gallery package."
+            },
+        }
+  },
+  "resources": [
+    {
+    "apiVersion": "2018-02-01",
+    "name": "pid-0ed76959-bda0-58bb-8501-e0f5e59db7e5",
+    "type": "Microsoft.Resources/deployments",
+    "properties": {
+        "mode": "Incremental",
+        "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": []
+        }
+      }
+    },
+    {
+        "name": "[concat(parameters('clusterName'),'/InfoworksADE' )]",
+        "type": "Microsoft.HDInsight/clusters/applications",
+        "location": "East Us",
+        "apiVersion": "2015-03-01-preview",
+        "properties": {
+            "marketPlaceIdentifier": "[parameters('galleryPackageIdentity')]",
+            "computeProfile": {
+                "roles": [{
+                    "name": "edgenode",
+                    "targetInstanceCount": 1,
+                    "hardwareProfile": {
+                        "vmSize": "[parameters('edgeNodeSize')]"
+                    }
+                }
+              ]
+            },
+            "installScriptActions": [{
+              "name": "Install spark app",
+              "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/spark-install.sh",
+              "roles": [
+                "headnode",
+                "workernode",
+                "edgenode"
+              ]
+              },
+              {
+              "name": "Install Infoworks app",
+              "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/edgenode-setup.sh",
+              "roles": [
+                "edgenode"
+              ]
+              }
+            ],
+            "uninstallScriptActions": [],
+            "httpsEndpoints": [
+              {
+            "subDomainSuffix": "cdw",
+            "destinationRole": "edgenode",
+            "destinationPort": 3000,
+            "description": "Access to Infoworks UI",
+            "hasWebpage": true,
+            "disableGatewayAuth": true,
+            "accessModes": [
+              "WebPage"
+            ]
+          },
+          {
+            "subDomainSuffix": "api",
+            "destinationRole": "edgenode",
+            "destinationPort": 2999,
+            "description": "Access to infoworks REST API",
+            "hasWebpage": true,
+            "disableGatewayAuth": true,
+            "accessModes": [
+              "WebPage"
+            ]
+          },
+          {
+            "subDomainSuffix": "cub",
+            "destinationRole": "edgenode",
+            "destinationPort": 7005,
+            "description": "Access to infoworks access server for cube",
+            "hasWebpage": true,
+            "disableGatewayAuth": true,
+            "accessModes": [
+              "WebPage"
+            ]
+          }
+            ],
+            "applicationType": "CustomApplication"
+        }
+    }
+  ]
+}
