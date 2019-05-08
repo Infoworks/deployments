@@ -18,6 +18,9 @@ elif [ "$security" == "true" ]; then
   export password=""
 fi
 
+#echo -e "import hdinsight_common.ClusterManifestParser as ClusterManifestParser\nprint ClusterManifestParser.parse_local_manifest().settings.get('enable_security') == 'true' and ClusterManifestParser.parse_local_manifest().settings.get('cluster_type') == 'hbase'" | python
+
+
 wget -O /tmp/HDInsightUtilities-v01.sh -q https://hdiconfigactions.blob.core.windows.net/linuxconfigactionmodulev01/HDInsightUtilities-v01.sh && source /tmp/HDInsightUtilities-v01.sh && rm -f /tmp/HDInsightUtilities-v01.sh
 
 PRIMARYHEADNODE=`get_primary_headnode`

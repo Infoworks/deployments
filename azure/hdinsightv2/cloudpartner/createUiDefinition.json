@@ -2,6 +2,7 @@
     "handler": "Microsoft.HDInsight",
     "version": "0.0.1-preview",
     "clusterFilters": {
+        "tiers": ["Standard"],
         "types": ["HBase"],
         "versions": ["3.6"]
     }
