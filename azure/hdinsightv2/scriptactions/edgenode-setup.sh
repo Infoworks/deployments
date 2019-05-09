@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.6.0-azure/infoworks-2.6.0-azure.tar.gz
+export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/2.7.0.1-azure/infoworks-2.7.0.1-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
