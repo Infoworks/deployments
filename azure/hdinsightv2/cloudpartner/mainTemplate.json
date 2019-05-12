@@ -42,6 +42,17 @@
       }
     },
     {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('clusterName'),'/InfoworksIP' )]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      },
+      "tags": {
+        "displayName": "PublicIPAddress - IWUI"
+      }
+    },
+    {
         "name": "[concat(parameters('clusterName'),'/InfoworksADE' )]",
         "type": "Microsoft.HDInsight/clusters/applications",
         "location": "East Us",
