@@ -27,6 +27,11 @@
             },
         }
   },
+  "variables":
+  {
+    "clusterApiVersion": "2015-03-01-preview",
+    "applicationName": "InfoworksADE"
+  },
   "resources": [
     {
     "apiVersion": "2018-02-01",
@@ -53,10 +58,10 @@
       }
     },
     {
-        "name": "[concat(parameters('clusterName'),'/InfoworksADE' )]",
+        "name": "[concat(parameters('clusterName'),'/', variables('applicationName'))]",
         "type": "Microsoft.HDInsight/clusters/applications",
         "location": "East Us",
-        "apiVersion": "2015-03-01-preview",
+        "apiVersion": "[variables('clusterApiVersion')]",
         "properties": {
             "marketPlaceIdentifier": "[parameters('galleryPackageIdentity')]",
             "computeProfile": {
@@ -70,7 +75,7 @@
               ]
             },
             "installScriptActions": [{
-              "name": "Install spark app",
+              "name": "[concat('spark-install-v0','-' ,uniquestring(variables('applicationName')))]",
               "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/spark-install.sh",
               "roles": [
                 "headnode",
@@ -79,7 +84,7 @@
               ]
               },
               {
-              "name": "Install Infoworks app",
+              "name": "[concat('infoworks-install-v0','-' ,uniquestring(variables('applicationName')))]",
               "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/edgenode-setup.sh",
               "roles": [
                 "edgenode"
@@ -125,5 +130,13 @@
             "applicationType": "CustomApplication"
         }
     }
-  ]
+  ],
+  "outputs":
+  {
+    "application":
+    {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.HDInsight/clusters/applications/',parameters('clusterName'), variables('applicationName')))]"
+    }
+  }
 }
