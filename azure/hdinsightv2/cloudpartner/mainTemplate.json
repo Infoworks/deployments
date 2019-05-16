@@ -19,18 +19,27 @@
                 "description": "Identity of the gallery package."
             }
         },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The location where all azure resources will be deployed."
+            }
+        },
         "galleryPackageIdentity": {
             "type": "string",
-            "defaultValue": "InfoworksADE",
             "metadata": {
                 "description" : "Identity of the gallery package."
-            },
+            }
         }
   },
   "variables":
   {
     "clusterApiVersion": "2015-03-01-preview",
-    "applicationName": "InfoworksADE"
+    "applicationName": "Infoworks-edgenode",
+    "BASE_URL": "https://gallery.azure.com/artifact/20161101",
+    "spark_install": "Artifacts/scripts/spark_install.sh",
+    "infoworks_setup": "Artifacts/scripts/infoworks_init.sh"
   },
   "resources": [
     {
@@ -49,18 +58,19 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(parameters('clusterName'),'/InfoworksIP' )]",
+      "name": "[concat(parameters('clusterName'),'-InfoworksIP' )]",
+      "location": "[parameters('location')]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
       },
       "tags": {
-        "displayName": "PublicIPAddress - IWUI"
+        "displayName": "PublicIPAddress-IWUI"
       }
     },
     {
         "name": "[concat(parameters('clusterName'),'/', variables('applicationName'))]",
         "type": "Microsoft.HDInsight/clusters/applications",
-        "location": "East Us",
+        "location": "[parameters('location')]",
         "apiVersion": "[variables('clusterApiVersion')]",
         "properties": {
             "marketPlaceIdentifier": "[parameters('galleryPackageIdentity')]",
@@ -75,8 +85,9 @@
               ]
             },
             "installScriptActions": [{
-              "name": "[concat('spark-install-v0','-' ,uniquestring(variables('applicationName')))]",
-              "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/spark-install.sh",
+              "name": "[concat('spark-install-v0','-',uniquestring(variables('applicationName')))]",
+              "uri": "[concat(variables('BASE_URL'),'/',parameters('galleryPackageIdentity'),'/',variables('spark_install'))]",
+              "parameters": "[parameters('galleryPackageIdentity')]",
               "roles": [
                 "headnode",
                 "workernode",
@@ -84,8 +95,9 @@
               ]
               },
               {
-              "name": "[concat('infoworks-install-v0','-' ,uniquestring(variables('applicationName')))]",
-              "uri": "https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/edgenode-setup.sh",
+              "name": "[concat('infoworks-install-v0','-',uniquestring(variables('applicationName')))]",
+              "uri": "[concat(variables('BASE_URL'),'/',parameters('galleryPackageIdentity'),'/',variables('infoworks_setup'))]",
+              "parameters": "[parameters('galleryPackageIdentity')]",
               "roles": [
                 "edgenode"
               ]
