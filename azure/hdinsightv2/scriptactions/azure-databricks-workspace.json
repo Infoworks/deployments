@@ -8,7 +8,7 @@
         "description": "The name of the Azure Databricks workspace to create."
       }
     },
-    "pricingTier": {
+    "tier": {
       "type": "string",
       "defaultValue": "premium",
       "allowedValues": [
@@ -27,23 +27,25 @@
       }
     }
   },
-  "variables": {
-    "managedResourceGroupName": "[concat('databricks-rg-', parameters('workspaceName'), '-', uniqueString(parameters('workspaceName'), resourceGroup().id))]"
-  },
   "resources": [
     {
-      "type": "Microsoft.Databricks/workspaces",
-      "name": "[parameters('workspaceName')]",
-      "location": "[parameters('location')]",
       "apiVersion": "2018-04-01",
+      "location": "[parameters('location')]",
+      "name": "[parameters('workspaceName')]",
       "sku": {
-        "name": "[parameters('pricingTier')]"
+        "name": "[parameters('tier')]"
       },
+      "comments": "Please do not use an existing resource group for ManagedResourceGroupId.",
       "properties": {
-        "ManagedResourceGroupId": "[concat(subscription().id, '/resourceGroups/', variables('managedResourceGroupName'))]"
-      }
+        "ManagedResourceGroupId": "[variables('managedResourceGroupId')]"
+      },
+      "type": "Microsoft.Databricks/workspaces"
     }
   ],
+  "variables": {
+      "managedResourceGroupId": "[concat(subscription().id, '/resourceGroups/', variables('managedResourceGroupName'))]",
+      "managedResourceGroupName": "[concat('databricks-rg-', parameters('workspaceName'), '-', uniqueString(parameters('workspaceName'), resourceGroup().id))]"
+  },
   "outputs": {
     "workspace": {
       "type": "object",
