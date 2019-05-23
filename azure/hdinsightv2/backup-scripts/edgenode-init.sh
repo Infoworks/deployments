@@ -37,7 +37,7 @@ kerberos_auth()
 
 cluster_init()
 {
-	chown -R $username:$username ${app_name}
+	chown -R $username:$username ${iw_home}
 	if [ "$is_security_enabled" == "True" ];
 	then
 		hdfs dfs -mkdir /user/$username

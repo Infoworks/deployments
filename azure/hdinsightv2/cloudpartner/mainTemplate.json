@@ -10,8 +10,9 @@
         },
         "edgeNodeSize": {
             "type": "string",
-            "defaultValue": "Standard_D14_v2",
+            "defaultValue": "Standard_D14_V2",
             "allowedValues": [
+                "Standard_D14_V2",
                 "Standard_D13_V2",
                 "Standard_D12_V2"
             ],
@@ -19,27 +20,32 @@
                 "description": "Identity of the gallery package."
             }
         },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "The location where all azure resources will be deployed."
-            }
-        },
         "galleryPackageIdentity": {
             "type": "string",
             "metadata": {
                 "description" : "Identity of the gallery package."
             }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+              "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+              "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            },
+            "defaultValue": ""
         }
   },
   "variables":
   {
     "clusterApiVersion": "2015-03-01-preview",
-    "applicationName": "Infoworks-edgenode",
-    "BASE_URL": "https://gallery.azure.com/artifact/20161101",
-    "spark_install": "Artifacts/scripts/spark_install.sh",
-    "infoworks_setup": "Artifacts/scripts/infoworks_init.sh"
+    "location": "[resourceGroup().location]",
+    "applicationName": "Infoworks-Cloud-Data-edgenode"
   },
   "resources": [
     {
@@ -59,7 +65,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[concat(parameters('clusterName'),'-InfoworksIP' )]",
-      "location": "[parameters('location')]",
+      "location": "[variables('location')]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
       },
@@ -70,7 +76,7 @@
     {
         "name": "[concat(parameters('clusterName'),'/', variables('applicationName'))]",
         "type": "Microsoft.HDInsight/clusters/applications",
-        "location": "[parameters('location')]",
+        "location": "[variables('location')]",
         "apiVersion": "[variables('clusterApiVersion')]",
         "properties": {
             "marketPlaceIdentifier": "[parameters('galleryPackageIdentity')]",
@@ -86,7 +92,7 @@
             },
             "installScriptActions": [{
               "name": "[concat('spark-install-v0','-',uniquestring(variables('applicationName')))]",
-              "uri": "[concat(variables('BASE_URL'),'/',parameters('galleryPackageIdentity'),'/',variables('spark_install'))]",
+              "uri": "[uri(parameters('_artifactsLocation'), concat('scripts/spark_install.sh', parameters('_artifactsLocationSasToken')))]",
               "parameters": "[parameters('galleryPackageIdentity')]",
               "roles": [
                 "headnode",
@@ -96,7 +102,7 @@
               },
               {
               "name": "[concat('infoworks-install-v0','-',uniquestring(variables('applicationName')))]",
-              "uri": "[concat(variables('BASE_URL'),'/',parameters('galleryPackageIdentity'),'/',variables('infoworks_setup'))]",
+              "uri": "[uri(parameters('_artifactsLocation'), concat('scripts/infoworks_init.sh', parameters('_artifactsLocationSasToken')))]",
               "parameters": "[parameters('galleryPackageIdentity')]",
               "roles": [
                 "edgenode"

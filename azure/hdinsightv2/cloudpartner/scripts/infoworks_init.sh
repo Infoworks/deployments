@@ -37,12 +37,8 @@ kerberos_auth()
 
 cluster_init()
 {
-	chown -R $username:$username ${app_name}
-	if [ "$is_security_enabled" == "True" ];
-	then
-		hdfs dfs -mkdir /user/$username
-		hdfs dfs -chown -R $username:$username /user/$username
-	fi
+	chown -R $username:$username ${iw_home}
+
 }
 _deploy_app(){
 
@@ -116,6 +112,9 @@ _delete_tar(){
     if [ -f /opt/infoworks*.tar.gz ]
     then
         rm -rf /opt/infoworks*.tar.gz
+				if [ "$is_security_enabled" == "True" ]; then
+					kdestroy
+				fi
     fi
 }
 

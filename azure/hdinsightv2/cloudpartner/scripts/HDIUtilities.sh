@@ -7,7 +7,7 @@ function download_file
     if [ "$overwrite" = false ] && [ -e $destfile ]; then
         return;
     fi
-
+    echo "Downloading file $srcurl"
     wget -O $destfile -q $srcurl;
 }
 
@@ -17,6 +17,7 @@ function untar_file
     unzipdir=$2;
 
     if [ -e $zippedfile ]; then
+        echo "Extracting $zippedfile to $unzipdir"
         tar -xf $zippedfile -C $unzipdir;
     fi
 }
