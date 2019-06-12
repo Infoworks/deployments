@@ -146,7 +146,7 @@ function ClusterType
 {
   CLUSTERTYPE=$(echo -e "import hdinsight_common.ClusterManifestParser as ClusterManifestParser\nprint ClusterManifestParser.parse_local_manifest().settings[Constants.CLUSTER_TYPE]" | python)
   if [ $? -ne 0 ]; then
-    echo "[ERROR] Cannot determine cluster name. Exiting!"
+    echo "[ERROR] Cannot determine cluster Type. Exiting!"
     exit 134
   fi
 }
