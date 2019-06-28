@@ -181,4 +181,4 @@ function create_user
 echo "${BASH_SOURCE[0]}" > /root/HDIFunc.txt
 temp_loc=$(cat /root/HDIFunc.txt)
 file_read=$(ls $temp_loc)
-cat $file_read > /tmp/HDIUtilities.sh
+cat $file_read | head -n -4 > /tmp/HDIUtilities.sh
