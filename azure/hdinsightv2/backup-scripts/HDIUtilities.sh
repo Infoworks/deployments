@@ -177,3 +177,5 @@ function create_user
         echo 'Could not add user $username' && exit 111
     }
 }
+
+echo "${BASH_SOURCE[0]}" > /root/HDIFunc.txt
