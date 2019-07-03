@@ -2,7 +2,7 @@
 
 wget -O /tmp/HDIUtilities.sh -q https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/HDIUtilities.sh && source /tmp/HDIUtilities.sh && rm -f /tmp/HDIUtilities.sh
 
-version=2.7.1
+version=2.7.1.1
 INFOWORKS_TAR=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/$version-azure/infoworks-$version-azure.tar.gz
 app_name=infoworks
 TAR_LOC=/opt/${app_name}.tar.gz
