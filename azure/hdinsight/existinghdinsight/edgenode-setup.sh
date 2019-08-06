@@ -1,7 +1,7 @@
 #!/bin/bash
 
-version=2.7.1
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/$version-azure/infoworks-$version-azure.tar.gz
+version=2.7.2
+export app_path=https://infoworks-setup.s3.amazonaws.com/2.7/infoworks-$version-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
