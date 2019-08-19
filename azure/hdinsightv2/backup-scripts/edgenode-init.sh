@@ -2,7 +2,7 @@
 
 wget -O /tmp/HDIUtilities.sh -q https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/HDIUtilities.sh && source /tmp/HDIUtilities.sh && rm -f /tmp/HDIUtilities.sh
 
-version=2.7.2
+version=2.8.0_beta1
 INFOWORKS_TAR=https://infoworks-setup.s3.amazonaws.com/2.7/infoworks-$version-azure.tar.gz
 app_name=infoworks
 TAR_LOC=/opt/${app_name}.tar.gz
@@ -60,6 +60,7 @@ $hiveserver_hostname
 
 $sparkmaster_hostname
 /usr/hdp/current/spark2-client
+/usr/hdp/current/hive-webhcat/share/hcatalog
 
 EOF1234
 
