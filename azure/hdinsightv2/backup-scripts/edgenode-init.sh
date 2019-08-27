@@ -17,9 +17,11 @@ if [ "$is_security_enabled" == "True" ]; then
 	security_features
 	secured_password
   username="$LDAP_CLUSTER_ADMIN"
+  script_exec=start-old.sh
 else
 	username=infoworks-user
   password=infoworks-user
+  script_exec=start.sh
 fi
 ClusterName
 PRIMARYHEADNODE=`get_primary_headnode`
@@ -50,7 +52,7 @@ _deploy_app(){
     hiveserver_hostname=$PRIMARYHEADNODE
     sparkmaster_hostname=$PRIMARYHEADNODE
 
-su -c "$iw_home/bin/start.sh all" $username <<EOF1234
+su -c "$iw_home/bin/${script_exec} all" $username <<EOF1234
 
 $PRIMARYHEADNODE
 
