@@ -214,6 +214,8 @@ _init(){
     sed -i 's|{{CLUSTER_NAME}}|'"${cluster_name}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
     sed -i 's|{{DOMAIN_NAME}}|'"${Domain_name}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
     sed -i 's|{{history-server-hostname}}|'"${active_namenode_hostname}"':18080|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+    cp /etc/hive/conf/hive-site.xml /etc/spark/conf/
+    sed -i -e "s/>tez</>mr</" /etc/spark/conf/hive-site.xml
   else
     echo "Not able find security cluster type"
   fi
