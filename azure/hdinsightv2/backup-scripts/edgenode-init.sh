@@ -60,7 +60,6 @@ $hiveserver_hostname
 
 $sparkmaster_hostname
 /usr/hdp/current/spark2-client
-/usr/hdp/current/hive-webhcat/share/hcatalog
 
 EOF1234
 
