@@ -110,6 +110,8 @@ then
 	    sed -i 's|{{CLUSTER_NAME}}|'"${CLUSTERNAME}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
 	    sed -i 's|{{DOMAIN_NAME}}|'"${LDAP_DOMAIN}"'|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
 	    sed -i 's|{{history-server-hostname}}|'"${PRIMARYHEADNODE}"':18080|g' /etc/spark2/$HDP_VERSION/0/spark-defaults.conf
+	    cp /etc/hive/conf/hive-site.xml /etc/spark/conf/
+	    sed -i -e "s/>tez</>mr</" /etc/spark/conf/hive-site.xml
 	  else
 	    echo "Not able find security cluster type"
 	  fi
@@ -162,6 +164,7 @@ then
 		else
 			echo "[$(_timestamp)]: starting slaves"
 		fi
+		
 	}
 
 	if [ "$(id -u)" != "0" ]; then
