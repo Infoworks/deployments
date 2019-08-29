@@ -111,8 +111,8 @@ EOF1234
     if [ "$is_security_enabled" == "True" ];
     then
       sed -i -e "s/^#iw_security_kerberos_enabled.*$/iw_security_kerberos_enabled=true/" /opt/infoworks/conf/conf.properties
-      sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${Domain_name}/" /opt/infoworks/conf/conf.properties
-      sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive\/_HOST@${Domain_name}/" /opt/infoworks/conf/conf.properties
+      sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${LDAP_DOMAIN}/" /opt/infoworks/conf/conf.properties
+      sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive\/_HOST@${LDAP_DOMAIN}/" /opt/infoworks/conf/conf.properties
     fi
 }
 _delete_tar(){
