@@ -6,6 +6,8 @@ exec &> /var/log/spark_install.log
 wget -O /tmp/HDIUtilities.sh -q https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/backup-scripts/HDIUtilities.sh && source /tmp/HDIUtilities.sh && rm -f /tmp/HDIUtilities.sh
 
 ClusterType
+is_security_enabled
+security_features
 if [ ${CLUSTERTYPE} == "spark" ];
 then
 	echo "The script is not supported for the ${CLUSTERTYPE}"
@@ -96,7 +98,7 @@ then
 	    fi
 	    #statements
 	    sed -i 's|{{HDP_VERSION}}|'"${HDP_VERSION}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
-	    sed -i 's|{{ACTIVE_NN}|'"${PRIMARYHEADNODE}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
+	    sed -i 's|{{ACTIVE_NN}}|'"${PRIMARYHEADNODE}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
 	    sed -i 's|{{DOMAIN_NAME}}|'"${LDAP_DOMAIN}"'|g' /etc/spark2/$HDP_VERSION/0/spark-env.sh
 	    sed -i "s,wasb:,${hdfs_prefix},g" /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
 	    sed -i 's|{{ZOOKEEPER_HOSTS}}|'"${zookeeper_hostnames_string}"'|g' /etc/spark2/$HDP_VERSION/0/spark-thrift-sparkconf.conf
