@@ -17,11 +17,9 @@ if [ "$is_security_enabled" == "True" ]; then
 	security_features
 	secured_password
   username="$LDAP_CLUSTER_ADMIN"
-  script_exec=start-old.sh
 else
 	username=infoworks-user
   password=infoworks-user
-  script_exec=start.sh
 fi
 ClusterName
 PRIMARYHEADNODE=`get_primary_headnode`
@@ -29,7 +27,7 @@ SECONDARYHEADNODE=`get_secondary_headnode`
 
 kerberos_auth()
 {
-	echo "$LDAP_PASSWORD" | kinit $LDAP_USER
+	echo "$LDAP_PASSWORD" | su -c "kinit $LDAP_USER" $username
 	kstat=$?
 	if [ $? != 0 ]; then
 		echo "Kerberos Auth Failed, Start Infoworks Services Manually"
@@ -52,7 +50,7 @@ _deploy_app(){
     hiveserver_hostname=$PRIMARYHEADNODE
     sparkmaster_hostname=$PRIMARYHEADNODE
 
-su -c "$iw_home/bin/${script_exec} all" $username <<EOF1234
+su -c "$iw_home/bin/start.sh all" $username <<EOF1234
 
 $PRIMARYHEADNODE
 
