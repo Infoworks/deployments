@@ -69,6 +69,7 @@ ${username}
 EOF
 
 su -c "./install.sh -v ${version}-azure" -s /bin/bash $username
+popd
 sleep 10
     echo "Checking for configurations status"
     if [ ! -f $configured_status_file ]; then
