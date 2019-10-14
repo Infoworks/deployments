@@ -2,11 +2,10 @@
 
 wget -O /tmp/HDIUtilities.sh -q https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/HDIUtilities.sh && source /tmp/HDIUtilities.sh && rm -f /tmp/HDIUtilities.sh
 
-version=2.9.0-beta1
-INFOWORKS_TAR=https://infoworks-setup.s3.amazonaws.com/2.9/deploy_$version.tar.gz
+version=2.7.1
+INFOWORKS_TAR=https://infoworks-setup.s3.amazonaws.com/2.9/infoworks-$version-azure.tar.gz
 app_name=infoworks
-TAR_LOC=/tmp/deploy.tar.gz
-INSTALL_DIR=/tmp/iw-installer
+TAR_LOC=/opt/${app_name}.tar.gz
 iw_home=/opt/${app_name}
 configured_status_file=$iw_home/conf/configured
 date=$(date +"%Z")
@@ -18,11 +17,9 @@ if [ "$is_security_enabled" == "True" ]; then
 	security_features
 	secured_password
   username="$LDAP_CLUSTER_ADMIN"
-	hive_port=10001
 else
 	username=infoworks-user
   password=infoworks-user
-	hive_port=10000
 fi
 ClusterName
 PRIMARYHEADNODE=`get_primary_headnode`
@@ -40,36 +37,33 @@ kerberos_auth()
 
 cluster_init()
 {
-	mkdir -p ${iw_home}
 	chown -R $username:$username ${iw_home}
-	hdfs dfs -mkdir /user/$username
-	hdfs dfs -chown -R $username:$username /user/$username
+	if [ "$is_security_enabled" == "True" ];
+	then
+		hdfs dfs -mkdir /user/$username
+		hdfs dfs -chown -R $username:$username /user/$username
+	fi
 }
 #/usr/hdp/current/hive-webhcat/share/hcatalog
-
 _deploy_app(){
-chown -R $username:$username ${INSTALL_DIR}
-pushd ${INSTALL_DIR}
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
     hiveserver_hostname=$PRIMARYHEADNODE
-    edgenode_hostname=`hostname -f`
+    sparkmaster_hostname=$PRIMARYHEADNODE
 
-su -c "./configure_install.sh" $username <<EOF
-y
-${username}
-${username}
-${iw_home}
-/user/${username}
-iw_df_workspace
-${edgenode_hostname}
-hive2://${hiveserver_hostname}:${hive_port}
-${username}
-${username}
-EOF
+su -c "$iw_home/bin/start.sh all" $username <<EOF1234
 
-su -c "./install.sh -v ${version}-azure" -s /bin/bash $username
-sleep 10
+$PRIMARYHEADNODE
+
+$hiveserver_hostname
+
+
+
+$sparkmaster_hostname
+/usr/hdp/current/spark2-client
+
+EOF1234
+
     echo "Checking for configurations status"
     if [ ! -f $configured_status_file ]; then
         echo "touch $configured_status_file"
@@ -108,27 +102,30 @@ sleep 10
         return 1;
     fi
 
+    sleep 4
+    source ${iw_home}/bin/env.sh
+    su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
     ##Enabling Kerberos Related configs for ESP Cluster
     if [ "$is_security_enabled" == "True" ];
     then
       sed -i -e "s/^#iw_security_kerberos_enabled.*$/iw_security_kerberos_enabled=true/" /opt/infoworks/conf/conf.properties
       sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${LDAP_DOMAIN}/" /opt/infoworks/conf/conf.properties
-      sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive\/_HOST@${LDAP_DOMAIN};transportMode=http;httpPath=cliservice/" /opt/infoworks/conf/conf.properties
+      sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive\/_HOST@${LDAP_DOMAIN}/" /opt/infoworks/conf/conf.properties
     fi
 }
 _delete_tar(){
-    if [ -f $TAR_LOC ]
+    if [ -f /opt/infoworks*.tar.gz ]
     then
-        rm -rf $TAR_LOC
+        rm -rf /opt/infoworks*.tar.gz
     fi
 }
 
 apt-get --assume-yes install expect
 [ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
 if [ "$is_security_enabled" == "False" ]; then
-  eval create_user && download_file $INFOWORKS_TAR $TAR_LOC && untar_file $TAR_LOC /tmp/ && cluster_init && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+  eval create_user && download_file $INFOWORKS_TAR $TAR_LOC && untar_file $TAR_LOC /opt/ && cluster_init && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 elif [ "$is_security_enabled" == "True" ]; then
-  eval download_file $INFOWORKS_TAR $TAR_LOC && untar_file $TAR_LOC /tmp && kerberos_auth && cluster_init && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+  eval download_file $INFOWORKS_TAR $TAR_LOC && untar_file $TAR_LOC /opt/ && kerberos_auth && cluster_init && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
 fi
