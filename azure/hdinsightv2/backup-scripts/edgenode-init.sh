@@ -104,6 +104,9 @@ sleep 10
     echo  "db_time_zone=$date" >> /opt/infoworks/conf/conf.properties
     echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties
     echo  "iw_platform=hdinsight" >> /opt/infoworks/conf/conf.properties
+    echo "export pipeline_build_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/conf/conf.properties
+    echo "export generate_sample_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/conf/conf.properties
+    echo "export CATALINA_OPTS=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/conf/conf.properties
 
     if [ "$?" != "0" ]; then
         return 1;
@@ -116,6 +119,11 @@ sleep 10
       sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${LDAP_DOMAIN}/" /opt/infoworks/conf/conf.properties
       sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive\/_HOST@${LDAP_DOMAIN};transportMode=http;httpPath=cliservice/" /opt/infoworks/conf/conf.properties
     fi
+    #Restart Hangman
+    su -c "/opt/infoworks/bin/stop.sh hangman" -s /bin/bash $username
+    sleep 3
+    su -c "/opt/infoworks/bin/start.sh hangman" -s /bin/bash $username
+
 }
 _delete_tar(){
     if [ -f $TAR_LOC ]
