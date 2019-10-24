@@ -27,6 +27,12 @@ fi
 ClusterName
 PRIMARYHEADNODE=`get_primary_headnode`
 SECONDARYHEADNODE=`get_secondary_headnode`
+prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
+    if [ "$prefix" == "adl:" ]; then
+        export hdfs_prefix=adl:
+    elif [ "$prefix" == "wasb:" ]; then
+        export hdfs_prefix=wasb:
+    fi
 
 kerberos_auth()
 {
@@ -42,12 +48,9 @@ cluster_init()
 {
 	mkdir -p ${iw_home}
 	chown -R $username:$username ${iw_home}
-    if [ "$is_security_enabled" == "True" ]; then
+    if [ "$prefix" == "wasb:" ]; then
         hdfs dfs -mkdir /user/$username
         hdfs dfs -chown -R $username:$username /user/$username
-    else
-        sudo -u hdfs hdfs dfs -mkdir /user/$username
-        sudo -u hdfs hdfs dfs -chown -R $username:$username /user/$username
     fi
 }
 #/usr/hdp/current/hive-webhcat/share/hcatalog
@@ -80,13 +83,6 @@ sleep 10
     if [ ! -f $configured_status_file ]; then
         echo "touch $configured_status_file"
         touch $configured_status_file
-    fi
-
-    prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
-    if [ "$prefix" == "adl:" ]; then
-        hdfs_prefix=adl:
-    else
-        hdfs_prefix=wasb:
     fi
 
     echo "Setting custom properties"
