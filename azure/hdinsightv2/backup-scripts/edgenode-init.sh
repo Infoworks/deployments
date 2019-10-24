@@ -2,7 +2,7 @@
 
 wget -O /tmp/HDIUtilities.sh -q https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/HDIUtilities.sh && source /tmp/HDIUtilities.sh && rm -f /tmp/HDIUtilities.sh
 
-version=2.9.0-beta1
+version=2.9.0_beta1
 INFOWORKS_TAR=https://infoworks-setup.s3.amazonaws.com/2.9/deploy_$version.tar.gz
 app_name=infoworks
 TAR_LOC=/tmp/deploy.tar.gz
@@ -104,10 +104,10 @@ sleep 10
     echo  "db_time_zone=$date" >> /opt/infoworks/conf/conf.properties
     echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties
     echo  "iw_platform=hdinsight" >> /opt/infoworks/conf/conf.properties
-    echo "export pipeline_build_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
-    echo "export generate_sample_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
-    echo "export CATALINA_OPTS=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
-    echo "export pipeline_metadata_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export pipeline_build_java_opts=\" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export generate_sample_java_opts=\" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export CATALINA_OPTS=\" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export pipeline_metadata_java_opts=\" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
 
     if [ "$?" != "0" ]; then
         return 1;
