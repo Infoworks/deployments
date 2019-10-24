@@ -42,8 +42,13 @@ cluster_init()
 {
 	mkdir -p ${iw_home}
 	chown -R $username:$username ${iw_home}
-	hdfs dfs -mkdir /user/$username
-	hdfs dfs -chown -R $username:$username /user/$username
+    if [ "$is_security_enabled" == "True" ]; then
+        hdfs dfs -mkdir /user/$username
+        hdfs dfs -chown -R $username:$username /user/$username
+    else
+        sudo -u hdfs hdfs dfs -mkdir /user/$username
+        sudo -u hdfs hdfs dfs -chown -R $username:$username /user/$username
+    fi
 }
 #/usr/hdp/current/hive-webhcat/share/hcatalog
 
