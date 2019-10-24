@@ -104,9 +104,10 @@ sleep 10
     echo  "db_time_zone=$date" >> /opt/infoworks/conf/conf.properties
     echo  "#iw_core_based_licensing=true" >> /opt/infoworks/conf/conf.properties
     echo  "iw_platform=hdinsight" >> /opt/infoworks/conf/conf.properties
-    echo "export pipeline_build_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/conf/conf.properties
-    echo "export generate_sample_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/conf/conf.properties
-    echo "export CATALINA_OPTS=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/conf/conf.properties
+    echo "export pipeline_build_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export generate_sample_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export CATALINA_OPTS=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
+    echo "export pipeline_metadata_java_opts=" -Dhdp.version=$HDP_VERSION \"" >> /opt/infoworks/bin/env.sh
 
     if [ "$?" != "0" ]; then
         return 1;
