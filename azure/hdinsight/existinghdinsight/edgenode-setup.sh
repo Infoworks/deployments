@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=2.8.0
+version=2.8.0.1
 export app_path=https://infoworks-setup.s3.amazonaws.com/2.8/infoworks-$version-azure.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
