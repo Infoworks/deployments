@@ -80,7 +80,7 @@ _download_app(){
             done
         } || return 1;
 
-        eval chown -R $username:$username ${app_name} || echo "Could not change ownership of infoworks package"
+        eval chown -R $username:$username ${INSTALL_DIR} || echo "Could not change ownership of infoworks package"
 
     } || {
         echo "Could not download the package" && return 1
