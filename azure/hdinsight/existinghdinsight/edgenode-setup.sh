@@ -241,6 +241,7 @@ _delete_tar(){
 
 
 apt-get --assume-yes install expect
+mkdir /opt/infoworks && chown -R $username:$username /opt/infoworks
 
 [ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
 if [ "$security" == "false" ]; then
