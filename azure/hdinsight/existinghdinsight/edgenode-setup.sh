@@ -18,7 +18,7 @@ if [ "$security" == "false" ]; then
   export password=infoworks-user
 elif [ "$security" == "true" ]; then
   export k4=$4
-  export username="$Admin_user"
+  export username=infoworks-user
   export password="$k4"
 fi
 
