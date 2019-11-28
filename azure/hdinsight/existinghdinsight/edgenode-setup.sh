@@ -78,7 +78,7 @@ _download_app(){
             done
         } || return 1;
 
-        chown -R $username:$username ${iw_home} || echo "Could not change ownership of infoworks package" && exit 1
+        chown -R $username:$username ${iw_home} || echo "Could not change ownership of infoworks package"
 
     } || {
         echo "Could not download the package" && return 1
@@ -240,9 +240,9 @@ _delete_tar(){
 apt-get --assume-yes install expect
 [ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
 if [ "$security" == "false" ]; then
-  _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed" && exit 1
+  _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 elif [ "$security" == "true" ]; then
-  _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed" && exit 1
+  _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
 fi
