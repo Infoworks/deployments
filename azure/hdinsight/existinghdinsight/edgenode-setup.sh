@@ -219,6 +219,7 @@ EOF1234
     sleep 4
     source ${iw_home}/bin/env.sh
     su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
+    su -c "$iw_home/bin/start.sh platform configuration" -s /bin/bash $username
     ##Enabling Kerberos Related configs for ESP Cluster
     if [ "$security" == "true" ];
     then
