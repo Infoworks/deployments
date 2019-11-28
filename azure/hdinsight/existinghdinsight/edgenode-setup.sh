@@ -70,7 +70,7 @@ _download_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started downloading application from "${app_path}
     {
-        eval cd /opt/ && wget ${app_path} && {
+        cd /opt/ && wget ${app_path} && {
             for i in `ls -a`; do
                 if [[ ($app_path =~ .*$i.*) && -f $i ]]; then
                     _extract_file $i;
@@ -78,7 +78,7 @@ _download_app(){
             done
         } || return 1;
 
-        eval chown -R $username:$username ${app_name} || echo "Could not change ownership of infoworks package"
+        chown -R $username:$username ${iw_home} || echo "Could not change ownership of infoworks package" && exit 1
 
     } || {
         echo "Could not download the package" && return 1
@@ -137,7 +137,7 @@ _get_namenode_hostname(){
             active_namenode=`hdfs getconf -confKey dfs.namenode.https-address.$hadoop_cluster_name.$namenode_id`
             IFS=':' read -ra $return_var<<< "$active_namenode"
             if [ "${!return_var}" == "" ]; then
-                    eval $return_var="'$default'"
+                    $return_var="'$default'"
             fi
 
         fi
@@ -240,9 +240,9 @@ _delete_tar(){
 apt-get --assume-yes install expect
 [ $? != "0" ] && echo "Could not install 'expect' plugin" && exit
 if [ "$security" == "false" ]; then
-  eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+  _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 elif [ "$security" == "true" ]; then
-  eval _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+  _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
 fi
