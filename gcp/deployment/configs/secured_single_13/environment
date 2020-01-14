@@ -1,0 +1,15 @@
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+JAVA_CONFIG_DIR=/etc/java-8-openjdk
+BDUTIL_DIR=/usr/local/share/google/dataproc/bdutil
+DATAPROC_AGENT_JAR=/usr/local/share/google/dataproc/agent-1-3-deb9-cloud_datarefinery_image_20191216_nightly-RC01.jar
+DATAPROC_COMMON_PACKAGES="bigtop-utils libjansi-java python-numpy hadoop-client hive pig spark-core spark-python spark-r autofs libhdfs0 libsnappy-dev libzstd-dev libatlas3-base libopenblas-base libapr1 vim git bash-completion spark-yarn-shuffle spark-datanucleus spark-extras hadoop-lzo python-setuptools linux-headers-4.9.0-11-amd64 uuid-runtime bc anaconda druid kafka-server kerberos presto ranger openssl tez hive-hcatalog linux-image-amd64 linux-headers-amd64 libmysql-java openjdk-8-jdk openjdk-8-dbg"
+DATAPROC_MASTER_SERVICES="hadoop-hdfs-namenode hadoop-yarn-resourcemanager hive-metastore hive-server2 zookeeper-server solr-server"
+DATAPROC_MASTER_EXCLUSIVE_SERVICES="hadoop-mapreduce-historyserver spark-history-server hive-webhcat-server jupyter knox proxy-agent zeppelin hadoop-yarn-timelineserver mariadb-server"
+DATAPROC_MASTER_STANDALONE_SERVICES="hadoop-hdfs-secondarynamenode"
+DATAPROC_MASTER_HA_SERVICES="hadoop-hdfs-journalnode hadoop-hdfs-zkfc"
+DATAPROC_WORKER_SERVICES="hadoop-hdfs-datanode hadoop-yarn-nodemanager"
+DATAPROC_VERSION="1.3"
+DATAPROC_OPTIONAL_COMPONENTS="zookeeper-server anaconda druid hive-webhcat-server jupyter kafka-server kerberos knox presto proxy-agent ranger solr-server zeppelin"
+DATAPROC_NON_DEBIAN_COMPONENTS="anaconda jupyter kerberos proxy-agent"
+DATAPROC_START_AFTER_HDFS_SERVICES="hadoop-mapreduce-historyserver spark-history-server"
+SPARK_HOME=/usr/lib/spark
