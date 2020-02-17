@@ -3,7 +3,7 @@
 wget -O /tmp/HDIUtilities.sh -q https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsightv2/scriptactions/HDIUtilities.sh && source /tmp/HDIUtilities.sh && rm -f /tmp/HDIUtilities.sh
 
 version=2.9.0
-INFOWORKS_TAR=https://infoworks-setup.s3.amazonaws.com/3.1/deploy_$version.tar.gz
+INFOWORKS_TAR=https://infoworks-setup.s3.amazonaws.com/2.9/deploy_$version.tar.gz
 app_name=infoworks
 TAR_LOC=/tmp/deploy.tar.gz
 INSTALL_DIR=/tmp/iw-installer
@@ -71,7 +71,6 @@ ${iw_home}
 /user/${username}
 iw_df_workspace
 ${edgenode_hostname}
-1
 hive2://${hiveserver_hostname}:${hive_port}
 ${username}
 ${username}
