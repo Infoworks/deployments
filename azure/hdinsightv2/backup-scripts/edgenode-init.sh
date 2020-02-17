@@ -30,7 +30,7 @@ SECONDARYHEADNODE=`get_secondary_headnode`
 prefix=$(grep -o adl: /etc/hadoop/conf/core-site.xml)
     if [ "$prefix" == "adl:" ]; then
         export hdfs_prefix=adl:
-    elif [ "$prefix" == "wasb:" ]; then
+    else
         export hdfs_prefix=wasb:
     fi
 
