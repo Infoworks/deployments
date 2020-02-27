@@ -5,7 +5,7 @@ export p2=$2
 export p3=$3
 export p4=$4
 
-export edgeNodeSetup="https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/edgenode-setup_290.sh"
+export edgeNodeSetup="https://raw.githubusercontent.com/Infoworks/deployments/master/azure/hdinsight/existinghdinsight/edgenode-setup.sh"
 
 _timestamp(){
 	date +%H:%M:%S
