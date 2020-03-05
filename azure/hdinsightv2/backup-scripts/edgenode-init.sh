@@ -77,7 +77,7 @@ ${username}
 ${username}
 EOF
 
-su -c "./install.sh -v ${version}-azure" -s /bin/bash $username
+su -c "./install.sh -v ${version}-azure --exclude-services cube-engine" -s /bin/bash $username
 popd
 sleep 10
     echo "Checking for configurations status"
