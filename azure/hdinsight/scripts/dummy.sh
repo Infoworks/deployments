@@ -16,6 +16,7 @@ readonly DEPLOYMENT_NAME=$1
 readonly DB_INSTANCE=$2
 readonly DB_URL=$3
 readonly DB_TOKEN=$4
+export DNS_NAME=datafoundryapp.eastus2.cloudapp.azure.com
 readonly HOSTNAME=`hostname -f`
 export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
 
@@ -33,6 +34,7 @@ sed -i -e "s|^export\ IW_DB_CLUSTER_TIMEOUT.*$|export\ IW_DB_CLUSTER_TIMEOUT=60|
 sed -i -e "s|^export\ DB_URL.*$|export\ DB_URL=$DB_URL|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ DB_TOKEN.*$|export\ DB_TOKEN=$DB_TOKEN|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=$HOSTNAME|" /opt/iw-installer/configure.sh
+sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME|" /opt/infoworks/conf/conf.properties.default
 systemctl restart collectd
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.0-adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER
