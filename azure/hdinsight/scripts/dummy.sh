@@ -1,5 +1,53 @@
 #!/bin#!/usr/bin/env bash
-echo "Iam Robot and working" > ~/temp
-echo "$1" >> ~/temp
-echo "$2" >> ~/temp
-echo "$3" >> ~/temp
+
+set -euo pipefail
+
+#add Variables
+readonly DEPLOYMENT_NAME=$1
+readonly DB_INSTANCE=$2
+readonly DB_URL=$3
+readonly DB_TOKEN=$4
+readonly HOSTNAME=`hostname -f`
+
+function mount() {
+  #statements
+  if mount -l | grep 'DataFoundry'; then
+  	echo "DataFoundry already mounted"
+  else
+  	DATA_DISK=$(blkid | grep 'DataFoundry' | awk '{print $3}')
+  	echo "$DATA_DISK   /opt   xfs   defaults,nofail   1   2" | tee -a /etc/fstab
+  	mount -a
+  fi
+}
+
+function user() {
+  #statements
+  if getent passwd $DF_USER; then
+    echo "User already exists"
+  else
+    useradd -m -s /bin/bash -p $(openssl passwd $DF_USER) $DF_USER 2> /dev/null || true
+  fi
+}
+
+function main() {
+  #statements
+  chown -R $DF_USER:$DF_USER /opt/*
+  sed -i -e "s|^export\ IW_DB_CLUSTER_INSTANCE.*$|export\ IW_DB_CLUSTER_INSTANCE_TYPE=$DB_INSTANCE|" /opt/iw-installer/configure.sh
+  sed -i -e "s|^export\ IW_DB_CLUSTER_NAME.*$|export\ IW_DB_CLUSTER_NAME=$DEPLOYMENT_NAME|" /opt/iw-installer/configure.sh
+  sed -i -e "s|^export\ IW_DB_CLUSTER_TIMEOUT.*$|export\ IW_DB_CLUSTER_TIMEOUT=60|" /opt/iw-installer/configure.sh
+  sed -i -e "s|^export\ DB_URL.*$|export\ DB_URL=$DB_URL|" /opt/iw-installer/configure.sh
+  sed -i -e "s|^export\ DB_TOKEN.*$|export\ DB_TOKEN=$DB_TOKEN|" /opt/iw-installer/configure.sh
+  sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=$HOSTNAME|" /opt/iw-installer/configure.sh
+  systemctl restart collectd
+}
+
+function infoworks() {
+  #statements
+  su - $DF_USER -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.0-adb-ubuntu && popd || echo "Deployment Failed' -s /bin/bash
+}
+
+mount
+export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
+user
+main
+infoworks
