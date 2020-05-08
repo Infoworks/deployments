@@ -16,7 +16,7 @@ readonly DEPLOYMENT_NAME=$1
 readonly DB_INSTANCE=$2
 readonly DB_URL=$3
 readonly DB_TOKEN=$4
-export DNS_NAME=$5
+#export DNS_NAME=$5
 readonly HOSTNAME=`hostname -f`
 export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
 
