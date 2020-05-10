@@ -20,9 +20,9 @@ readonly HOSTNAME=`hostname -f`
 export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
 
 if [ -f /run/cloud-init/instance-data.json ]; then
-  readonly IP_ADDR=$(grep -i 'publicIpAddress' /run/cloud-init/instance-data.json | awk '{print $2}' | tr -d '",')
+  export IP_ADDR=$(grep -i 'publicIpAddress' /run/cloud-init/instance-data.json | awk '{print $2}' | tr -d '",')
   if [ -z $IP_ADDR ]; then
-    readonly IP_ADDR=$(grep -i 'privateIpAddress' /run/cloud-init/instance-data.json | awk '{print $2}' | tr -d '",')
+    export IP_ADDR=$(grep -i 'privateIpAddress' /run/cloud-init/instance-data.json | awk '{print $2}' | tr -d '",')
   fi
 fi
 if getent passwd $DF_USER; then
