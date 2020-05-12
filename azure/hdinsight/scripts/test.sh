@@ -39,11 +39,12 @@ bcrypt_password = bcrypt.hashpw(hashed_password.encode(encoding="UTF-8", errors=
 print(bcrypt_password)
 EOF
 
-source /opt/infoworks/bin/env.sh.default
-ENCRYPT_PASS=$(python /opt/passgen.py)
+
+ENCRYPT_PASS=$(/opt/infoworks/resources/python36/bin/python /opt/passgen.py)
 if [[ -n ${ENCRYPT_PASS} ]]; then
   sed -i -e "s|^export\ IW_UI_PASSWORD.*$|export\ IW_UI_PASSWORD=${ENCRYPT_PASS#?}|" /opt/infoworks/conf/conf.properties.default
 fi
+rm -rf /opt/passgen.py
 
 chown -R $DF_USER:$DF_USER /opt/*
 sed -i -e "s|^export\ IW_DB_CLUSTER_INSTANCE.*$|export\ IW_DB_CLUSTER_INSTANCE_TYPE=$DB_INSTANCE|" /opt/iw-installer/configure.sh
