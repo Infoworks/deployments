@@ -42,7 +42,7 @@ EOF
 
 ENCRYPT_PASS=$(/opt/infoworks/resources/python36/bin/python /opt/passgen.py)
 if [[ -n ${ENCRYPT_PASS} ]]; then
-  sed -i -e "s|^export\ IW_UI_PASSWORD.*$|export\ IW_UI_PASSWORD=${ENCRYPT_PASS#?}|" /opt/infoworks/conf/conf.properties.default
+  sed -i -e "s|^export\ IW_UI_PASSWORD.*$|export\ IW_UI_PASSWORD=${ENCRYPT_PASS#?}|" /opt/iw-installer/configure.sh
 fi
 rm -rf /opt/passgen.py
 
@@ -53,7 +53,9 @@ sed -i -e "s|^export\ IW_DB_CLUSTER_TIMEOUT.*$|export\ IW_DB_CLUSTER_TIMEOUT=60|
 sed -i -e "s|^export\ DB_URL.*$|export\ DB_URL=$DB_URL|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ DB_TOKEN.*$|export\ DB_TOKEN=$DB_TOKEN|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=$HOSTNAME|" /opt/iw-installer/configure.sh
+sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-installer/configure.sh
 sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
-su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.0-adb-ubuntu && popd || exit 1' -s /bin/bash $DF_USER
+
+su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.0-adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER
 systemctl restart collectd
