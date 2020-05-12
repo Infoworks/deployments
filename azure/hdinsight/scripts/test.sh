@@ -17,6 +17,7 @@ readonly DB_INSTANCE=$2
 readonly DB_URL=$3
 readonly DB_TOKEN=$4
 readonly DNS_NAME=$5
+readonly PASS=$6
 readonly HOSTNAME=`hostname -f`
 export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
 
@@ -29,6 +30,20 @@ else
   useradd -m -s /bin/bash -p $(openssl passwd $DF_USER) $DF_USER 2> /dev/null || true
 fi
 
+cat << EOF > /opt/passgen.py
+import bcrypt
+from hashlib import sha256
+password = "$PASS"
+hashed_password = sha256(password.encode(encoding="UTF-8", errors="strict").rstrip()).hexdigest()
+bcrypt_password = bcrypt.hashpw(hashed_password.encode(encoding="UTF-8", errors="strict"), bcrypt.gensalt(rounds=10,prefix=b"2a"))
+print(bcrypt_password)
+EOF
+
+source /opt/infoworks/bin/env.sh.default
+ENCRYPT_PASS=$(python /opt/passgen.py)
+if [[ -n ${ENCRYPT_PASS} ]]; then
+  sed -i -e "s|^export\ IW_UI_PASSWORD.*$|export\ IW_UI_PASSWORD=${ENCRYPT_PASS#?}|" /opt/infoworks/conf/conf.properties.default
+fi
 
 chown -R $DF_USER:$DF_USER /opt/*
 sed -i -e "s|^export\ IW_DB_CLUSTER_INSTANCE.*$|export\ IW_DB_CLUSTER_INSTANCE_TYPE=$DB_INSTANCE|" /opt/iw-installer/configure.sh
@@ -39,5 +54,5 @@ sed -i -e "s|^export\ DB_TOKEN.*$|export\ DB_TOKEN=$DB_TOKEN|" /opt/iw-installer
 sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=$HOSTNAME|" /opt/iw-installer/configure.sh
 sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
-su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.0-adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER
+su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.0-adb-ubuntu && popd || exit 1' -s /bin/bash $DF_USER
 systemctl restart collectd
