@@ -40,7 +40,7 @@ sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=$HOSTNAME|" /opt/
 sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-installer/configure.sh
 #Temp Password:
 #sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD='\$2a\$10\$KuIunWHHtfPx/BA.JFw5BOpy2A1z2vVvh04vQ/byqlTuQoskW2kS.'|" /opt/iw-installer/configure.sh
-sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD=|" /opt/iw-installer/configure.sh
+sed -i -e "s|^export\ IW_AUTH_TOKEN.*|export\ IW_AUTH_TOKEN=sXi+E2rQF4bt70L5ah4B5F/KoGNi/tQzTIP9ZHVI500=|" /opt/iw-installer/configure.sh
 sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.1_beta1-adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER
