@@ -91,7 +91,7 @@ ${UI_IWX}
 1
 hive2://${Masternode}:10000
 ${username}
-${username}
+${password}
 EOF
     echo "Checking for configurations status"
     if [ ! -f $configured_status_file ]; then
@@ -103,40 +103,40 @@ EOF
     fi
 
     sleep 4
-    
-    source ${iw_home}/bin/env.sh
-    su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
-    sed -i -e "s/{{ZOOKEEPER_HOST}}/${Masternode}/g" $iw_home/cube-engine/conf/kylin_job_conf.xml
-}
-_delete_tar(){
-    if [ -f /opt/infoworks-*.tar.gz ]
-    then
-        rm -rf /opt/infoworks-*.tar.gz 
-    fi
+    sudo su - ${username} 'bash /opt/iw-installer/install.sh -v ${IW_VERSION}'
 }
 
+
 ##Replacing MasterNode Hostname in respective nodes.
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hbase/conf/hbase-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hbase/conf/jaas.conf
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/tez/conf/tez-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hadoop/conf/yarn-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hadoop/conf/core-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hadoop/conf/hdfs-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hadoop/conf/mapred-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/spark/conf/spark-defaults.conf
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/spark/conf/spark-env.sh
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/spark/conf/hive-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/hive/conf/hive-site.xml
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/zookeeper/conf/server-jaas.conf
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/zookeeper/conf/zoo.cfg
-sed -i -e "s/{{MASTER_HOSTNAME}}/${Masternode}/g" /etc/krb5.conf
+
+find /etc/hive/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/hue/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/hadoop/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/spark/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /usr/share/aws/emr/emrfs -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/krb5.conf -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/hive-hcatalog/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/zookeeper/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/hbase/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+
+find /etc/hive/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/hue/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/hadoop/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/spark/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /usr/share/aws/emr/emrfs -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/krb5.conf -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/hive-hcatalog/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/zookeeper/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+find /etc/hbase/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+
 sed -i -e "s/{{DOMAIN}}/${Domain}/g" /etc/krb5.conf
-sed -i -e "s/{{REALM}}/${Realm}/g" /etc/krb5.conf
+
 echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc ${username}@${Realm}"
 kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/${username}.keytab ${username}@${Realm}"
 echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc hdfs@${Realm}"
 kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/hdfs.keytab hdfs@${Realm}"
 chown hdfs:hdfs /etc/hdfs.keytab
+
 su -c "kinit -k -t /etc/hdfs.keytab hdfs@${Realm}" -s /bin/bash hdfs
 su -c "hdfs dfs -mkdir /user/infoworks-user" -s /bin/bash hdfs
 su -c "hdfs dfs -mkdir /iw" -s /bin/bash hdfs
@@ -146,4 +146,4 @@ chmod 0400 /etc/${username}.keytab
 
 
 ##Running Infoworks
-eval _create_user && chown ${username}:${username} /etc/${username}.keytab && su -c "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+eval _create_user && chown ${username}:${username} /etc/${username}.keytab && su -c $username "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username && _download_app && _deploy_app && [ -f $configured_status_file ] && echo "Application deployed successfully"  || echo "Deployment failed"

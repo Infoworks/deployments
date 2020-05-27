@@ -7,7 +7,7 @@
                         "instance_type": "t2.micro",
                         "subnet_id": "subnet-6a65b633",
                         "ssh_username": "ec2-user",
-                        "ami_name": "IWX_EMR_5.27.0",
+                        "ami_name": "IWX_EMR_5.27.0-{{timestamp}}",
                         "ami_description": "Infoworks EdgeNode for EMR 5.27.0"
                 }
         ],

@@ -34,7 +34,8 @@ hive-webhcat-2.3.5.amzn.1-1.amzn1.noarch
 jakarta-taglibs-standard-1.1.1-11.7.9.amzn1.noarch
 krb5-server-1.15.1-34.44.amzn1.x86_64
 libicu-50.2-4.0.amzn1.x86_64
-libicu-devel-50.2-4.0.amzn1.x86_64krb5-workstation-1.15.1-34.44.amzn1.x86_64
+libicu-devel-50.2-4.0.amzn1.x86_64
+krb5-workstation-1.15.1-34.44.amzn1.x86_64
 libRmath-devel-3.4.1-1.52.amzn1.x86_64
 libunwind-1.1-10.8.amzn1.x86_64
 libverto-libevent-0.2.5-4.9.amzn1.x86_64
