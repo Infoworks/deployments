@@ -51,7 +51,7 @@ print_green 'Remove SSH keys'
 [ -f /root/.ssh/authorized_keys ] && rm /root/.ssh/authorized_keys
  
 print_green 'Cleanup log files'
-sudo find /var/log -type f | while read f; do sudo echo -ne '' > $f; done
+sudo find /var/log -type f | while read f; do sudo truncate -s 0 $f; done
 
 print_green 'Cleanup bash history'
 unset HISTFILE

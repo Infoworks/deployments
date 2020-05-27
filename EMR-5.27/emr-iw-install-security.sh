@@ -6,7 +6,8 @@ export Realm=$3
 export Kpass=$4
 export Domain=$(hostname -d)
 export principal=kadmin/admin
-export app_path=http://54.221.70.148:8081/artifactory/infoworks-release/io/infoworks/release/${IW_VERSION}/infoworks-${IW_VERSION}.tar.gz
+major_version=`echo ${IW_VERSION} | cut -d. -f1-2`
+export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy/${IW_VERSION}.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
@@ -42,7 +43,7 @@ _create_user(){
 
 _extract_file(){
 
-    echo "Extracting infoworks package $1"
+    echo "Extracting Deploy package $1"
     if [ -f $1 ] ; then
      case $1 in
          *.tar.gz)    tar -xzf $1 ;;
