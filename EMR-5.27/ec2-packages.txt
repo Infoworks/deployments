@@ -60,11 +60,6 @@ python27-numpy-1.14.5-1.x86_64
 python27-sagemaker_pyspark-1.2.4-1.noarch
 python36-numpy-1.14.5-1.x86_64
 python36-sagemaker_pyspark-1.2.4-1.noarch
-R-3.4.1-1.52.amzn1.x86_64
-R-core-devel-3.4.1-1.52.amzn1.x86_64
-R-devel-3.4.1-1.52.amzn1.x86_64
-R-java-3.4.1-1.52.amzn1.x86_64
-R-java-devel-3.4.1-1.52.amzn1.x86_64
 s3-dist-cp-2.13.0-1.amzn1.noarch
 spark-core-2.4.4-1.amzn1.noarch
 spark-datanucleus-2.4.4-1.amzn1.noarch
