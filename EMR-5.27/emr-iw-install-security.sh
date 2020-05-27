@@ -109,25 +109,26 @@ EOF
 
 ##Replacing MasterNode Hostname in respective nodes.
 
-find /etc/hive/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/hue/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/hadoop/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/spark/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /usr/share/aws/emr/emrfs -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/krb5.conf -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/hive-hcatalog/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/zookeeper/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
-find /etc/hbase/conf/ -type f -exec sed -i 's/{{MASTER_HOSTNAME}}/${Masternode}/g' {} \;
+find /etc/hive/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/hadoop/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/spark/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /usr/share/aws/emr/emrfs -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/krb5.conf -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/hive-hcatalog/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/zookeeper/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/hbase/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
+find /etc/hdfs/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
 
-find /etc/hive/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/hue/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/hadoop/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/spark/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /usr/share/aws/emr/emrfs -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/krb5.conf -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/hive-hcatalog/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/zookeeper/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
-find /etc/hbase/conf/ -type f -exec sed -i 's/{{REALM}}/${Realm}/g' {} \;
+
+find /etc/hive/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/hadoop/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/spark/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /usr/share/aws/emr/emrfs -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/krb5.conf -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/hive-hcatalog/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/zookeeper/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/hbase/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
+find /etc/hbase/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
 
 sed -i -e "s/{{DOMAIN}}/${Domain}/g" /etc/krb5.conf
 
