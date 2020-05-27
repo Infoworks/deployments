@@ -13,6 +13,7 @@ export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
 export username=infoworks-user
 export password=infoworks-user
+export UI_IWX=$(hostname -f)
 
 #create system user with sudo permission
 _create_user(){
@@ -79,18 +80,19 @@ _download_app(){
 _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
-su -c "$iw_home/bin/start.sh all" $username <<EOF12345
-/usr/lib
-${Masternode}
-
-${Masternode}
-
-
-
-${Masternode}
-/usr/lib/spark
-
-EOF12345
+su -c "/opt/iw-installer/configure_install.sh" <<EOF
+y
+${username}
+${username}
+${iw_home}
+/user/${username}
+iw_df_workspace
+${UI_IWX}
+1
+hive2://${Masternode}:10000
+${username}
+${username}
+EOF
     echo "Checking for configurations status"
     if [ ! -f $configured_status_file ]; then
         echo "touch $configured_status_file"
@@ -101,6 +103,7 @@ EOF12345
     fi
 
     sleep 4
+    
     source ${iw_home}/bin/env.sh
     su -c "$iw_home/bin/start.sh orchestrator" -s /bin/bash $username
     sed -i -e "s/{{ZOOKEEPER_HOST}}/${Masternode}/g" $iw_home/cube-engine/conf/kylin_job_conf.xml
