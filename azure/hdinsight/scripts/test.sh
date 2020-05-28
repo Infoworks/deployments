@@ -57,5 +57,5 @@ sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-ins
 sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
 
-su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER
+su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.1-adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER
 systemctl restart collectd
