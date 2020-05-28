@@ -7,7 +7,7 @@ export Kpass=$4
 export Domain=$(hostname -d)
 export principal=kadmin/admin
 major_version=`echo ${IW_VERSION} | cut -d. -f1-2`
-export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy_${IW_VERSION}.tar.gz
+export app_path=https://infoworks-setup.s3.amazonaws.com/3.1/deploy_${IW_VERSION}.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
@@ -30,7 +30,8 @@ _create_user(){
                 useradd -m -p $pass $username
                 [ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
             fi
-            usermod -aG wheel $username || echo "Could not give sudo permission to $username"           
+            #usermod -aG wheel $username || echo "Could not give sudo permission to $username"
+            
         else
             echo "Only root may add a user to the system"
             return 1
@@ -142,11 +143,12 @@ su -c "hdfs dfs -chown -R infoworks-user:infoworks-user /user/infoworks-user" -s
 su -c "hdfs dfs -chown -R infoworks-user:infoworks-user /iw" -s /bin/bash hdfs
 chmod 0400 /etc/${username}.keytab
 
+su -c "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash ${username}
+
 ##Running Infoworks
 eval _create_user 
 chown ${username}:${username} /etc/${username}.keytab 
-su -c "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username
-
+su -c $username "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username
 _download_app && _deploy_app && [ -f $configured_status_file ] 
 echo "Application deployed successfully"  || echo "Deployment failed"
 
