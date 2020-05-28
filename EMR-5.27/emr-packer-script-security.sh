@@ -20,18 +20,20 @@ wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/emrc
 
 tar xzf emrconfigs-5.27.0-kerberos.tar.gz
 
-sudo cp -r emrconfigs/hadoop/conf/* /etc/hadoop/conf/
+sudo cp -r emrconfigs/hadoop/conf/*-site.xml /etc/hadoop/conf/
+sudo cp -r emrconfigs/hive/conf/*-site.xml /etc/hive/conf/
 sudo cp -r emrconfigs/hbase/conf/* /etc/hbase/conf/
-sudo cp -r emrconfigs/hive/conf/* /etc/hive/conf/
 sudo cp -r emrconfigs/hive-hcatalog/conf/* /etc/hive-hcatalog/conf/
 sudo cp -r emrconfigs/spark/conf/* /etc/spark/conf/
 sudo cp -r emrconfigs/tez/conf/* /etc/tez/conf/
 sudo cp -r emrconfigs/zookeeper/conf/* /etc/zookeeper/conf/
 sudo cp -r emrconfigs/kerberos/krb5.conf /etc/
-#sudo cp -r emrconfigs/emrfs/conf/* /usr/share/aws/emr/emrfs/conf/
+sudo cp -r emrconfigs/emrfs/conf/* /usr/share/aws/emr/emrfs/conf/
 
 wget https://raw.githubusercontent.com/Infoworks/deployments/master/EMR/message.sh
 cat message.sh | sudo tee -a /etc/profile.d/motd.sh
+
+sudo sed -i "s/# %wheel\tALL=(ALL)\tNOPASSWD: ALL/%wheel\tALL=(ALL)\tNOPASSWD: ALL/g" /etc/sudoers
 
 #######Remove the Tar ############
 rm -rf /home/ec2-user/ec2-packages.txt

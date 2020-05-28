@@ -7,7 +7,7 @@ export Kpass=$4
 export Domain=$(hostname -d)
 export principal=kadmin/admin
 major_version=`echo ${IW_VERSION} | cut -d. -f1-2`
-export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy/${IW_VERSION}.tar.gz
+export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy_${IW_VERSION}.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
@@ -30,8 +30,7 @@ _create_user(){
                 useradd -m -p $pass $username
                 [ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
             fi
-            usermod -aG sudo $username || echo "Could not give sudo permission to $username"
-            
+            usermod -aG wheel $username || echo "Could not give sudo permission to $username"           
         else
             echo "Only root may add a user to the system"
             return 1
@@ -62,15 +61,20 @@ _download_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started downloading application from "${app_path}
     {
-        eval cd /opt/ && wget ${app_path} && {
+        eval cd /opt && wget ${app_path} && {
             for i in `ls -a`; do
                 if [[ ($app_path =~ .*$i.*) && -f $i ]]; then
                     _extract_file $i;
                 fi
             done
+	    mkdir /opt/iw-installer/logs
+            chown -R ${username}:${username} /opt/iw-installer || echo "Could not change ownership of deploy infoworks package"
+            mkdir /opt/${app_name}
+            chown -R ${username}:${username} ${app_name} || echo "Could not change ownership of infoworks package"
         } || return 1;
-
-        eval chown -R $username:$username ${app_name} || echo "Could not change ownership of infoworks package"
+        
+        chown -R ${username}:${username} /opt/iw-installer || echo "Could not change ownership of deploy infoworks package"
+        chown -R ${username}:${username} ${app_name} || echo "Could not change ownership of infoworks package"
 
     } || {
         echo "Could not download the package" && return 1
@@ -80,7 +84,8 @@ _download_app(){
 _deploy_app(){
 
     echo "[$(date +"%m-%d-%Y %T")] Started deployment"
-su -c "/opt/iw-installer/configure_install.sh" <<EOF
+pushd /opt/iw-installer
+./configure_install.sh <<EOF
 y
 ${username}
 ${username}
@@ -93,17 +98,10 @@ hive2://${Masternode}:10000
 ${username}
 ${password}
 EOF
-    echo "Checking for configurations status"
-    if [ ! -f $configured_status_file ]; then
-        echo "touch $configured_status_file"
-        touch $configured_status_file
-    fi
-    if [ "$?" != "0" ]; then
-        return 1;
-    fi
-
-    sleep 4
-    sudo su - ${username} 'bash /opt/iw-installer/install.sh -v ${IW_VERSION}'
+sleep 4
+su -c "./install.sh -v ${IW_VERSION}-emr" -s /bin/bash $username
+#/bin/su -s /bin/bash -c '/opt/iw-installer/install.sh  -v ${IW_VERSION}-emr' ${username}
+popd
 }
 
 
@@ -117,7 +115,6 @@ find /etc/krb5.conf -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g"
 find /etc/hive-hcatalog/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
 find /etc/zookeeper/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
 find /etc/hbase/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
-find /etc/hdfs/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \;
 
 
 find /etc/hive/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \;
@@ -145,6 +142,11 @@ su -c "hdfs dfs -chown -R infoworks-user:infoworks-user /user/infoworks-user" -s
 su -c "hdfs dfs -chown -R infoworks-user:infoworks-user /iw" -s /bin/bash hdfs
 chmod 0400 /etc/${username}.keytab
 
-
 ##Running Infoworks
-eval _create_user && chown ${username}:${username} /etc/${username}.keytab && su -c $username "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username && _download_app && _deploy_app && [ -f $configured_status_file ] && echo "Application deployed successfully"  || echo "Deployment failed"
+eval _create_user 
+chown ${username}:${username} /etc/${username}.keytab 
+su -c "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username
+
+_download_app && _deploy_app && [ -f $configured_status_file ] 
+echo "Application deployed successfully"  || echo "Deployment failed"
+
