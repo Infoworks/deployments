@@ -6,8 +6,9 @@ export Realm=$3
 export Kpass=$4
 export Domain=$(hostname -d)
 export principal=kadmin/admin
+
 major_version=`echo ${IW_VERSION} | cut -d. -f1-2`
-export app_path=https://infoworks-setup.s3.amazonaws.com/3.1/deploy_${IW_VERSION}.tar.gz
+export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy_${IW_VERSION}.tar.gz
 export app_name=infoworks
 export iw_home=/opt/${app_name}
 export configured_status_file=$iw_home/conf/configured
