@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=2.9.0
+version=2.9.1
 app_path=https://infoworks-setup.s3.amazonaws.com/2.9/deploy_$version.tar.gz
 app_name=infoworks
 TAR_LOC=/tmp/deploy.tar.gz
