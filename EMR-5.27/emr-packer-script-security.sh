@@ -6,22 +6,24 @@ sudo wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0
 
 sudo wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/emr-platform.repo -P /etc/yum.repos.d/
 
-wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/ec2-packages.txt -P /home/ec2-user/
+wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/ec2-packages-amzn2.txt -P /home/ec2-user/
 
 filename='/home/ec2-user/ec2-packages.txt'
 exec 4<$filename
 echo "INSTALLING PACKAGES"
 while read -u4 p ; do
-    sudo yum install -y $p
-    sleep 7
+     sudo yum install -y $p
+     sleep 7
 done
+
+#sudo yum install -y zookeeper hadoop-client hbase hive hive-hcatalog tez spark-core wget expect emr-kinesis-pig emr-ddb-hadoop lzo emr-goodies-hadoop emr-kinesis-hive emr-ddb-hive emr-kinesis-cascading emr-kinesis-hadoop emr-goodies-hive  emr-kinesis-samples aws-java-sdk emrfs emr-kinesis emr-goodies emr-ddb hadoop-lzo emr-scripts cloudwatch-sink spark-yarn-shuffle aws-sagemaker-spark-sdk aws-hm-client spark-datanucleus python27-numpy python27-sagemaker_pyspark python34-sagemaker_pyspark krb5-workstation krb5-libs krb5-devel texlive
 
 wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/emrconfigs-5.27.0-kerberos.tar.gz
 
-tar xzf emrconfigs-5.27.0-kerberos.tar.gz
+tar xf emrconfigs-5.27.0-kerberos.tar.gz
 
-sudo cp -r emrconfigs/hadoop/conf/ /etc/hadoop/conf/
-sudo cp -r emrconfigs/hive/conf/ /etc/hive/conf/
+sudo cp -r emrconfigs/hadoop/conf/* /etc/hadoop/conf/
+sudo cp -r emrconfigs/hive/conf/* /etc/hive/conf/
 sudo cp -r emrconfigs/hbase/conf/* /etc/hbase/conf/
 sudo cp -r emrconfigs/hive-hcatalog/conf/* /etc/hive-hcatalog/conf/
 sudo cp -r emrconfigs/spark/conf/* /etc/spark/conf/

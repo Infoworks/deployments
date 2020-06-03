@@ -157,11 +157,13 @@ sleep 4
 
 }
 
-
 ##Replacing MasterNode Hostname in respective nodes.
 echo "Replacing PlaceHolders with MasterNode DNS and Relam"
 
-find /etc/hive/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \; || echo "Failed to change the PlaceHolder in Hive confs"
+find /etc/hive/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \; << EOF
+IN11**rk
+IN11**rk 
+EOF || echo "Failed to change the PlaceHolder in Hive confs"
 find /etc/hadoop/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \; || echo "Failed to change the PlaceHolder in Hadoop confs"
 find /etc/spark/conf/ -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \; || echo "Failed to change the PlaceHolder in Spark confs"
 find /usr/share/aws/emr/emrfs -type f -exec sed -i "s/{{MASTER_HOSTNAME}}/${Masternode}/g" {} \; || echo "Failed to change the PlaceHolder in EMRFS confs"
@@ -184,10 +186,10 @@ find /etc/hbase/conf/ -type f -exec sed -i "s/{{REALM}}/${Realm}/g" {} \; || ech
 sed -i -e "s/{{DOMAIN}}/${Domain}/g" /etc/krb5.conf || echo "Failed to change the PlaceHolder in Krb5 confs"
 
 
-echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc ${username}@${Realm}" || echo "Failed to add infoworks user principal"; exit 1;
-kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/${username}.keytab ${username}@${Realm}" || echo "Failed to create infoworks Keytab"; exit 1;
-echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc hdfs@${Realm}" || echo "Failed to add HDFS user principal"; exit 1;
-kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/hdfs.keytab hdfs@${Realm}" || echo "Failed to create HDFS Keytab"; exit 1;
+echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc ${username}@${Realm}" || echo "Failed to add infoworks user principal"; 
+kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/${username}.keytab ${username}@${Realm}" || echo "Failed to create infoworks Keytab"; 
+echo -e "${password}\n${password}" | kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "addprinc hdfs@${Realm}" || echo "Failed to add HDFS user principal"; 
+kadmin -p "${principal}@${Realm}" -w "${Kpass}" -q "xst -k /etc/hdfs.keytab hdfs@${Realm}" || echo "Failed to create HDFS Keytab";
 chown hdfs:hdfs /etc/hdfs.keytab
 chmod 0400 /etc/${username}.keytab
 chown ${username}:${username} /etc/${username}.keytab 
@@ -204,6 +206,15 @@ su -c "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash ${
 ##Running Infoworks
 eval _create_user 
 su -c $username "kinit -k -t /etc/${username}.keytab ${username}@${Realm}" -s /bin/bash $username
-_download_app && _deploy_app && [ -f $configured_status_file ] 
-echo "Application deployed successfully"  || echo "Deployment failed"
+_download_app && _deploy_app
+
+if [ -f "configured_status_file" ]
+then
+    sed -i -e "s/^#iw_security_kerberos_enabled.*$/iw_security_kerberos_enabled=true/" ${iw_home}/conf/conf.properties || echo "Failed to change the kerberos properties in infoworks configuration file";
+    sed -i -e "s/^#iw_security_kerberos_default_principal.*$/iw_security_kerberos_default_principal=${username}@${Realm}/" ${iw_home}/conf/conf.properties || echo "Failed to change the kerberos properties in infoworks configuration file";
+    sed -i -e "s/^#iw_security_kerberos_default_keytab_file.*$/iw_security_kerberos_default_keytab_file=/etc/${username}.keytab" ${iw_home}/conf/conf.properties || echo "Failed to change the kerberos properties in infoworks configuration file";
+    sed -i -e "s/^#iw_security_kerberos_hiveserver_principal.*$/iw_security_kerberos_hiveserver_principal=hive/_HOST@${Realm}" ${iw_home}/conf/conf.properties || echo "Failed to change the kerberos properties in infoworks configuration file";
+    echo "Application deployed successfully" 
+else
+    echo -e "\033[33;5m Deplpyemnt Failed \033[0m"
 
