@@ -4,7 +4,13 @@ apache-commons-dbcp-1.4-7.7.amzn1.noarch
 apache-commons-logging-1.1.1-16.8.amzn1.noarch
 apache-commons-pool-1.5.6-1.7.amzn1.noarch
 apache-tomcat-apis-0.1-1.6.amzn1.noarch
+aws-hm-client-1.10.0-1.amzn1.noarch
+aws-sagemaker-spark-sdk-1.2.4-1.amzn1.noarch
 bigtop-tomcat-6.0.48-1.amzn1.noarch
+bzip2-devel-1.0.6-8.12.amzn1.x86_64
+cloudwatch-sink-1.1.0-1.amzn1.noarch
+hadoop-yarn-nodemanager-2.8.5.amzn.4-1.amzn1.x86_64
+hbase-regionserver-1.4.10-1.amzn1.noarch
 ecj-4.2.1-4.15.amzn1.x86_64
 emr-ddb-4.12.0-1.amzn1.noarch
 emr-ddb-hadoop-4.12.0-1.amzn1.noarch
@@ -66,6 +72,7 @@ spark-core-2.4.4-1.amzn1.noarch
 spark-datanucleus-2.4.4-1.amzn1.noarch
 spark-external-2.4.4-1.amzn1.noarch
 spark-python-2.4.4-1.amzn1.noarch
+spark-yarn-shuffle-2.4.4-1.amzn1.noarch
 spark-R-2.4.4-1.amzn1.noarch
 texinfo-5.1-4.10.amzn1.x86_64
 texinfo-tex-5.1-4.10.amzn1.x86_64
@@ -93,3 +100,4 @@ hadoop-client
 wget
 emrfs
 hue
+hadoop-lzo

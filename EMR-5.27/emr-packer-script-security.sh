@@ -6,7 +6,7 @@ sudo wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0
 
 sudo wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/emr-platform.repo -P /etc/yum.repos.d/
 
-wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/ec2-packages-amzn2.txt -P /home/ec2-user/
+wget https://infoworks-setup.s3.amazonaws.com/emr-configurations/emr-5.27.0/ec2-packages.txt -P /home/ec2-user/
 
 filename='/home/ec2-user/ec2-packages.txt'
 exec 4<$filename
