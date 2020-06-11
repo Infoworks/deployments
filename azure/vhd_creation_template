@@ -31,7 +31,7 @@
       "sed -i '/LoadPlugin rrdtool/d' \"/etc/collectd/collectd.conf\"",
       "mkdir /etc/install",
       "cd /etc/install",
-      "wget https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.0/deploy_4.0{{build name}}adb-ubuntu.tar.gz",
+      "wget https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.0/deploy_{{imagename}}}-adb-ubuntu.tar.gz",
       "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ],
     "inline_shebang": "/bin/sh -x",
