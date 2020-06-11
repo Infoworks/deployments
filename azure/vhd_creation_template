@@ -1,0 +1,41 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+    "client_id": "---",
+    "client_secret": "---",
+    "tenant_id": "fb2758f6-7661-4b5f-8166-c3b82ad24f7d",
+    "subscription_id": "9c9cb9aa-49f6-40d2-a073-d0c1d291327d",
+    "managed_image_resource_group_name": "myResourceGroup",
+    "managed_image_name": "iw-{{imagename}}-image",
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "16.04-LTS",
+    "azure_tags": {
+      "Product": "Infoworks",
+      "Version": "4.0"
+    },
+    "location": "East US",
+    "vm_size": "Standard_D4s_v3"
+  }],
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "apt-get update",
+      "apt-get upgrade -y",
+      "sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3994D24FB8543576",
+      "sudo touch /etc/apt/sources.list.d/pkg.ci.collectd.org.list",
+      "echo \"deb http://pkg.ci.collectd.org/deb xenial collectd-5.8\" | sudo tee -a /etc/apt/sources.list.d/pkg.ci.collectd.org.list",
+      "apt update",
+      "apt --assume-yes install openjdk-8-jdk collectd",
+      "sed -i '/LoadPlugin rrdtool/d' \"/etc/collectd/collectd.conf\"",
+      "mkdir /etc/install",
+      "cd /etc/install",
+      "wget https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.0/deploy_4.0{{build name}}adb-ubuntu.tar.gz",
+      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+  }
+  ]
+}
