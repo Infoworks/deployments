@@ -11,6 +11,7 @@
     "image_publisher": "Canonical",
     "image_offer": "UbuntuServer",
     "image_sku": "16.04-LTS",
+    "async_resourcegroup_delete":true,
     "azure_tags": {
       "Product": "Infoworks",
       "Version": "4.0"
