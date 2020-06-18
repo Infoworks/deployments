@@ -34,8 +34,8 @@
       "cd /etc/install",
       "sudo wget https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.0/deploy_{{imagename}}-adb-ubuntu.tar.gz",
       "sudo wget https://iw-saas-setup.s3-accelerate.amazonaws.com/4.0/infoworks-{{imagename}}-adb-ubuntu.tar.gz",
-      "sudo tar -xzf deploy_4.0-int-adb-ubuntu.tar.gz",
-      "sudo tar -xzf infoworks-4.0-int-adb-ubuntu.tar.gz",
+      "sudo tar -xzf deploy_{{imagename}}-adb-ubuntu.tar.gz",
+      "sudo tar -xzf infoworks-{{imagename}}-adb-ubuntu.tar.gz",
       "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ],
     "inline_shebang": "/bin/sh -x",
