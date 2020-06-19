@@ -6,7 +6,7 @@
     "tenant_id": "fb2758f6-7661-4b5f-8166-c3b82ad24f7d",
     "subscription_id": "9c9cb9aa-49f6-40d2-a073-d0c1d291327d",
     "managed_image_resource_group_name": "myResourceGroup",
-    "managed_image_name": "4.0_beta1-formatdate("DDMMMYYYY","{{timestamp}}")",
+    "managed_image_name": "4.0_beta1-{{formatdate("DDMMMYYYY","{{timestamp}}")}}",
     "os_type": "Linux",
     "image_publisher": "Canonical",
     "image_offer": "UbuntuServer",
