@@ -14,7 +14,7 @@
     "async_resourcegroup_delete":true,
     "azure_tags": {
       "Product": "Infoworks",
-      "Version": "4.0"
+      "Version": "{{imagename}}"
     },
     "location": "{{REGION}}",
     "vm_size": "Standard_D4s_v3"
