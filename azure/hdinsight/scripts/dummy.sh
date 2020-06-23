@@ -46,6 +46,4 @@ sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.clo
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.1_beta1-adb-ubuntu || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
 systemctl restart collectd
-if [ -f /tmp/iwstatus ]; then
-  exit 143
-fi
+[ -f "/tmp/iwstatus" ] && exit 143
