@@ -16,7 +16,7 @@
       "Product": "Infoworks",
       "Version": "4.0"
     },
-    "location": "East US",
+    "location": "EAST US",
     "vm_size": "Standard_D4s_v3"
   }],
   "provisioners": [{
