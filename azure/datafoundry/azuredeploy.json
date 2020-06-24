@@ -203,6 +203,7 @@
         "extensionName": "[concat(parameters('vmName'), '-app')]",
         "networkSecurityGroupName": "[concat(parameters('vmName'), '-datafoundrynsg-', uniqueString(resourceGroup().id))]",
         "nicName": "[concat(parameters('vmName'), '-datafoundrynic-', uniqueString(resourceGroup().id))]",
+        "publicIpDns": "[concat(datafoundrydns-', uniqueString(resourceGroup().id))]",
         "osDisk": "StandardSSD_LRS",
         "scriptName": "dummy.sh"
     },
@@ -232,7 +233,7 @@
             "properties": {
                 "publicIPAllocationMethod": "[parameters('publicIpAllocationMethod')]",
                 "dnsSettings": {
-                    "domainNameLabel": "[parameters('publicIpDns')]"
+                    "domainNameLabel": "[variables('publicIpDns')]"
                 }
             }
         },
@@ -366,7 +367,7 @@
                             ]
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('bash dummy.sh ',parameters('vmName'), ' ', parameters('DbnodeVmsize'), ' ', parameters('databricksurl'), ' ', parameters('databrickstoken'), ' ', parameters('publicIpDns'))]"
+                            "commandToExecute": "[concat('bash dummy.sh ',parameters('vmName'), ' ', parameters('DbnodeVmsize'), ' ', parameters('databricksurl'), ' ', parameters('databrickstoken'), ' ', variables('publicIpDns'))]"
                         }
                     }
                 }
