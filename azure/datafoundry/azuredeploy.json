@@ -76,7 +76,7 @@
         },
         "adminUsername": {
             "type": "string",
-            "defaultValue": "infoworks"
+            "defaultValue": "infoworks",
             "metadata": {
                 "description": "User name for the Infoworks DF VM."
             }
@@ -94,7 +94,7 @@
         },
         "adminPasswordOrKey": {
             "type": "securestring",
-            "defaultValue": "IN11**rk1234"
+            "defaultValue": "IN11**rk1234",
             "metadata": {
                 "description": "Password or ssh key for the Infoworks DF VM."
             }
