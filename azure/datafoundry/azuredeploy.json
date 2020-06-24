@@ -55,14 +55,14 @@
         },
         "databrickstoken": {
             "type": "string",
-            "defaultValue": "https://adb-4134742693736709.9.azuredatabricks.net",
+            "defaultValue": "dapi814c61712794ec8818b297b85d149255",
             "metadata": {
                 "description": "Databricks Workspace Token"
             }
         },
         "databricksurl": {
             "type": "string",
-            "defaultValue": "dapi814c61712794ec8818b297b85d149255",
+            "defaultValue": "https://adb-4134742693736709.9.azuredatabricks.net",
             "metadata": {
                 "description": "Databricks Workspace URL"
             }
