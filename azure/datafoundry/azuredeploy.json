@@ -151,7 +151,7 @@
         },
         "dfVersion": {
             "type": "string",
-            "defaultValue": "1.4.0",
+            "defaultValue": "latest",
             "metadata": {
                 "description": "DF Version"
             }
@@ -334,8 +334,8 @@
                 "storageProfile": {
                     "imageReference": {
                         "publisher": "iwnamespace",
-                        "offer": "testsaas-preview",
-                        "sku": "plan123",
+                        "offer": "datafoundry-for-databricks-vm",
+                        "sku": "datafoundry-for-databricks-azure-vm",
                         "version": "[parameters('dfVersion')]"
                     },
                     "osDisk": {
@@ -364,9 +364,9 @@
                 }
             },
             "plan": {
-                "name": "plan123",
+                "name": "datafoundry-for-databricks-azure-vm",
                 "publisher": "iwnamespace",
-                "product": "testsaas-preview"
+                "product": "datafoundry-for-databricks-vm"
             },
             "resources": [
                 {
