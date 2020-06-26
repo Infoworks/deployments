@@ -69,7 +69,7 @@
         },
         "vmName": {
             "type": "string",
-            "defaultValue": "infoworks-datafoundry",
+            "defaultValue": "datafoundry",
             "metadata": {
                 "description": "Name for the Infoworks DF VM."
             }
