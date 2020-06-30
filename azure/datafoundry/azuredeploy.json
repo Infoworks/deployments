@@ -273,7 +273,8 @@
                             "destinationPortRanges": [
                                 "3000",
                                 "3030",
-                                "3020"
+                                "3020",
+                                "2999"
                             ],
                             "access": "Allow",
                             "direction": "Inbound",
