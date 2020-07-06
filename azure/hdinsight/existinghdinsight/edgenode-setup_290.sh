@@ -248,7 +248,7 @@ mkdir /opt/infoworks && chown -R $username:$username /opt/infoworks
 if [ "$security" == "false" ]; then
   eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 elif [ "$security" == "true" ]; then
-  eval _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+  eval _download_app && _deploy_app && _ticket_automation && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
 fi
