@@ -1,0 +1,20 @@
+{
+        "builders": [
+                {
+                        "type": "amazon-ebs",
+                        "region": "us-east-1",
+                        "source_ami": "ami-07e0233eebbcf1a6e",
+                        "instance_type": "t2.micro",
+                        "subnet_id": "subnet-6a65b633",
+                        "ssh_username": "ec2-user",
+                        "ami_name": "INFOWORKS_EMR_5.28.0_kerberos-tls-{{timestamp}}",
+                        "ami_description": "Infoworks EdgeNode for EMR 5.27.0 with security"
+                }
+        ],
+        "provisioners": [
+                {
+                        "type": "shell",
+                        "script": "emr-packer-script-security.sh"
+                }
+        ]
+}
