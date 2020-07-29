@@ -44,7 +44,7 @@ sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-ins
 sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD=|" /opt/iw-installer/configure.sh
 sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
-su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.1_beta1-adb-ubuntu || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
+su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 4.0.1_beta1-adb-ubuntu || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
 systemctl restart collectd
 #[ -f "/tmp/iwstatus" ] && exit 143
 if [ -f /tmp/iwstatus ]; then
