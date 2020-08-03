@@ -11,7 +11,7 @@ date=$(date +"%Z")
 HDP_VERSION=`ls /usr/hdp/ -I current`
 export security=$(grep -A 1 'acl.enable' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | cut -f 2 -d">" | cut -f 1 -d"<")
 #export Admin_user=$(grep -A 1 'admin.acl' /etc/hadoop/${HDP_VERSION}/0/yarn-site.xml | grep -v 'name' | awk -F',' '{print $1}' | cut -f2 -d">")
-export Admin_user="devopsengineer"
+export Admin_user="infoworks-user"
 export Domain_name=$(hostname -d | tr '[:lower:]' '[:upper:]')
 export k1=$1
 export k2=$2
@@ -248,7 +248,7 @@ mkdir /opt/infoworks && chown -R $username:$username /opt/infoworks
 if [ "$security" == "false" ]; then
   eval _create_user && _download_app && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 elif [ "$security" == "true" ]; then
-  eval _download_app && _ticket_automation && _deploy_app && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
+  eval _download_app && _deploy_app && _ticket_automation && [ -f $configured_status_file ] && _delete_tar && echo "Application deployed successfully"  || echo "Deployment failed"
 else
   echo "Not able figure out security type of cluster"
 fi
