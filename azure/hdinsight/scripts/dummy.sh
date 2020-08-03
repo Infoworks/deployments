@@ -29,8 +29,8 @@ else
   useradd -m -s /bin/bash -p $(openssl passwd $DF_USER) $DF_USER 2> /dev/null || true
 fi
 wget https://infoworks-resources.s3.amazonaws.com/self-seigned-certs.tar.gz
-mkdir -p /opt/infoworks/certificates
-tar xzf self-seigned-certs.tar.gz -C /opt/infoworks/certificates
+tar xzf self-seigned-certs.tar.gz -C /opt/infoworks/
+#chown -R $DF_USER:$DF_USER /opt/infoworks/
 rm -rf self-seigned-certs.tar.gz
 chown root:root /opt
 chown -R $DF_USER:$DF_USER /opt/*
