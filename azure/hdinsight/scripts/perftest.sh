@@ -12,12 +12,13 @@ else
 fi
 
 #add Variables
-readonly DEPLOYMENT_NAME=$1
+export DEPLOYMENT_NAME=$1-$(openssl rand -hex 3)
 readonly DB_INSTANCE=$2
 readonly DB_URL=$3
 readonly DB_TOKEN=$4
 readonly DNS_NAME=$5
 readonly HOSTNAME=`hostname -f`
+
 export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
 
 if [ -f /run/cloud-init/instance-data.json ]; then
@@ -43,6 +44,6 @@ sed -i -e "s|^export\ DB_TOKEN.*$|export\ DB_TOKEN=$DB_TOKEN|" /opt/iw-installer
 sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=$INTERNAL_IP|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-installer/configure.sh
 sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
-sed -i -e "s|spark.iw.collectd.host.*$|spark.iw.collectd.host\": \"$SPARK_IP\"|" /opt/infoworks/conf/databricks_defaults_azure.json
+#sed -i -e "s|spark.iw.collectd.host.*$|spark.iw.collectd.host\": \"$SPARK_IP\"|" /opt/infoworks/conf/databricks_defaults_azure.json
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 3.2.1-adb-ubuntu && popd || echo "Deployment Failed"' -s /bin/bash $DF_USER

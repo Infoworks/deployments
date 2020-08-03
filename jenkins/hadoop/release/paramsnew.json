@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "eastus2"
+    },
+    "virtualNetworkNewOrExisting": {
+      "value": "existing"
+    },
+    "virtualNetworkName": {
+      "value": "generalized-vnet"
+    },
+    "addressPrefixes": {
+      "value": [
+        "10.0.0.0/16"
+      ]
+    },
+    "subnetName": {
+      "value": "Subnet-1"
+    },
+    "subnetPrefix": {
+      "value": "10.0.0.0/29"
+    },
+    "virtualNetworkResourceGroupName": {
+      "value": "marketplaceoffer"
+    },
+    "databrickstoken": {
+      "value": "dapi814c61712794ec8818b297b85d149255"
+    },
+    "databricksurl": {
+      "value": "https://adb-4134742693736709.9.azuredatabricks.net"
+    },
+    "vmName": {
+      "value": "infoworks-df"
+    },
+    "adminUsername": {
+      "value": "saikrishna"
+    },
+    "authenticationType": {
+      "value": "password"
+    },
+    "adminPasswordOrKey": {
+      "value": "IN11**rk1234"
+    },
+    "publicIpNewOrExisting": {
+      "value": "new"
+    },
+    "publicIpName": {
+      "value": "datafoundsip"
+    },
+    "publicIpDns": {
+      "value": "datafoundsdns"
+    },
+    "publicIpResourceGroupName": {
+      "value": "marketplaceoffer"
+    },
+    "publicIpAllocationMethod": {
+      "value": "Dynamic"
+    },
+    "publicIpSku": {
+      "value": "Basic"
+    },
+    "dfVmsize": {
+      "value": "Standard_D3_v2"
+    },
+    "DbnodeVmsize": {
+      "value": "Standard_D3_v2"
+    },
+    "_artifactsLocation": {
+      "value": ""
+    },
+    "_artifactsLocationSasToken": {
+      "value": ""
+    }
+  }
+}
