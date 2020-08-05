@@ -28,10 +28,7 @@ if getent passwd $DF_USER; then
 else
   useradd -m -s /bin/bash -p $(openssl passwd $DF_USER) $DF_USER 2> /dev/null || true
 fi
-wget https://infoworks-resources.s3.amazonaws.com/self-seigned-certs.tar.gz
-tar xzf self-seigned-certs.tar.gz -C /opt/infoworks/
-#chown -R $DF_USER:$DF_USER /opt/infoworks/
-rm -rf self-seigned-certs.tar.gz
+
 chown root:root /opt
 chown -R $DF_USER:$DF_USER /opt/*
 sed -i -e "s|^export\ IW_DB_CLUSTER_INSTANCE.*$|export\ IW_DB_CLUSTER_INSTANCE_TYPE=$DB_INSTANCE|" /opt/iw-installer/configure.sh
@@ -45,7 +42,7 @@ sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-ins
 #sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD='\$2a\$10\$DBui6vvfI5NAu3/ZuZBxquMTzI0PViKA6W5vO9reLr09GbLUyXIn6'|" /opt/iw-installer/configure.sh
 #sed -i -e "s|^export\ IW_AUTH_TOKEN.*|export\ IW_AUTH_TOKEN=AU66mMKxL9fEwHEUe9cMnhV7JCSbhjs4XMAQZo0eP0TQC5ONWWXBjASI+HELzmGDu5earU0xLKvrLOVxdzNMkA==|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD=|" /opt/iw-installer/configure.sh
-echo "export SSL_SETUP=Y" >> /opt/iw-installer/configure.sh
+#echo "export SSL_SETUP=Y" >> /opt/iw-installer/configure.sh
 #sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 4.0.1_beta1-adb-ubuntu || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
