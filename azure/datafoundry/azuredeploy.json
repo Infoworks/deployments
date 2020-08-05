@@ -389,7 +389,7 @@
                             ]
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('bash dummy.sh ',parameters('vmName'), ' ', parameters('DbnodeVmsize'), ' ', parameters('databricksurl'), ' ', parameters('databrickstoken'), ' ', variables('publicIpDns'))]"
+                            "commandToExecute": "[concat('bash dummy.sh ',parameters('vmName'), ' ', parameters('DbnodeVmsize'), ' ', parameters('databricksurl'), ' ', parameters('databrickstoken'))]"
                         }
                     }
                 }
@@ -399,7 +399,7 @@
     "outputs": {
         "dataFoundry URL": {
             "type": "string",
-            "value": "[if(equals(parameters('publicIpNewOrExisting'), 'none'), 'no public ip', concat('http://', reference(resourceId(parameters('publicIpResourceGroupName'), 'Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2018-04-01').dnsSettings.fqdn, ':3000'))]"
+            "value": "[if(equals(parameters('publicIpNewOrExisting'), 'none'), 'no public ip', concat('https://', reference(resourceId(parameters('publicIpResourceGroupName'), 'Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2018-04-01').dnsSettings.fqdn))]"
         },
         "default username": {
             "type": "string",
