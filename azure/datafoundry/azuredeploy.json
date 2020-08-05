@@ -271,10 +271,7 @@
                             "sourceAddressPrefix": "*",
                             "protocol": "Tcp",
                             "destinationPortRanges": [
-                                "3000",
-                                "3002",
-                                "3011",                                                                                       
-                                "2999"
+                                "443"
                             ],
                             "access": "Allow",
                             "direction": "Inbound",
