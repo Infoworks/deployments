@@ -16,7 +16,7 @@ readonly DEPLOYMENT_NAME=$1
 readonly DB_INSTANCE=$2
 readonly DB_URL=$3
 readonly DB_TOKEN=$4
-readonly DNS_NAME=$5
+#readonly DNS_NAME=$5
 readonly HOSTNAME=`hostname -f`
 export DF_USER=$(grep 'IW_USER' /opt/iw-installer/configure.sh | cut -f2 -d'=')
 
@@ -46,7 +46,7 @@ sed -i -e "s|^export\ DB_REGION.*$|export\ DB_REGION=$DNS_SETTINGS|" /opt/iw-ins
 #sed -i -e "s|^export\ IW_AUTH_TOKEN.*|export\ IW_AUTH_TOKEN=AU66mMKxL9fEwHEUe9cMnhV7JCSbhjs4XMAQZo0eP0TQC5ONWWXBjASI+HELzmGDu5earU0xLKvrLOVxdzNMkA==|" /opt/iw-installer/configure.sh
 sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD=|" /opt/iw-installer/configure.sh
 echo "export SSL_SETUP=Y" >> /opt/iw-installer/configure.sh
-sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
+#sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 4.0.1_beta1-adb-ubuntu || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
 systemctl restart collectd
