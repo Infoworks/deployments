@@ -46,18 +46,19 @@ sed -i -e "s|^export\ IW_UI_PASSWORD.*|export\ IW_UI_PASSWORD=|" /opt/iw-install
 #sed -i -e "s|^proxy_server_host.*$|proxy_server_host=$DNS_NAME.$DNS_SETTINGS.cloudapp.azure.com|" /opt/infoworks/conf/conf.properties.default || true
 
 su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 4.0.1_beta1-adb-ubuntu || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
-tee /tmp/script.sh <<EOF
-if /opt/infoworks/resources/python36/bin/dbfs ls dbfs:/infoworks/lib | grep -Fxq platform; then
-  echo "Exists already"
-else
-  /opt/infoworks/resources/python36/bin/dbfs mkdirs dbfs:/infoworks/lib/platform/scala-utils/
-  /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparksalesforce.jar dbfs:/infoworks/lib/platform/scala-utils/sparksalesforce.jar
-  /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar dbfs:/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar
-fi
-EOF
-chown $DF_USER:$DF_USER /tmp/script.sh && chmod +x /tmp/script.sh
-su -c 'bash /tmp/script.sh' -s /bin/bash $DF_USER
-rm -rf /tmp/script.sh
+#tee /tmp/script.sh <<EOF
+#if /opt/infoworks/resources/python36/bin/dbfs ls dbfs:/infoworks/lib | grep -Fxq platform; then
+#  echo "Exists already"
+#else
+#  /opt/infoworks/resources/python36/bin/dbfs mkdirs dbfs:/infoworks/lib/platform/scala-utils/
+#  /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparksalesforce.jar dbfs:/infoworks/lib/platform/scala-utils/sparksalesforce.jar
+#  /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar dbfs:/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar
+#fi
+#EOF
+#chown $DF_USER:$DF_USER /tmp/script.sh && chmod +x /tmp/script.sh
+#su -c 'if /opt/infoworks/resources/python36/bin/dbfs ls dbfs:/infoworks/lib | grep -Fxq platform; then echo "Exists already"; else /opt/infoworks/resources/python36/bin/dbfs mkdirs dbfs:/infoworks/lib/platform/scala-utils/; /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparksalesforce.jar dbfs:/infoworks/lib/platform/scala-utils/sparksalesforce.jar; /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar dbfs:/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar; fi' -s /bin/bash $DF_USER
+su -c 'if /opt/infoworks/resources/python36/bin/dbfs ls dbfs:/saikrishna/lib | grep -Fxq platform; then echo "Exists already"; else /opt/infoworks/resources/python36/bin/dbfs mkdirs dbfs:/saikrishna/lib/platform/scala-utils/; /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparksalesforce.jar dbfs:/saikrishna/lib/platform/scala-utils/sparksalesforce.jar; /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar dbfs:/saikrishna/lib/platform/scala-utils/sparkMetrics-assembly.jar; fi' -s /bin/bash $DF_USER
+#rm -rf /tmp/script.sh
 systemctl restart collectd
 #[ -f "/tmp/iwstatus" ] && exit 143
 if [ -f /tmp/iwstatus ]; then
