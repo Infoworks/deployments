@@ -55,6 +55,7 @@ else
   /opt/infoworks/resources/python36/bin/dbfs cp /opt/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar dbfs:/infoworks/lib/platform/scala-utils/sparkMetrics-assembly.jar
 fi
 EOF
+chown $DF_USER:$DF_USER /tmp/script.sh && chmod +x /tmp/script.sh
 su -c 'bash /tmp/script.sh' -s /bin/bash $DF_USER
 rm -rf /tmp/script.sh
 systemctl restart collectd
