@@ -151,7 +151,7 @@
         },
         "dfVersion": {
             "type": "string",
-            "defaultValue": "4.0.01",
+            "defaultValue": "4.0.1",
             "metadata": {
                 "description": "DF Version"
             }
