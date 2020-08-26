@@ -1,10 +1,10 @@
 #!/bin/bash -e
 
-username="infoworks"
-pass="infoworks"
+#username="infoworks"
+#pass="infoworks"
 
 
-sudo useradd -m -p $pass $username
+#sudo useradd -m -p $pass $username
 
 #setting ulimits for infoworks user
 #sudo su - infoworks ulimit -n 10000 
@@ -13,14 +13,14 @@ sudo useradd -m -p $pass $username
 
 
 #set ulimits
-sudo tee -a /etc/security/limits.conf > /dev/null <<EOF
+#sudo tee -a /etc/security/limits.conf > /dev/null <<EOF
 
-@infoworks	 hard	 nproc	10000 
-@infoworks	 soft	 nproc	10000
-@infoworks	 hard	nofile	65000
-@infoworks   soft	nofile	65000
+#@infoworks	 hard	 nproc	10000 
+#@infoworks	 soft	 nproc	10000
+#@infoworks	 hard	nofile	65000
+#@infoworks   soft	nofile	65000
 
-EOF
+#EOF
 
 sudo yum install -y wget
 sleep 20
@@ -46,13 +46,13 @@ sudo yum -y install collectd
 
 #configure collectd
 sudo sed -i '/LoadPlugin rrdtool/d' "/etc/collectd.conf"
+sudo sed -i '/LoadPlugin network/s/^#//g' /etc/collectd.conf
+sudo sed -i '/LoadPlugin write_http/s/^#//g' /etc/collectd.conf
 sudo tee -a /etc/collectd.conf > /dev/null <<EOF
-LoadPlugin network
 <Plugin network>
   Server "localhost" "25826"
 </Plugin>
 
-LoadPlugin write_http
 <Plugin write_http>
   <Node "collectd_exporter">
     URL "http://localhost:3027/collectd-post"
@@ -78,12 +78,12 @@ sudo service collectd restart
 sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.2/deploy_4.2.0-adb-rhel7.tar.gz' -P /opt/
 sudo tar -xzf /opt/deploy_4.2.0-adb-rhel7.tar.gz -C /opt/
 sudo rm /opt/deploy_4.2.0-adb-rhel7.tar.gz
-sudo chown -R infoworks: /opt/iw-installer
+sudo chown -R ec2-user:ec2-user /opt/iw-installer
 
 sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.2/infoworks-4.2.0-adb-rhel7.tar.gz' -P /opt/
 sudo tar -xzf /opt/infoworks-4.2.0-adb-rhel7.tar.gz -C /opt/
 sudo rm /opt/infoworks-4.2.0-adb-rhel7.tar.gz
-sudo chown -R infoworks: /opt/infoworks/
+sudo chown -R ec2-user:ec2-user /opt/infoworks
 
 wget https://raw.githubusercontent.com/Infoworks/deployments/master/EMR/message.sh
 cat message.sh | sudo tee -a /etc/profile.d/motd.sh
