@@ -1,16 +1,16 @@
-#!/bin/bash
+/bin/bash
 
 export Domain=$(hostname -d)
 export principal=kadmin/admin
 
-major_version=`echo $IW_VERSION | cut -d. -f1-2`
-export app_path=https://infoworks-setup.s3.amazonaws.com/$major_version/deploy_$IW_VERSION.tar.gz
-export app_name=infoworks
-export iw_home=/opt/$app_name
-export configured_status_file=$iw_home/conf/configured
-export username=infoworks-user
-export password=infoworks-user
-export UI_IWX=$(hostname -f)
+#major_version=`echo $IW_VERSION | cut -d. -f1-2`
+#export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy_${IW_VERSION}.tar.gz
+#export app_name=infoworks
+#export iw_home=/opt/$app_name
+#export configured_status_file=$iw_home/conf/configured
+#export username=infoworks-user
+#export password=infoworks-user
+#export UI_IWX=$(hostname -f)
 
 echo "Please enter the configuration settings"
 echo "================================================================================"
@@ -51,6 +51,16 @@ then
     exit 1
 fi
 
+major_version=`echo $IW_VERSION | cut -d. -f1-2`
+export app_path=https://infoworks-setup.s3.amazonaws.com/${major_version}/deploy_${IW_VERSION}.tar.gz
+export app_name=infoworks
+export iw_home=/opt/$app_name
+export configured_status_file=$iw_home/conf/configured
+export username=infoworks-user
+export password=infoworks-user
+export UI_IWX=$(hostname -f)
+
+
 #create system user with sudo permission
 _create_user(){
 
@@ -63,7 +73,9 @@ _create_user(){
                 echo "$username exists!"
             else
                 pass=$(perl -e 'print crypt($ARGV[0], "password")' $password)
+		groupadd $username
                 useradd -m -p $pass $username
+                groupadd -f $username
                 [ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
             fi
             #usermod -aG wheel $username || echo "Could not give sudo permission to $username"
@@ -77,6 +89,8 @@ _create_user(){
         echo 'Could not add user $username' && return 1
     }
 }
+
+eval _create_user
 
 _extract_file(){
 
@@ -131,7 +145,6 @@ $iw_home
 iw_df_workspace
 $UI_IWX
 1
-
 hive2://$Masternode:10000
 $username
 $password
@@ -169,14 +182,13 @@ find /etc/hbase/conf/ -type f -exec sed -i 's/{{REALM}}/'"$Realm"'/g' {} \; || e
 sed -i -e 's/{{DOMAIN}}/'"$Domain"'/g' /etc/krb5.conf || echo 'Failed to change the PlaceHolder in Krb5 confs'
 
 
-echo -e "$Domain\n$Domain" | kadmin -p "$principal@$Realm" -w "$Kpass" -q "addprinc $username@$Realm" || echo "Failed to add infoworks user principal"; exit 1;
-kadmin -p "$principal@$Realm" -w "$Kpass" -q "xst -k /etc/$username.keytab $username@$Realm" || echo "Failed to create infoworks Keytab"; exit 1;
-echo -e "$Domain\n$Domain" | kadmin -p "$principal@$Realm" -w "$Kpass" -q "addprinc hdfs@$Realm" || echo "Failed to add HDFS user principal"; exit 1;
-kadmin -p "$principal@$Realm" -w "$Kpass" -q "xst -k /etc/hdfs.keytab hdfs@$Realm" || echo "Failed to create HDFS Keytab"; exit 1;
+echo -e "$Domain\n$Domain" | kadmin -p "$principal@$Realm" -w "$Kpass" -q "addprinc $username@$Realm" || echo "Failed to add infoworks user principal";
+kadmin -p "$principal@$Realm" -w "$Kpass" -q "xst -k /etc/$username.keytab $username@$Realm" || echo "Failed to create infoworks Keytab"; 
+echo -e "$Domain\n$Domain" | kadmin -p "$principal@$Realm" -w "$Kpass" -q "addprinc hdfs@$Realm" || echo "Failed to add HDFS user principal"; 
+kadmin -p "$principal@$Realm" -w "$Kpass" -q "xst -k /etc/hdfs.keytab hdfs@$Realm" || echo "Failed to create HDFS Keytab"; 
 chown hdfs:hdfs /etc/hdfs.keytab
 chmod 0400 /etc/$username.keytab
-chown $username:$username /etc/$username.keytab 
-
+chown $username:$username /etc/$username.keytab
 
 su -c "kinit -k -t /etc/hdfs.keytab hdfs@$Realm" -s /bin/bash hdfs  || echo "Failed to Kinit"; 
 su -c "hdfs dfs -mkdir /user/infoworks-user" -s /bin/bash hdfs || echo "Failed to create HDFS directory";
@@ -187,7 +199,12 @@ su -c "hdfs dfs -chown -R infoworks-user:infoworks-user /iw" -s /bin/bash hdfs |
 su -c "kinit -k -t /etc/$username.keytab $username@$Realm" -s /bin/bash $username || echo "Failed to Kinit"; 
 
 ##Running Infoworks
-eval _create_user 
 su -c $username "kinit -k -t /etc/$username.keytab $username@$Realm" -s /bin/bash $username
 _download_app && _deploy_app && [ -f $configured_status_file ] 
-#echo "Application deployed successfully"  || echo "Deployment failed"
+
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's//'"$Realm"'/g' {} \; || echo 'Failed to change the PlaceHolder in Hbase confs'
+
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's/#iw_security_kerberos_enabled=true/iw_security_kerberos_enabled=true/g' {} \; || echo 'Failed to change the PlaceHolder in Hbase confs'
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's/#iw_security_kerberos_default_principal=INFOWORKS-USER@DOMAIN.COM/iw_security_kerberos_default_principal='"$username"'@'"$Realm"'/g' {} \; || echo 'Failed to change the PlaceHolder in Hbase confs'
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's|#iw_security_kerberos_default_keytab_file=/path/to/infoworks-user.keytab|iw_security_kerberos_default_keytab_file=/etc/'"$username"'.keytab|g' {} \; || echo 'Failed to change the PlaceHolder in Hbase confs'
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's|#iw_security_kerberos_hiveserver_principal=hive/HIVEHOST@DOMAIN.COM|iw_security_kerberos_hiveserver_principal=hive/_HOST@'"$Realm"'|g' {} \; || echo 'Failed to change the PlaceHolder in Hbase confs'

@@ -7,8 +7,8 @@
                         "instance_type": "t2.micro",
                         "subnet_id": "subnet-6a65b633",
                         "ssh_username": "ec2-user",
-                        "ami_name": "INFOWORKS_EMR_5.28.0_kerberos-tls-{{timestamp}}",
-                        "ami_description": "Infoworks EdgeNode for EMR 5.27.0 with security"
+                        "ami_name": "INFOWORKS_EMR_5.28.1_kerberos-tls-{{timestamp}}",
+                        "ami_description": "Infoworks EdgeNode for EMR 5.28.1 with security"
                 }
         ],
         "provisioners": [

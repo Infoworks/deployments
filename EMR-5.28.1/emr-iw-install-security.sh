@@ -51,6 +51,15 @@ then
     exit 1
 fi
 
+major_version=`echo $IW_VERSION | cut -d. -f1-2`
+export app_path=https://infoworks-setup.s3.amazonaws.com/$major_version/deploy_$IW_VERSION.tar.gz
+export app_name=infoworks
+export iw_home=/opt/$app_name
+export configured_status_file=$iw_home/conf/configured
+export username=infoworks-user
+export password=infoworks-user
+export UI_IWX=$(hostname -f)
+
 #create system user with sudo permission
 _create_user(){
 
@@ -131,7 +140,6 @@ $iw_home
 iw_df_workspace
 $UI_IWX
 1
-
 hive2://$Masternode:10000
 $username
 $password
@@ -186,8 +194,11 @@ su -c "hdfs dfs -chown -R infoworks-user:infoworks-user /iw" -s /bin/bash hdfs |
 
 su -c "kinit -k -t /etc/$username.keytab $username@$Realm" -s /bin/bash $username || echo "Failed to Kinit"; 
 
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's/#iw_security_kerberos_enabled=true/iw_security_kerberos_enabled=true/g' {} \; 
 ##Running Infoworks
 eval _create_user 
 su -c $username "kinit -k -t /etc/$username.keytab $username@$Realm" -s /bin/bash $username
 _download_app && _deploy_app && [ -f $configured_status_file ] 
 #echo "Application deployed successfully"  || echo "Deployment failed"
+
+find /opt/infoworks/conf/conf.properties -type f -exec sed -i 's/#iw_security_kerberos_enabled=true/iw_security_kerberos_enabled=true/g' {} \; 
