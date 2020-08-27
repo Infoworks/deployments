@@ -37,7 +37,7 @@ fi
 sudo rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum -y install collectd 
 sleep 20
-yum install -y jq
+sudo yum install -y jq
 sleep 20
 sudo yum install -y wget
 sleep 20
@@ -91,6 +91,12 @@ sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.2/infoworks-4.2.0-
 sudo tar -xzf /opt/infoworks-4.2.0-adb-rhel7.tar.gz -C /opt/
 sudo rm /opt/infoworks-4.2.0-adb-rhel7.tar.gz
 sudo chown -R ec2-user:ec2-user /opt/infoworks
+
+sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/Amazonlinux2/4.2/amazonlinux2-selfsigned-certs.tar.gz' -P /opt/
+sudo mkdir /opt/infoworks/certificates/
+sudo tar -xzf /opt/amazonlinux2-selfsigned-certs.tar.gz -C /opt/infoworks/certificates/
+sudo rm /opt/amazonlinux2-selfsigned-certs.tar.gz
+sudo chown -R ec2-user:ec2-user /opt/infoworks/certificates/
 
 wget https://raw.githubusercontent.com/Infoworks/deployments/master/EMR/message.sh
 cat message.sh | sudo tee -a /etc/profile.d/motd.sh

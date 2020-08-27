@@ -20,3 +20,4 @@ export IW_HOME=/opt/infoworks
 export IW_ADMIN_AUTH_TOKEN=
 export IW_INSTALLATION_ID=
 export IW_LICENSE=
+export SSL_SETUP=Y
