@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export IW_USER=infoworks
-export IW_PLATFORM=saas
+export IW_PLATFORM=marketplace
 export DB_URL={{DATABRICKS_URL}}
 export DB_TOKEN={{DATABRICKS_TOKEN}}
 export DB_REGION={{REGION}}
@@ -18,3 +18,5 @@ export DEMO_ASSETS=Y
 export IW_AUTH_TOKEN=
 export IW_HOME=/opt/infoworks
 export IW_ADMIN_AUTH_TOKEN=
+export IW_INSTALLATION_ID=
+export IW_LICENSE=

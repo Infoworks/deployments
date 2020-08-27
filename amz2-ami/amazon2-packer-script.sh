@@ -22,13 +22,6 @@ sudo tee -a /etc/security/limits.conf > /dev/null <<EOF
 
 EOF
 
-sudo yum install -y wget
-sleep 20
-sudo yum install -y java-1.8.0-openjdk
-sleep 20
-sudo yum install -y ncurses-devel
-sleep 20
-
 # check if hostname exists
 HOSTNAME="$(hostname -f)"
 # echo "${HOSTNAME}"
@@ -43,6 +36,15 @@ fi
 #install collectd and openjdk
 sudo rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum -y install collectd 
+sleep 20
+yum install -y jq
+sleep 20
+sudo yum install -y wget
+sleep 20
+sudo yum install -y java-1.8.0-openjdk
+sleep 20
+sudo yum install -y ncurses-compat-libs
+
 
 #configure collectd
 sudo sed -i '/LoadPlugin rrdtool/d' "/etc/collectd.conf"
@@ -76,14 +78,14 @@ EOF
 sudo systemctl enable collectd
 sudo service collectd restart
 
-sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/Amazonlinux2/4.2/configure.sh' -P /opt/
-sudo chown +x /opt/configure.sh
-sudo chown -R ec2-user:ec2-user /opt/configure.sh
-
 sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.2/deploy_4.2.0-adb-rhel7.tar.gz' -P /opt/
 sudo tar -xzf /opt/deploy_4.2.0-adb-rhel7.tar.gz -C /opt/
 sudo rm /opt/deploy_4.2.0-adb-rhel7.tar.gz
 sudo chown -R ec2-user:ec2-user /opt/iw-installer
+
+sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/Amazonlinux2/4.2/configure.sh' -P /opt/iw-installer
+sudo chmod +x /opt/iw-installer/configure.sh
+sudo chown -R ec2-user:ec2-user /opt/iw-installer/configure.sh
 
 sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.2/infoworks-4.2.0-adb-rhel7.tar.gz' -P /opt/
 sudo tar -xzf /opt/infoworks-4.2.0-adb-rhel7.tar.gz -C /opt/
