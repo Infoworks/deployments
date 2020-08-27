@@ -13,14 +13,14 @@
 
 
 #set ulimits
-#sudo tee -a /etc/security/limits.conf > /dev/null <<EOF
+sudo tee -a /etc/security/limits.conf > /dev/null <<EOF
 
-#@infoworks	 hard	 nproc	10000 
-#@infoworks	 soft	 nproc	10000
-#@infoworks	 hard	nofile	65000
-#@infoworks   soft	nofile	65000
+@infoworks	 hard	 nproc	10000 
+@infoworks	 soft	 nproc	10000
+@infoworks	 hard	nofile	65000
+@infoworks   soft	nofile	65000
 
-#EOF
+EOF
 
 sudo yum install -y wget
 sleep 20
@@ -73,7 +73,12 @@ LoadPlugin statsd
   TimerPercentile 90.0
 </Plugin>
 EOF
+sudo systemctl enable collectd
 sudo service collectd restart
+
+sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/Amazonlinux2/4.2/configure.sh' -P /opt/
+sudo chown +x /opt/configure.sh
+sudo chown -R ec2-user:ec2-user /opt/configure.sh
 
 sudo wget 'https://iw-saas-setup.s3-us-west-2.amazonaws.com/4.2/deploy_4.2.0-adb-rhel7.tar.gz' -P /opt/
 sudo tar -xzf /opt/deploy_4.2.0-adb-rhel7.tar.gz -C /opt/
