@@ -331,7 +331,7 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "datafoundry-for-databricks",
+                        "publisher": "iwnamespace",
                         "offer": "datafoundry-for-databricks-vm",
                         "sku": "datafoundry-for-databricks-azure-vm",
                         "version": "[parameters('dfVersion')]"
@@ -363,7 +363,7 @@
             },
             "plan": {
                 "name": "datafoundry-for-databricks-azure-vm",
-                "publisher": "datafoundry-for-databricks",
+                "publisher": "iwnamespace",
                 "product": "datafoundry-for-databricks-vm"
             },
             "resources": [
