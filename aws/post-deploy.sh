@@ -31,7 +31,7 @@ sed -i -e "s|^export\ IW_EDGENODE_IP.*$|export\ IW_EDGENODE_IP=`hostname -f`|" /
 chown -R $DF_USER:$DF_USER /opt/{iw-installer,infoworks}
 
 ###Execute the setup###
-su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 4.2.0-adb-rhel7 || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
+su -c 'pushd /opt/iw-installer && source configure.sh && ./configure_install.sh && ./install.sh -v 4.2.2-adb-rhel7 || echo "failed" > /tmp/iwstatus' -s /bin/bash $DF_USER
 if [ -f /tmp/iwstatus ]; then
   exit 143
 fi
